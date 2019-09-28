@@ -53,7 +53,7 @@ public:
 		}
 	}
 
-	static FloatType calcKaiserBeta(FloatType dB)
+	static FloatType betaFromDecibels(FloatType dB)
 	{
 		if(dB < 21.0) {
 			return 0;
