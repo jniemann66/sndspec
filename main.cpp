@@ -10,6 +10,10 @@ int main(int argc, char** argv)
 {
     std::cout << "fuck you, world" << std::endl;
 
-	Sndspec::Parameters parameters;
-	parameters.setInputFiles({"/tmp/testfile.wav"});
+//	Sndspec::Parameters parameters;
+//	parameters.setInputFiles({"/tmp/testfile.wav"});
+
+	Sndspec::KaiserWindow<double> k;
+	k.setBeta(Sndspec::KaiserWindow<double>::calcKaiserBeta(95));
+	k.generate(512);
 }
