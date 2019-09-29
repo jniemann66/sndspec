@@ -56,6 +56,10 @@ public:
 
 	void read()
 	{
+		if(!window.empty() && window.size() != blockSize) { // incorrect window size
+			return;
+		}
+
 		std::vector<T> inputBuffer(nChannels * blockSize);
 
 		int64_t startFrame = startPos;
