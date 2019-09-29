@@ -38,7 +38,7 @@ protected:
 // Kaiser Window class
 
 template <typename FloatType>
-class KaiserWindow : Window<FloatType>
+class KaiserWindow : public Window<FloatType>
 {
 	FloatType beta;
 

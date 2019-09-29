@@ -15,15 +15,16 @@ template <typename T>
 class Reader
 {
 public:
-	using ProcessingFunc = std::function<void(int64_t frame, int channel, const std::vector<T>& data)>;
+	using ProcessingFunc = std::function<void(int64_t frame, int channel, const T* data)>;
 	Reader(const std::string& filename, const ProcessingFunc& f, int blockSize, int w)
 	    : filename(filename), processingFunc(f), blockSize(blockSize), w(w)
 	{
 		sndFileHandle = std::make_unique<SndfileHandle>(Reader::filename);
 		if(sndFileHandle.get() != nullptr) {
-			startPos = 0LL;
-			finishPos = sndFileHandle->frames();
+			setStartPos(0LL);
+			setFinishPos(sndFileHandle->frames());
 			nChannels = sndFileHandle->channels();
+			channelBuffers.resize(nChannels, nullptr);
 		}
 	}
 
@@ -56,10 +57,6 @@ public:
 	void read()
 	{
 		std::vector<T> inputBuffer(nChannels * blockSize);
-		std::vector<std::vector<T> > channelBuffers;
-		for(int ch = 0; ch < nChannels; ch ++) {
-			channelBuffers.emplace_back(blockSize, 0.0);
-		}
 
 		int64_t startFrame = startPos;
 		for(int x = 0; x < w; x++) {
@@ -69,20 +66,48 @@ public:
 
 			// deinterleave
 			const T* p = inputBuffer.data();
-			for(int64_t f = 0; f < framesRead; f++) {
-				for(int ch = 0; ch < nChannels; ch++) {
-					channelBuffers[f][ch] = *p++;
+			if(window.empty()) {
+				for(int64_t f = 0; f < framesRead; f++) {
+					for(int ch = 0; ch < nChannels; ch++) {
+						channelBuffers[f][ch] = *p++;
+					}
+				}
+			} else {
+				for(int64_t f = 0; f < framesRead; f++) {
+					for(int ch = 0; ch < nChannels; ch++) {
+						channelBuffers[ch][f] = *p++ * window[f];
+					}
 				}
 			}
 
 			// call processing function
 			for(int ch = 0; ch < nChannels; ch++) {
-				processingFunc(startFrame, ch, inputBuffer.at(ch));
+				processingFunc(startFrame, ch, channelBuffers.at(ch));
 			}
 
 			// advance
 			startFrame += interval;
 		}
+	}
+
+	std::vector<T> getWindow() const
+	{
+		return window;
+	}
+
+	void setWindow(const std::vector<T> &value)
+	{
+		window = value;
+	}
+
+	void setChannelBuffer(int channel, T* pBuf)
+	{
+		channelBuffers[channel] = pBuf;
+	}
+
+	int getNChannels() const
+	{
+		return nChannels;
 	}
 
 private:
@@ -95,6 +120,8 @@ private:
 	int w;
 	std::unique_ptr<SndfileHandle> sndFileHandle;
 	int nChannels;
+	std::vector<T> window;
+	std::vector<T*> channelBuffers;
 };
 
 } // namespace Sndspec
