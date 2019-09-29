@@ -26,6 +26,7 @@ endif()
 set(SOURCE_FILES
     spectrogram.cpp
 	parameters.cpp
+	reader.cpp
   )
 
 if (WIN32)
