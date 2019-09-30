@@ -12,15 +12,16 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 	k.generate(parameters.getFftSize());
 
 	for(const std::string& inputFilename : parameters.getInputFiles()) {
-		std::cout << "Opening input file: " << inputFilename << std::endl;
+		std::cout << "Opening input file: " << inputFilename << " ... ";
 		Sndspec::Reader<double> r(inputFilename, [](int64_t pos, int ch, const double* data) -> void {
 			(void)data; // unused
 			std::cout << "pos " << pos << " ch " << ch << std::endl;
 		}, parameters.getFftSize(), parameters.getImgWidth());
 
-		if(r.getSndFileHandle() == nullptr) {
-			std::cout << "problem opening file" << std::endl;
+		if(r.getSndFileHandle() == nullptr || r.getSndFileHandle()->error() != SF_ERR_NO_ERROR) {
+			std::cout << "couldn't open file !" << std::endl;
 		} else {
+			std::cout << "ok" << std::endl;
 			r.setWindow(k.getData());
 			std::vector<std::unique_ptr<double[]>> channelBuffers;
 			for(int ch = 0; ch < r.getNChannels(); ch ++) {
