@@ -38,6 +38,9 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 				(void)data; // unused
 				spectrumAnalyzers.at(static_cast<decltype(spectrumAnalyzers)::size_type>(channel))->exec();
 				spectrumAnalyzers.at(static_cast<decltype(spectrumAnalyzers)::size_type>(channel))->getMag();
+//				if(frame == 160800) {
+//					std::cout << "Booyah " << std::endl;
+//				}
 			});
 
 			r.read();

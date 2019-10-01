@@ -19,9 +19,10 @@ Spectrum::Spectrum(int fftLength) : fftLength(fftLength)
 
 Spectrum::~Spectrum()
 {
+	fftw_destroy_plan(plan);
 	fftw_free(tdBuf);
 	fftw_free(fdBuf);
-	fftw_destroy_plan(plan);
+
 }
 
 void Spectrum::exec()
