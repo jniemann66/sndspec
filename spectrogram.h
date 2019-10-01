@@ -4,10 +4,11 @@
 #include "parameters.h"
 
 namespace Sndspec {
-	class Spectrogram {
-	public:
-		static void makeSpectrogram(const Parameters& parameters);
-	};
+
+class Spectrogram {
+public:
+	static void makeSpectrogram(const Parameters& parameters);
+};
 
 } // namespace Sndspec
 

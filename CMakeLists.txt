@@ -24,7 +24,8 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 set(SOURCE_FILES
-    spectrogram.cpp
+	spectrum.cpp
+	spectrogram.cpp
 	parameters.cpp
 	reader.cpp
   )
