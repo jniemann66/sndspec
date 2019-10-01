@@ -1,6 +1,7 @@
 #ifndef READER_H
 #define READER_H
 
+#include <iostream>
 #include <functional>
 #include <array>
 #include <vector>
@@ -16,8 +17,8 @@ class Reader
 {
 public:
 	using ProcessingFunc = std::function<void(int64_t frame, int channel, const T* data)>;
-	Reader(const std::string& filename, const ProcessingFunc& f, int blockSize, int w)
-	    : filename(filename), processingFunc(f), blockSize(blockSize), w(w)
+	Reader(const std::string& filename, int blockSize, int w)
+		: filename(filename), blockSize(blockSize), w(w)
 	{
 		sndFileHandle = std::make_unique<SndfileHandle>(Reader::filename);
 		if(sndFileHandle.get() != nullptr) {
@@ -25,6 +26,12 @@ public:
 			setFinishPos(sndFileHandle->frames());
 			nChannels = sndFileHandle->channels();
 			channelBuffers.resize(nChannels, nullptr);
+
+			// placeholder function
+			processingFunc = [](int64_t pos, int ch, const double* data) -> void {
+				(void)data; // unused
+				std::cout << "pos " << pos << " ch " << ch << std::endl;
+			};
 		}
 	}
 
@@ -112,6 +119,11 @@ public:
 	int getNChannels() const
 	{
 		return nChannels;
+	}
+
+	void setProcessingFunc(const ProcessingFunc &value)
+	{
+		processingFunc = value;
 	}
 
 private:

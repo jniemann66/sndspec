@@ -17,8 +17,10 @@ public:
 	const fftw_complex *getFdBuf() const;
 	std::vector<double> getMag();
 	std::vector<double> getPhase();
+	void exec();
 
 private:
+	fftw_plan plan;
 	int fftLength;
 
 	// C facing:
