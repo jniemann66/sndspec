@@ -36,20 +36,10 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			// create a callback function to execute spectrum analysis for each block read
 			r.setProcessingFunc([spectrumAnalyzers](int64_t frame, int channel, const double* data) -> void {
 				std::cout << "frame " << frame << std::endl;
-				//(void)frame; // unused
-
 				assert(data == spectrumAnalyzers.at(channel)->getTdBuf());
-
-
-//				if(frame == 492000) {
-					spectrumAnalyzers.at(static_cast<decltype(spectrumAnalyzers)::size_type>(channel))->exec();
-
-
-					const auto& mag = spectrumAnalyzers.at(static_cast<decltype(spectrumAnalyzers)::size_type>(channel))->getMag();
-			//		UglyPlot::plot(mag.data(), mag.size());
-	//			}
-//					std::cout << "Booyah " << std::endl;
-//				}
+				spectrumAnalyzers.at(static_cast<decltype(spectrumAnalyzers)::size_type>(channel))->exec();
+				const auto& mag = spectrumAnalyzers.at(static_cast<decltype(spectrumAnalyzers)::size_type>(channel))->getMag();
+				UglyPlot::plot(mag.data(), mag.size());
 			});
 
 			r.read();

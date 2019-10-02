@@ -8,12 +8,12 @@
 namespace Sndspec {
 
 // todo: this is only good for doubles: specialize for FloatType
-Spectrum::Spectrum(int fftLength) : fftLength(fftLength)
+Spectrum::Spectrum(int fftLength) : fftLength(fftLength), spectrumLength(fftLength / 2)
 {
 	tdBuf = static_cast<double*>(fftw_malloc(sizeof(double) * static_cast<size_t>(fftLength)));
 	fdBuf = static_cast<fftw_complex*>(fftw_malloc(2 * sizeof(fftw_complex) * static_cast<size_t>(fftLength)));
-	mag.resize(static_cast<std::vector<double>::size_type>(fftLength));
-	phase.resize(static_cast<std::vector<double>::size_type>(fftLength));
+	mag.resize(static_cast<std::vector<double>::size_type>(spectrumLength));
+	phase.resize(static_cast<std::vector<double>::size_type>(spectrumLength));
 	plan = fftw_plan_dft_r2c_1d(fftLength, tdBuf, fdBuf, FFTW_MEASURE | FFTW_PRESERVE_INPUT);
 }
 
@@ -22,7 +22,6 @@ Spectrum::~Spectrum()
 	fftw_destroy_plan(plan);
 	fftw_free(tdBuf);
 	fftw_free(fdBuf);
-
 }
 
 void Spectrum::exec()
@@ -33,6 +32,11 @@ void Spectrum::exec()
 int Spectrum::getFftLength() const
 {
 	return fftLength;
+}
+
+int Spectrum::getSpectrumLength() const
+{
+	return spectrumLength;
 }
 
 double *Spectrum::getTdBuf() const
@@ -47,7 +51,7 @@ const fftw_complex *Spectrum::getFdBuf() const
 
 std::vector<double> Spectrum::getMag()
 {
-	for(int b = 0; b < fftLength; b++) {
+	for(int b = 0; b < spectrumLength; b++) {
 		double re = fdBuf[b][0];
 		double im = fdBuf[b][1];
 		mag[static_cast<std::vector<double>::size_type>(b)] = std::sqrt(re * re + im * im);
@@ -57,15 +61,13 @@ std::vector<double> Spectrum::getMag()
 
 std::vector<double> Spectrum::getPhase()
 {
-	for(int b = 0; b < fftLength; b++) {
+	for(int b = 0; b < spectrumLength; b++) {
 		double re = fdBuf[b][0];
 		double im = fdBuf[b][1];
 		phase[static_cast<std::vector<double>::size_type>(b)] = std::atan2(im, re);
 	}
 	return phase;
 }
-
-
 
 // todo: float version
 // todo: long double version

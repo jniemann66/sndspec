@@ -61,7 +61,7 @@ public:
 		interval = (finishPos - startPos) / w;
 	}
 
-	void read()
+	void readDeinterleaved()
 	{
 		if(!window.empty() && window.size() != blockSize) { // incorrect window size
 			return;

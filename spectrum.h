@@ -20,10 +20,12 @@ public:
 	void exec();
 
 	int getFftLength() const;
+	int getSpectrumLength() const;
 
 private:
 	fftw_plan plan;
 	int fftLength;
+	int spectrumLength;
 
 	// C facing:
 	double* tdBuf;
