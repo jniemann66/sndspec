@@ -6,6 +6,11 @@
 
 #include <iostream>
 
+// todo: float version
+// todo: long double version
+// todo: quad precision version etc
+
+
 namespace Sndspec {
 
 // todo: this is only good for doubles: specialize for FloatType
@@ -75,10 +80,5 @@ std::vector<double> Spectrum::getPhase()
 	}
 	return phase;
 }
-
-// todo: float version
-// todo: long double version
-// todo: quad precision version etc
-
 
 } // namespace Sndspec

@@ -27,7 +27,6 @@ set(SOURCE_FILES
 	spectrum.cpp
 	spectrogram.cpp
 	parameters.cpp
-	uglyplot.cpp
 	tests.cpp
   )
 
