@@ -19,6 +19,8 @@ public:
 	std::vector<double> getPhase();
 	void exec();
 
+	int getFftLength() const;
+
 private:
 	fftw_plan plan;
 	int fftLength;

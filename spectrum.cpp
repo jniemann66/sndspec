@@ -14,7 +14,7 @@ Spectrum::Spectrum(int fftLength) : fftLength(fftLength)
 	fdBuf = static_cast<fftw_complex*>(fftw_malloc(2 * sizeof(fftw_complex) * static_cast<size_t>(fftLength)));
 	mag.resize(static_cast<std::vector<double>::size_type>(fftLength));
 	phase.resize(static_cast<std::vector<double>::size_type>(fftLength));
-	plan = fftw_plan_dft_r2c_1d (2 * fftLength, tdBuf, fdBuf, FFTW_MEASURE | FFTW_PRESERVE_INPUT);
+	plan = fftw_plan_dft_r2c_1d(fftLength, tdBuf, fdBuf, FFTW_MEASURE | FFTW_PRESERVE_INPUT);
 }
 
 Spectrum::~Spectrum()
@@ -28,6 +28,11 @@ Spectrum::~Spectrum()
 void Spectrum::exec()
 {
 	fftw_execute(plan);
+}
+
+int Spectrum::getFftLength() const
+{
+	return fftLength;
 }
 
 double *Spectrum::getTdBuf() const

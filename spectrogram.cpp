@@ -2,8 +2,10 @@
 #include "window.h"
 #include "reader.h"
 #include "spectrum.h"
+#include "uglyplot.h"
 
 #include <iostream>
+#include <cassert>
 
 void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters)
 {
@@ -35,10 +37,17 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			r.setProcessingFunc([spectrumAnalyzers](int64_t frame, int channel, const double* data) -> void {
 				std::cout << "frame " << frame << std::endl;
 				//(void)frame; // unused
-				(void)data; // unused
-				spectrumAnalyzers.at(static_cast<decltype(spectrumAnalyzers)::size_type>(channel))->exec();
-				spectrumAnalyzers.at(static_cast<decltype(spectrumAnalyzers)::size_type>(channel))->getMag();
-//				if(frame == 160800) {
+
+				assert(data == spectrumAnalyzers.at(channel)->getTdBuf());
+
+
+//				if(frame == 492000) {
+					spectrumAnalyzers.at(static_cast<decltype(spectrumAnalyzers)::size_type>(channel))->exec();
+
+
+					const auto& mag = spectrumAnalyzers.at(static_cast<decltype(spectrumAnalyzers)::size_type>(channel))->getMag();
+			//		UglyPlot::plot(mag.data(), mag.size());
+	//			}
 //					std::cout << "Booyah " << std::endl;
 //				}
 			});
