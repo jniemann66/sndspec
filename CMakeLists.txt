@@ -27,8 +27,8 @@ set(SOURCE_FILES
 	spectrum.cpp
 	spectrogram.cpp
 	parameters.cpp
-	reader.cpp
 	uglyplot.cpp
+	tests.cpp
   )
 
 if (WIN32)

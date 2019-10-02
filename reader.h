@@ -29,7 +29,7 @@ public:
 			channelBuffers.resize(nChannels, nullptr);
 
 			// placeholder function
-			processingFunc = [](int64_t pos, int ch, const double* data) -> void {
+			processingFunc = [](int64_t pos, int ch, const T* data) -> void {
 				(void)data; // unused
 				std::cout << "pos " << pos << " ch " << ch << std::endl;
 			};

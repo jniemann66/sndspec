@@ -29,8 +29,8 @@ private:
 	int spectrumLength;
 
 	// C facing:
-	double* tdBuf;
-	fftw_complex* fdBuf;
+	double* tdBuf;	// time-domain buffer
+	fftw_complex* fdBuf; // frequency-domain buffer
 
 	// C++ facing:
 	std::vector<double> mag;
