@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <cmath>
+#include <algorithm>
 
 #include <iostream>
 
@@ -37,6 +38,12 @@ int Spectrum::getFftLength() const
 int Spectrum::getSpectrumLength() const
 {
 	return spectrumLength;
+}
+
+std::pair<double, int> Spectrum::getFdPeak() const
+{
+	auto it = std::max_element(mag.cbegin(), mag.cend());
+	return {*it, std::distance(mag.cbegin(), it)};
 }
 
 double *Spectrum::getTdBuf() const

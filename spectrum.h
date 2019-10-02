@@ -21,6 +21,7 @@ public:
 
 	int getFftLength() const;
 	int getSpectrumLength() const;
+	std::pair<double, int> getFdPeak() const;
 
 private:
 	fftw_plan plan;

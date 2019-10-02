@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <cmath>
 
 #include <sndfile.hh>
 
@@ -58,7 +59,7 @@ public:
 	void setFinishPos(const int64_t &value)
 	{
 		finishPos = value;
-		interval = (finishPos - startPos) / w;
+		interval = std::ceil((finishPos - startPos) / w);
 	}
 
 	void readDeinterleaved()
@@ -75,12 +76,19 @@ public:
 			sndFileHandle->seek(startFrame, SEEK_SET);
 			int64_t framesRead = sndFileHandle->readf(inputBuffer.data(), blockSize);
 
+			if (framesRead < blockSize) {
+				// pad with trailing zeroes
+				for(size_t i = static_cast<size_t>(framesRead); i < inputBuffer.size(); i++) {
+					inputBuffer[i] = 0.0;
+				}
+			}
+
 			// deinterleave
 			const T* p = inputBuffer.data();
 			if(window.empty()) {
 				for(int64_t f = 0; f < framesRead; f++) {
 					for(int ch = 0; ch < nChannels; ch++) {
-						channelBuffers[f][ch] = *p++;
+						channelBuffers[ch][f] = *p++;
 					}
 				}
 			} else {

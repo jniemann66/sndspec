@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 	// todo: from args
 	Sndspec::Parameters parameters;
 	parameters.setInputFiles({"/tmp/testfile.wav", "/tmp/guitar.flac"});
-	parameters.setFftSize(512);
+	parameters.setFftSize(2048);
 
 	Sndspec::Spectrogram::makeSpectrogram(parameters);
 }
