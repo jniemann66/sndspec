@@ -14,8 +14,13 @@ int main(int argc, char** argv)
 	// acquire parameters
 	// todo: from args
 	Sndspec::Parameters parameters;
-	parameters.setInputFiles({"/tmp/testfile.wav", "/tmp/guitar.flac"});
-	parameters.setFftSize(2048);
 
+#ifdef WIN32
+	parameters.setInputFiles({"e:\\TestWav\\96khz_sweep-3dBFS_32f.wav"});
+#else
+	parameters.setInputFiles({"/tmp/testfile.wav", "/tmp/guitar.flac"});
+#endif
+
+	parameters.setFftSize(2048);
 	Sndspec::Spectrogram::makeSpectrogram(parameters);
 }
