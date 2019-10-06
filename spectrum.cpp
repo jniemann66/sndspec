@@ -17,7 +17,7 @@ namespace Sndspec {
 Spectrum::Spectrum(int fftLength) : fftLength(fftLength), spectrumLength(fftLength / 2)
 {
 	tdBuf = static_cast<double*>(fftw_malloc(sizeof(double) * static_cast<size_t>(fftLength)));
-	fdBuf = static_cast<fftw_complex*>(fftw_malloc(2 * sizeof(fftw_complex) * static_cast<size_t>(fftLength)));
+	fdBuf = static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * static_cast<size_t>(fftLength)));
 	mag.resize(static_cast<std::vector<double>::size_type>(spectrumLength));
 	phase.resize(static_cast<std::vector<double>::size_type>(spectrumLength));
 	plan = fftw_plan_dft_r2c_1d(fftLength, tdBuf, fdBuf, FFTW_MEASURE | FFTW_PRESERVE_INPUT);
