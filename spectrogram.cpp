@@ -10,6 +10,7 @@
 void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters)
 {
 	auto fftSize = parameters.getFftSize();
+	auto spectrumSize = fftSize >> 1;
 
 	// make a suitable Kaiser window
 	Sndspec::KaiserWindow<double> k;
@@ -26,34 +27,35 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			std::cout << "ok" << std::endl;
 			r.setWindow(k.getData());
 
-			// create output storage (channels x spectrums x fftbins)
-			std::vector<std::vector<std::vector<double>>> spectrogram(r.getNChannels(), std::vector<std::vector<double>>(parameters.getImgWidth(), std::vector<double>(fftSize, 0.0)));
+			// create output storage (channels x spectrums x numbins)
+			std::vector<std::vector<std::vector<double>>> spectrogram(r.getNChannels(), std::vector<std::vector<double>>(parameters.getImgWidth(), std::vector<double>(spectrumSize, 0.0)));
 
 			// create a spectrum analyzer for each channel
-			std::vector<Spectrum*> spectrumAnalyzers;
-
+			std::vector<std::unique_ptr<Spectrum>> analyzers;
 			for(int ch = 0; ch < r.getNChannels(); ch ++) {
-				Spectrum* s = new Spectrum(fftSize);
-				spectrumAnalyzers.push_back(s);
-				r.setChannelBuffer(ch, s->getTdBuf());
+				analyzers.emplace_back(new Spectrum(fftSize));
+
+				// give the reader direct write-access to the analyzer input buffer
+				r.setChannelBuffer(ch, analyzers.back()->getTdBuf());
 			}
 
 			// create a callback function to execute spectrum analysis for each block read
-			r.setProcessingFunc([spectrumAnalyzers, &spectrogram](int pos, int channel, const double* data) -> void {
+			r.setProcessingFunc([&analyzers, &spectrogram](int pos, int channel, const double* data) -> void {
 				std::cout << "pos " << pos << std::endl;
-				Spectrum* analyzer = spectrumAnalyzers.at(static_cast<decltype(spectrumAnalyzers)::size_type>(channel));
+				Spectrum* analyzer = analyzers.at(static_cast<decltype(analyzers)::size_type>(channel)).get();
 				assert(data == analyzer->getTdBuf());
 				analyzer->exec();
 				analyzer->getMag(spectrogram[channel][pos]);
-				//UglyPlot::plot(mag.data(), mag.size());
 			});
 
 			r.readDeinterleaved();
 
-			// clean up
-			for(auto s : spectrumAnalyzers) {
-				delete s;
-			}
-		}
-	}
+			// plot results
+//			for(int x = 0; x < spectrogram.at(0).size(); x++) {
+//				std::cout << "showing fft number " << x;
+//				UglyPlot::plot(spectrogram.at(0).at(x).data(), spectrumSize);
+//			}
+
+		} // ends successful file-open
+	} // ends loop over files
 }

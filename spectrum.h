@@ -13,7 +13,7 @@ public:
 	Spectrum(int fftLength);
 	~Spectrum();
 
-	double *getTdBuf() const;
+	double* getTdBuf() const;
 	const fftw_complex *getFdBuf() const;
 	void getMag(std::vector<double>& buf);
 	void getPhase(std::vector<double>& buf);

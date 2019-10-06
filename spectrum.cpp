@@ -49,7 +49,7 @@ int Spectrum::getSpectrumLength() const
 //	return {*it, std::distance(mag.cbegin(), it)};
 //}
 
-double *Spectrum::getTdBuf() const
+double* Spectrum::getTdBuf() const
 {
 	return tdBuf;
 }
