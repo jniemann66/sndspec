@@ -17,7 +17,7 @@ template <typename T>
 class Reader
 {
 public:
-	using ProcessingFunc = std::function<void(int64_t frame, int channel, const T* data)>;
+	using ProcessingFunc = std::function<void(int pos, int channel, const T* data)>;
 	Reader(const std::string& filename, int blockSize, int w)
 		: filename(filename), blockSize(blockSize), w(w)
 	{
@@ -29,7 +29,7 @@ public:
 			channelBuffers.resize(nChannels, nullptr);
 
 			// placeholder function
-			processingFunc = [](int64_t pos, int ch, const T* data) -> void {
+			processingFunc = [](int pos, int ch, const T* data) -> void {
 				(void)data; // unused
 				std::cout << "pos " << pos << " ch " << ch << std::endl;
 			};
@@ -101,7 +101,7 @@ public:
 
 			// call processing function
 			for(int ch = 0; ch < nChannels; ch++) {
-				processingFunc(startFrame, ch, channelBuffers.at(ch));
+				processingFunc(x, ch, channelBuffers.at(ch));
 			}
 
 			// advance

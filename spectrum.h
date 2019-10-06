@@ -15,13 +15,13 @@ public:
 
 	double *getTdBuf() const;
 	const fftw_complex *getFdBuf() const;
-	std::vector<double> getMag();
-	std::vector<double> getPhase();
+	void getMag(std::vector<double>& buf);
+	void getPhase(std::vector<double>& buf);
 	void exec();
 
 	int getFftLength() const;
 	int getSpectrumLength() const;
-	std::pair<double, int> getFdPeak() const;
+//	std::pair<double, int> getFdPeak() const;
 
 private:
 	fftw_plan plan;
@@ -32,9 +32,6 @@ private:
 	double* tdBuf;	// time-domain buffer
 	fftw_complex* fdBuf; // frequency-domain buffer
 
-	// C++ facing:
-	std::vector<double> mag;
-	std::vector<double> phase;
 };
 
 } // namespace Sndspec
