@@ -16,6 +16,7 @@ public:
 	double* getTdBuf() const;
 	const fftw_complex *getFdBuf() const;
 	void getMag(std::vector<double>& buf);
+	void getMagSquared(std::vector<double> &buf);
 	void getPhase(std::vector<double>& buf);
 	void exec();
 

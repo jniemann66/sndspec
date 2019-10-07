@@ -68,6 +68,15 @@ void Spectrum::getMag(std::vector<double>& buf)
 	}
 }
 
+void Spectrum::getMagSquared(std::vector<double>& buf)
+{
+	for(int b = 0; b < spectrumLength; b++) {
+		double re = fdBuf[b][0];
+		double im = fdBuf[b][1];
+		buf[static_cast<std::vector<double>::size_type>(b)] = re * re + im * im;
+	}
+}
+
 void Spectrum::getPhase(std::vector<double>& buf)
 {
 	for(int b = 0; b < spectrumLength; b++) {
