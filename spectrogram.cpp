@@ -3,6 +3,7 @@
 #include "reader.h"
 #include "spectrum.h"
 #include "uglyplot.h"
+#include "renderer.h"
 
 #include <iostream>
 #include <cassert>
@@ -50,6 +51,8 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 
 			r.readDeinterleaved();
 			scaleMagnitudeRelativeDb(spectrogram, /* magSquared = */ true);
+			Renderer renderer(parameters.getImgWidth(), parameters.getIngHeight());
+
 
 			// plot results
 //			for(int x = 0; x < spectrogram.at(0).size(); x++) {
