@@ -20,6 +20,7 @@ public:
 
 	std::vector<int32_t> getHeatMapPalette() const;
 	void setHeatMapPalette(const std::vector<int32_t> &value);
+	bool writeToFile(const std::string &filename);
 
 private:
 	int width;

@@ -1,5 +1,7 @@
 #include "renderer.h"
 
+#include <inttypes.h>
+
 #include <cstdlib>
 
 namespace Sndspec {
@@ -16,6 +18,30 @@ Renderer::~Renderer()
 {
 	cairo_surface_destroy(surface);
 	free(data);
+}
+
+void Renderer::Render(const Parameters &parameters, const SpectrogramResults<double> &spectrogramData)
+{
+	int numChannels = spectrogramData.size();
+	int numSpectrums = spectrogramData.at(0).size();
+	int numBins = spectrogramData.at(0).at(0).size();
+
+	double colorScale = heatMapPalette.size() / -parameters.getDynRange();
+
+	for(int c = 0; c < 1 /*numChannels*/; c++) {
+		for(int x = 0; x < numSpectrums; x++) {
+			for(int y = 0; y < numBins; y++) {
+				int addr = y * stride + x * 4;
+				int32_t color = heatMapPalette[spectrogramData[c][x][y] * colorScale];
+				data[addr] = color;
+			}
+		}
+	}
+}
+
+bool Renderer::writeToFile(const std::string& filename)
+{
+	return (cairo_surface_write_to_png(surface, filename.c_str()) == CAIRO_STATUS_SUCCESS);
 }
 
 std::vector<int32_t> Renderer::getHeatMapPalette() const

@@ -53,7 +53,19 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 
 			r.readDeinterleaved();
 			scaleMagnitudeRelativeDb(spectrogram, /* magSquared = */ true);
+			std::cout << "Rendering ... " << std::flush;
 			Renderer renderer(parameters.getImgWidth(), parameters.getIngHeight());
+			renderer.Render(parameters, spectrogram);
+			std::cout << "Done" << std::endl;
+
+			std::string outFile("e:\\lovely.png");
+			std::cout << "Saving to " << outFile << std::flush;
+			if(renderer.writeToFile(outFile)) {
+				std::cout << " ... OK" << std::endl;
+			} else {
+				std::cout << " ... ERROR" << std::endl;
+			}
+
 
 //			for(long c : renderer.getHeatMapPalette()) {
 //				std::cout << "0x" << std::setw(8) << std::setfill('0') << std::hex << c << std::endl;
