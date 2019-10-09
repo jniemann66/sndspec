@@ -21,6 +21,6 @@ int main(int argc, char** argv)
 	parameters.setInputFiles({"/tmp/testfile.wav", "/tmp/guitar.flac"});
 #endif
 
-	parameters.setFftSize(64);
+	parameters.setFftSize(512);
 	Sndspec::Spectrogram::makeSpectrogram(parameters);
 }
