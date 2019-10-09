@@ -18,5 +18,15 @@ Renderer::~Renderer()
 	free(data);
 }
 
+std::vector<int32_t> Renderer::getHeatMapPalette() const
+{
+	return heatMapPalette;
+}
+
+void Renderer::setHeatMapPalette(const std::vector<int32_t> &value)
+{
+	heatMapPalette = value;
+}
+
 
 } // namespace Sndspec

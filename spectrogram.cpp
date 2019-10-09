@@ -6,6 +6,8 @@
 #include "renderer.h"
 
 #include <iostream>
+#include <iomanip>
+
 #include <cassert>
 
 void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters)
@@ -53,6 +55,9 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			scaleMagnitudeRelativeDb(spectrogram, /* magSquared = */ true);
 			Renderer renderer(parameters.getImgWidth(), parameters.getIngHeight());
 
+//			for(long c : renderer.getHeatMapPalette()) {
+//				std::cout << "0x" << std::setw(8) << std::setfill('0') << std::hex << c << std::endl;
+//			}
 
 			// plot results
 //			for(int x = 0; x < spectrogram.at(0).size(); x++) {
