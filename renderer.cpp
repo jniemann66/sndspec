@@ -25,7 +25,6 @@ void Renderer::Render(const Parameters &parameters, const SpectrogramResults<dou
 	int numChannels = spectrogramData.size();
 	int numSpectrums = spectrogramData.at(0).size();
 	int numBins = spectrogramData.at(0).at(0).size();
-
 	int h = height - 1;
 	double colorScale = heatMapPalette.size() / -parameters.getDynRange();
 

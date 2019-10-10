@@ -44,7 +44,7 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 
 			// create a callback function to execute spectrum analysis for each block read
 			r.setProcessingFunc([&analyzers, &spectrogram](int pos, int channel, const double* data) -> void {
-				std::cout << "pos " << pos << std::endl;
+		//		std::cout << "pos " << pos << std::endl;
 				Spectrum* analyzer = analyzers.at(channel).get();
 				assert(data == analyzer->getTdBuf());
 				analyzer->exec();
