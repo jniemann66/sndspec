@@ -3,21 +3,21 @@
 #include <inttypes.h>
 
 #include <cstdlib>
+#include <cstddef>
 
 namespace Sndspec {
 
-Renderer::Renderer(int width, int height) : width(width), height(height)
+Renderer::Renderer(int width, int height) : width(width), height(height), pixelBuffer(width * height, 0)
 {
 	const cairo_format_t cairoFormat =  CAIRO_FORMAT_RGB24;
-	stride = cairo_format_stride_for_width(cairoFormat, width);
-	data = (unsigned char*)std::malloc(stride * height);
-	surface = cairo_image_surface_create_for_data (data, cairoFormat, width, height, stride);
+	int stride =  cairo_format_stride_for_width(cairoFormat, width);
+	stride32 = stride / sizeof(uint32_t);
+	surface = cairo_image_surface_create_for_data(reinterpret_cast<unsigned char*>(pixelBuffer.data()), cairoFormat, width, height, stride);
 }
 
 Renderer::~Renderer()
 {
 	cairo_surface_destroy(surface);
-	free(data);
 }
 
 void Renderer::Render(const Parameters &parameters, const SpectrogramResults<double> &spectrogramData)
@@ -26,14 +26,15 @@ void Renderer::Render(const Parameters &parameters, const SpectrogramResults<dou
 	int numSpectrums = spectrogramData.at(0).size();
 	int numBins = spectrogramData.at(0).at(0).size();
 
+	int h = height - 1;
 	double colorScale = heatMapPalette.size() / -parameters.getDynRange();
 
 	for(int c = 0; c < 1 /*numChannels*/; c++) {
 		for(int x = 0; x < numSpectrums; x++) {
 			for(int y = 0; y < numBins; y++) {
-				int addr = y * stride + x * 4;
+				int addr = x + (h - y) * stride32;
 				int32_t color = heatMapPalette[spectrogramData[c][x][y] * colorScale];
-				data[addr] = color;
+				pixelBuffer[addr] = color;
 			}
 		}
 	}

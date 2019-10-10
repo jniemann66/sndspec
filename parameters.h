@@ -33,10 +33,10 @@ public:
 private:
 	std::vector<std::string> inputFiles;
 	std::string outputPath;
-	int imgWidth{640};
-	int ingHeight{480};
+	int imgWidth{1024};
+	int ingHeight{768};
 	double dynRange{190};
-	int fftSize{512};
+	int fftSize{1024};
 
 };
 

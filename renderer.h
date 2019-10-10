@@ -25,8 +25,8 @@ public:
 private:
 	int width;
 	int height;
-	int stride;
-	unsigned char* data;
+	std::vector<uint32_t> pixelBuffer;
+	int stride32;
 	cairo_surface_t* surface;
 	std::vector<int32_t> heatMapPalette {
 		0x00ffffff,
