@@ -67,17 +67,6 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 				std::cout << " ... ERROR" << std::endl;
 			}
 
-
-//			for(long c : renderer.getHeatMapPalette()) {
-//				std::cout << "0x" << std::setw(8) << std::setfill('0') << std::hex << c << std::endl;
-//			}
-
-			// plot results
-//			for(int x = 0; x < spectrogram.at(0).size(); x++) {
-//				std::cout << "showing fft number " << x;
-//				UglyPlot::plot(spectrogram.at(0).at(x).data(), spectrumSize);
-//			}
-
 		} // ends successful file-open
 	} // ends loop over files
 }

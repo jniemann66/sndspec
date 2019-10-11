@@ -26,7 +26,7 @@ void Renderer::Render(const Parameters &parameters, const SpectrogramResults<dou
 	int numSpectrums = spectrogramData.at(0).size();
 	int numBins = spectrogramData.at(0).at(0).size();
 	int h = height - 1;
-	double colorScale = heatMapPalette.size() / (-parameters.getDynRange() - 50);
+	double colorScale = heatMapPalette.size() / -parameters.getDynRange();
 	int lastColorIndex = std::max(0ULL, heatMapPalette.size() - 1);
 
 	for(int c = 0; c < 1 /*numChannels*/; c++) {
@@ -55,6 +55,5 @@ void Renderer::setHeatMapPalette(const std::vector<int32_t> &value)
 {
 	heatMapPalette = value;
 }
-
 
 } // namespace Sndspec
