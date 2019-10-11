@@ -21,14 +21,11 @@ public:
 	int getImgWidth() const;
 	void setImgWidth(int value);
 
-	int getIngHeight() const;
+	int getImgHeight() const;
 	void setIngHeight(int value);
 
 	double getDynRange() const;
 	void setDynRange(double value);
-
-	int getFftSize() const;
-	void setFftSize(int value);
 
 private:
 	std::vector<std::string> inputFiles;
@@ -36,8 +33,6 @@ private:
 	int imgWidth{1024};
 	int ingHeight{768};
 	double dynRange{190};
-	int fftSize{1024};
-
 };
 
 } // namespace Options

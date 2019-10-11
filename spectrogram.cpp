@@ -12,8 +12,10 @@
 
 void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters)
 {
-	auto fftSize = parameters.getFftSize();
-	auto spectrumSize = fftSize >> 1;
+	auto fftSize = Spectrum::selectBestFFTSizeFromSpectrumSize(parameters.getImgHeight());
+	auto spectrumSize = Spectrum::convertFFTSizeToSpectrumSize(fftSize);
+
+	std::cout << "fft size " << fftSize << " spectrum size " << spectrumSize << std::endl;
 
 	// make a suitable Kaiser window
 	Sndspec::KaiserWindow<double> k;
@@ -44,7 +46,6 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 
 			// create a callback function to execute spectrum analysis for each block read
 			r.setProcessingFunc([&analyzers, &spectrogram](int pos, int channel, const double* data) -> void {
-		//		std::cout << "pos " << pos << std::endl;
 				Spectrum* analyzer = analyzers.at(channel).get();
 				assert(data == analyzer->getTdBuf());
 				analyzer->exec();
@@ -54,7 +55,7 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			r.readDeinterleaved();
 			scaleMagnitudeRelativeDb(spectrogram, /* magSquared = */ true);
 			std::cout << "Rendering ... ";
-			Renderer renderer(parameters.getImgWidth(), parameters.getIngHeight());
+			Renderer renderer(parameters.getImgWidth(), spectrumSize /*parameters.getImgHeight()*/);
 			renderer.Render(parameters, spectrogram);
 			std::cout << "Done\n";
 

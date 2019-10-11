@@ -32,7 +32,7 @@ void Parameters::setImgWidth(int value)
 	imgWidth = value;
 }
 
-int Parameters::getIngHeight() const
+int Parameters::getImgHeight() const
 {
 	return ingHeight;
 }
@@ -50,16 +50,6 @@ double Parameters::getDynRange() const
 void Parameters::setDynRange(double value)
 {
 	dynRange = value;
-}
-
-int Parameters::getFftSize() const
-{
-	return fftSize;
-}
-
-void Parameters::setFftSize(int value)
-{
-	fftSize = value;
 }
 
 } // namespace Sndspec
