@@ -30,8 +30,8 @@ public:
 private:
 	std::vector<std::string> inputFiles;
 	std::string outputPath;
-	int imgWidth{1920};
-	int ingHeight{1080};
+	int imgWidth{1024};
+	int imgHeight{768};
 	double dynRange{190};
 };
 

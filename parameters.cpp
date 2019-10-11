@@ -34,12 +34,12 @@ void Parameters::setImgWidth(int value)
 
 int Parameters::getImgHeight() const
 {
-	return ingHeight;
+	return imgHeight;
 }
 
 void Parameters::setIngHeight(int value)
 {
-	ingHeight = value;
+	imgHeight = value;
 }
 
 double Parameters::getDynRange() const
