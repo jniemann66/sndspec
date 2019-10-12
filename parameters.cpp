@@ -52,5 +52,10 @@ void Parameters::setDynRange(double value)
 	dynRange = value;
 }
 
+void Parameters::fromArgs(const std::vector<std::string> &args)
+{
+
+}
+
 } // namespace Sndspec
 

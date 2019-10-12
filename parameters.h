@@ -27,6 +27,8 @@ public:
 	double getDynRange() const;
 	void setDynRange(double value);
 
+	void fromArgs(const std::vector<std::string>& args);
+
 private:
 	std::vector<std::string> inputFiles;
 	std::string outputPath;
