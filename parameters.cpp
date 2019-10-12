@@ -1,4 +1,6 @@
 #include "parameters.h"
+#include <regex>
+#include <map>
 
 namespace Sndspec {
 
@@ -54,7 +56,8 @@ void Parameters::setDynRange(double value)
 
 void Parameters::fromArgs(const std::vector<std::string> &args)
 {
-
+	std::map<std::string, std::vector<std::string>> options;
+	std::regex r("(-.*)(?=$| -)");
 }
 
 } // namespace Sndspec

@@ -3,8 +3,37 @@
 
 #include <string>
 #include <vector>
+#include <variant>
 
 namespace Sndspec {
+
+enum OptionID
+{
+	Filenames,
+	DynRange,
+	OutputDir,
+	Height,
+	Width
+};
+
+struct Option
+{
+	OptionID optionID;
+	std::string longOption;
+	std::string shortOption;
+	int expectedArgs;
+	bool isMandatory;
+	std::string description;
+	std::vector<std::variant<int, float, std::string>> args;
+};
+
+const std::vector<Option> options
+{
+	{OptionID::DynRange, "--dyn-range", "", 1, false, "Set Dynamic Range in dB", {190}},
+	{OptionID::OutputDir,"--output-dir", "-o", 1, false, "Set Output directory", {"."}},
+	{OptionID::Height,"--height","-h", 1, false, "Set Image Height in Pixels", {480}},
+	{OptionID::Width,"--width", "-w", 1, false, "Set Image width in Pixels", {640}}
+};
 
 class Parameters
 {
