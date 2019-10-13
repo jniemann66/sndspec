@@ -54,23 +54,23 @@ int Spectrum::selectBestFFTSize(int requested_size)
 {
 	int s = 1;
 
-		for(int ef : {1, 11, 13}) {
-			for(int d = 1 ; d <= requested_size; d *= 7) {
-				for(int c = 1; c <= requested_size; c *= 5) {
-					for(int b = 1; b <= requested_size; b *= 3) {
-						for(int a = 1; a <= requested_size; a *= 2) {
-							int t = a * b * c * d * ef;
-							if(t > requested_size) {
-								break;
-							}
-							s = std::max(s, t);
+	for(int ef : {1, 11, 13}) {
+		for(int d = 1; d <= requested_size; d *= 7) {
+			for(int c = 1; c <= requested_size; c *= 5) {
+				for(int b = 1; b <= requested_size; b *= 3) {
+					for(int a = 1; a <= requested_size; a *= 2) {
+						int t = a * b * c * d * ef;
+						if(t > requested_size) {
+							break;
 						}
+						s = std::max(s, t);
 					}
 				}
 			}
 		}
+	}
 
-		return s;
+	return s;
 }
 
 int Spectrum::convertSpectrumSizeToFFTSize(int spectrum_size)
