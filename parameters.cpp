@@ -52,8 +52,75 @@ void Parameters::setDynRange(double value)
 	dynRange = value;
 }
 
-void Parameters::fromArgs(const std::vector<std::string> &args)
+std::string Parameters::fromArgs(const std::vector<std::string> &args)
 {
+	auto argsIt = args.cbegin();
+	while(argsIt != args.cend()) {
+		OptionID optionID = OptionID::Filenames; // unrecognized options to be treated as filenames
+
+		// option search
+		for(const auto& option : options) {
+			if((argsIt->compare(option.longOption) == 0) || (!option.shortOption.empty() && (argsIt->compare(option.shortOption) == 0))) {
+				optionID = option.optionID;
+				break;
+			}
+		}
+
+		// process option
+		switch(optionID) {
+		case Filenames:
+			// keep reading filenames until end reached, or another option detected
+			do {
+				inputFiles.push_back(*argsIt);
+				argsIt++;
+			} while (argsIt != args.cend() && argsIt->compare(0 ,1, "-") != 0);
+			break;
+		case DynRange:
+			if(++argsIt != args.cend()) {
+				dynRange = std::stod(*argsIt);
+				++argsIt;
+				break;
+			}
+		case OutputDir:
+			if(++argsIt != args.cend()) {
+				outputPath = *argsIt;
+				++argsIt;
+				break;
+			}
+		case Height:
+			if(++argsIt != args.cend()) {
+				imgHeight = std::stoi(*argsIt);
+				++argsIt;
+				break;
+			}
+		case Width:
+			if(++argsIt != args.cend()) {
+				imgWidth = std::stoi(*argsIt);
+				++argsIt;
+				break;
+			}
+		case Help:
+			++argsIt;
+			return showHelp();
+		}
+	}
+
+	return {};
+}
+
+std::string Parameters::showHelp()
+{
+	std::string helpString{"Usage: sndspec filename [filename2 ...] [options]\n\n"};
+	for(const auto& option : options) {
+		if(!option.shortOption.empty()) {
+			helpString.append(option.shortOption);
+			helpString.append(", ");
+		}
+
+		helpString.append(option.longOption).append("\t\t").append(option.description).append("\n");
+	}
+
+	return helpString;
 }
 
 } // namespace Sndspec

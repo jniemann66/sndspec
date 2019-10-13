@@ -13,7 +13,8 @@ enum OptionID
 	DynRange,
 	OutputDir,
 	Height,
-	Width
+	Width,
+	Help
 };
 
 struct Option
@@ -30,9 +31,10 @@ struct Option
 const std::vector<Option> options
 {
 	{OptionID::DynRange, "--dyn-range", "", 1, false, "Set Dynamic Range in dB", {190}},
-	{OptionID::OutputDir,"--output-dir", "-o", 1, false, "Set Output directory", {"."}},
-	{OptionID::Height,"--height","-h", 1, false, "Set Image Height in Pixels", {480}},
-	{OptionID::Width,"--width", "-w", 1, false, "Set Image width in Pixels", {640}}
+	{OptionID::OutputDir, "--output-dir", "-o", 1, false, "Set Output directory", {"."}},
+	{OptionID::Height, "--height","-h", 1, false, "Set Image Height in Pixels", {480}},
+	{OptionID::Width, "--width", "-w", 1, false, "Set Image Width in Pixels", {640}},
+	{OptionID::Help, "--help", "", 0, false, "Help", {}}
 };
 
 class Parameters
@@ -56,7 +58,9 @@ public:
 	double getDynRange() const;
 	void setDynRange(double value);
 
-	void fromArgs(const std::vector<std::string>& args);
+	std::string fromArgs(const std::vector<std::string>& args);
+
+	std::string showHelp();
 
 private:
 	std::vector<std::string> inputFiles;
