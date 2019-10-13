@@ -73,7 +73,7 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			do {
 				inputFiles.push_back(*argsIt);
 				argsIt++;
-			} while (argsIt != args.cend() && argsIt->compare(0 ,1, "-") != 0);
+			} while (argsIt != args.cend() && argsIt->compare(0, 1, "-") != 0);
 			break;
 		case DynRange:
 			if(++argsIt != args.cend()) {
