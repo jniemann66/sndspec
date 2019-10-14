@@ -64,6 +64,7 @@ message(STATUS "cairo library location: "  ${CAIRO_LIBRARY})
 add_library(sndspecLib ${SOURCE_FILES})
 add_executable(sndspec main.cpp)
 target_link_libraries(sndspec sndspecLib ${SNDFILE_LIBRARY} ${FFTW_LIBRARY} ${CAIRO_LIBRARY})
+target_compile_features(sndspecLib PRIVATE cxx_std_17)
 # ---
 
 if(WIN32) # deploy dlls to target directory

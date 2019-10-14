@@ -59,12 +59,14 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			renderer.Render(parameters, spectrogram);
 			std::cout << "Done\n";
 
-			std::string outFile("e:\\lovely.png");
-			std::cout << "Saving to " << outFile << std::flush;
-			if(renderer.writeToFile(outFile)) {
-				std::cout << " ... OK" << std::endl;
-			} else {
-				std::cout << " ... ERROR" << std::endl;
+			std::string outFile = replaceFileExt(inputFilename, "png");
+			if(!outFile.empty()) {
+				std::cout << "Saving to " << outFile << std::flush;
+				if(renderer.writeToFile(outFile)) {
+					std::cout << " ... OK" << std::endl;
+				} else {
+					std::cout << " ... ERROR" << std::endl;
+				}
 			}
 
 		} // ends successful file-open
@@ -103,3 +105,18 @@ void Sndspec::Spectrogram::scaleMagnitudeRelativeDb(SpectrogramResults<double> &
 		}
 	}
 }
+
+std::string Sndspec::Spectrogram::replaceFileExt(const std::string& filename, const std::string &newExt)
+{
+
+	auto lastDot = filename.rfind('.', filename.length());
+
+	if(lastDot != std::string::npos) {
+		std::string _fn{filename};
+		_fn.replace(lastDot + 1, newExt.length(), newExt);
+		return _fn;
+	}
+
+	return {};
+}
+
