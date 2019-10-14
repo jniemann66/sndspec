@@ -59,6 +59,7 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			renderer.Render(parameters, spectrogram);
 			std::cout << "Done\n";
 
+			// save output file. todo : proper management of paths / filenames / extensions
 			std::string outFile = replaceFileExt(inputFilename, "png");
 			if(!outFile.empty()) {
 				std::cout << "Saving to " << outFile << std::flush;
@@ -117,6 +118,6 @@ std::string Sndspec::Spectrogram::replaceFileExt(const std::string& filename, co
 		return _fn;
 	}
 
-	return {};
+	return filename + "." + newExt;
 }
 
