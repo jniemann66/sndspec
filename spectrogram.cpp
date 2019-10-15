@@ -13,6 +13,7 @@
 void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters)
 {
 	static const int reservedChannels(2); // stereo (most common use case)
+
 	auto fftSize = Spectrum::selectBestFFTSizeFromSpectrumSize(parameters.getImgHeight());
 	auto spectrumSize = Spectrum::convertFFTSizeToSpectrumSize(fftSize);
 	std::cout << "fft size " << fftSize << " spectrum size " << spectrumSize << std::endl;
@@ -61,7 +62,7 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 				r.setChannelBuffer(ch, analyzers.at(ch)->getTdBuf());
 			}
 
-			// create a callback function to execute spectrum analysis for each block read
+			// set a callback function to execute spectrum analysis for each block read
 			r.setProcessingFunc([&analyzers, &spectrogramData](int pos, int channel, const double* data) -> void {
 				Spectrum* analyzer = analyzers.at(channel).get();
 				assert(data == analyzer->getTdBuf());
