@@ -12,15 +12,26 @@
 
 void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters)
 {
+	static const int reservedChannels(2); // stereo (most common use case)
 	auto fftSize = Spectrum::selectBestFFTSizeFromSpectrumSize(parameters.getImgHeight());
 	auto spectrumSize = Spectrum::convertFFTSizeToSpectrumSize(fftSize);
-
 	std::cout << "fft size " << fftSize << " spectrum size " << spectrumSize << std::endl;
 
-	// make a suitable Kaiser window
+	// make a suitable FFT Window
 	Sndspec::KaiserWindow<double> k;
 	k.setBeta(Sndspec::KaiserWindow<double>::betaFromDecibels(parameters.getDynRange()));
 	k.generate(fftSize);
+
+	// prepare a renderer
+	Renderer renderer(parameters.getImgWidth(), spectrumSize);
+
+	// prepare storage for spectrogram results
+	SpectrogramResults<double> spectrogramData;
+	spectrogramData.reserve(reservedChannels);
+
+	// prepare the spectrum analyzers
+	std::vector<std::unique_ptr<Spectrum>> analyzers;
+	analyzers.reserve(reservedChannels);
 
 	for(const std::string& inputFilename : parameters.getInputFiles()) {
 		std::cout << "Opening input file: " << inputFilename << " ... ";
@@ -30,33 +41,42 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			std::cout << "couldn't open file !" << std::endl;
 		} else {
 			std::cout << "ok" << std::endl;
+			int nChannels = r.getNChannels();
+			std::cout << "channels: " << nChannels << std::endl;
+
+			// provide the reader with the FFT window. The Reader will apply the window to each block it reads.
 			r.setWindow(k.getData());
 
-			// create output storage
-			SpectrogramResults<double> spectrogram(r.getNChannels(), std::vector<std::vector<double>>(parameters.getImgWidth(), std::vector<double>(spectrumSize, 0.0)));
+			// resize output storage (according to number of channels)
+			spectrogramData.resize(nChannels, std::vector<std::vector<double>>(parameters.getImgWidth(), std::vector<double>(spectrumSize, 0.0)));
 
-			// create a spectrum analyzer for each channel
-			std::vector<std::unique_ptr<Spectrum>> analyzers;
-			for(int ch = 0; ch < r.getNChannels(); ch ++) {
-				analyzers.emplace_back(new Spectrum(fftSize));
+			for(int ch = 0; ch < nChannels; ch ++) {
+
+				// create a spectrum analyzer for each channel if not already existing
+				if(ch + 1 > analyzers.size()) {
+					analyzers.emplace_back(new Spectrum(fftSize));
+				}
 
 				// give the reader direct write-access to the analyzer input buffer
-				r.setChannelBuffer(ch, analyzers.back()->getTdBuf());
+				r.setChannelBuffer(ch, analyzers.at(ch)->getTdBuf());
 			}
 
 			// create a callback function to execute spectrum analysis for each block read
-			r.setProcessingFunc([&analyzers, &spectrogram](int pos, int channel, const double* data) -> void {
+			r.setProcessingFunc([&analyzers, &spectrogramData](int pos, int channel, const double* data) -> void {
 				Spectrum* analyzer = analyzers.at(channel).get();
 				assert(data == analyzer->getTdBuf());
 				analyzer->exec();
-				analyzer->getMagSquared(spectrogram[channel][pos]); // magSquared saves having do to square root
+				analyzer->getMagSquared(spectrogramData[channel][pos]); // magSquared avoids having do to square root !
 			});
 
+			// read (and analyze) the file
 			r.readDeinterleaved();
-			scaleMagnitudeRelativeDb(spectrogram, /* magSquared = */ true);
+
+			// scale the data into dB
+			scaleMagnitudeRelativeDb(spectrogramData, /* magSquared = */ true);
+
 			std::cout << "Rendering ... ";
-			Renderer renderer(parameters.getImgWidth(), spectrumSize /*parameters.getImgHeight()*/);
-			renderer.Render(parameters, spectrogram);
+			renderer.Render(parameters, spectrogramData);
 			std::cout << "Done\n";
 
 			// save output file. todo : proper management of paths / filenames / extensions
