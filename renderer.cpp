@@ -14,7 +14,7 @@ Renderer::Renderer(int width, int height) : width(width), height(height), pixelB
 	int stride =  cairo_format_stride_for_width(cairoFormat, width);
 	stride32 = stride / sizeof(uint32_t);
 	surface = cairo_image_surface_create_for_data(reinterpret_cast<unsigned char*>(pixelBuffer.data()), cairoFormat, width, height, stride);
-	cairo_t  *cr = cairo_create(surface);
+	cr = cairo_create(surface);
 }
 
 Renderer::~Renderer()
