@@ -29,4 +29,5 @@ soundfile-to-spectrogram utility
 - spectrums
 - waveforms
 - other color palettes
+- log frequency scale
 
