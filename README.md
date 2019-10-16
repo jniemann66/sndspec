@@ -3,7 +3,7 @@ soundfile-to-spectrogram utility
 
 ### usage
 
-Usage: sndspec filename [filename2 ...] [options]
+**sndspec filename [filename2 ...] [options]**
 
 ~~~
 --dyn-range         Set Dynamic Range in dB
