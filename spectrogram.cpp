@@ -78,6 +78,7 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 
 			std::cout << "Rendering ... ";
 			renderer.Render(parameters, spectrogramData);
+			renderer.drawGrid(22050, 5000, 2500);
 			std::cout << "Done\n";
 
 			// save output file. todo : proper management of paths / filenames / extensions

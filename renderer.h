@@ -21,6 +21,7 @@ public:
 	std::vector<int32_t> getHeatMapPalette() const;
 	void setHeatMapPalette(const std::vector<int32_t> &value);
 	bool writeToFile(const std::string &filename);
+	void drawGrid(double nyquist, double major, double minor);
 
 private:
 	int width;
@@ -28,6 +29,7 @@ private:
 	std::vector<uint32_t> pixelBuffer;
 	int stride32;
 	cairo_surface_t* surface;
+	cairo_t* cr;
 	std::vector<int32_t> heatMapPalette {
 		0x00ffffff,
 		0x00f0fed8,
