@@ -44,32 +44,29 @@ void Renderer::Render(const Parameters &parameters, const SpectrogramResults<dou
 	}
 }
 
-void Renderer::drawGrid(double nyquist, double major, double minor)
+void Renderer::drawGrid(double nyquist, double div)
 {
 	cairo_set_line_width (cr, 1.5);
 	cairo_set_source_rgb (cr, 0.5, 0.5, 0.5);
 
-	int yMajStep = height * major / nyquist;
-	for(int y = height - 1; y >= 0; y -= yMajStep ) {
+	double yStep = height * div / nyquist;
+	double y = height - 1 ;
+
+	while(y > 0) {
 		cairo_move_to(cr, 0, y);
 		cairo_line_to(cr, width - 1, y);
+		y -= yStep;
 	}
 
-	int xStep = width / 5.0;
-	for(int x = 0; x < width; x += xStep) {
+	double fWidth = static_cast<double>(width);
+	double xStep = fWidth / 5.0;
+	double x = 0.0;
+
+	while(x < fWidth) {
 		cairo_move_to(cr, x, 0);
 		cairo_line_to(cr, x, height - 1);
+		x += xStep;
 	}
-
-//	if(minor > 1.0) {
-//	//	static const double dashed1[] = {4.0, 21.0, 2.0};
-//	//	cairo_set_dash(cr, dashed1, 4, 0);
-//		int yMinStep = height * minor / nyquist;
-//		for(int y = height - 1; y >= 0; y -= yMinStep ) {
-//			cairo_move_to(cr, 0, y);
-//			cairo_line_to(cr, width - 1, y);
-//		}
-//	}
 
 	cairo_stroke (cr);
 }

@@ -21,7 +21,7 @@ public:
 	std::vector<int32_t> getHeatMapPalette() const;
 	void setHeatMapPalette(const std::vector<int32_t> &value);
 	bool writeToFile(const std::string &filename);
-	void drawGrid(double nyquist, double major, double minor);
+	void drawGrid(double nyquist, double div);
 
 private:
 	int width;
