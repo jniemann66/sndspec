@@ -15,7 +15,7 @@ soundfile-to-spectrogram utility
 
 ### todo
 
-- grid, tickmarks
+~grid, tickmarks - frequency axis~
 - heat map legend
 - labels
 - filename management 
