@@ -53,7 +53,7 @@ void Renderer::Render(const Parameters &parameters, const SpectrogramResults<dou
 
 void Renderer::drawGrid(double nyquist, double div)
 {
-	cairo_set_line_width (cr, 1.5);
+	cairo_set_line_width (cr, 1.0);
 	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
 
 	double yStep = plotHeight * div / nyquist;
@@ -98,14 +98,25 @@ void Renderer::drawTickmarks(double nyquist, double div)
 	cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
 
 	int s = 10;
+	int fx = s + 5;
+	int fy = 4;
+
+	cairo_set_font_size(cr, 13);
 
 	double yStep = plotHeight * div / nyquist;
 	double y = plotOriginY + plotHeight - 1 ;
+	int f = 0;
+
+	char txt[20];
 
 	while(y > plotOriginY) {
+		itoa(static_cast<int>(f), txt, 10);
 		cairo_move_to(cr, plotOriginX + plotWidth, y);
 		cairo_line_to(cr, plotOriginX + s + plotWidth - 1, y);
+		cairo_move_to(cr, plotOriginX + fx + plotWidth - 1, y + fy);
+		cairo_show_text(cr, txt);
 		y -= yStep;
+		f += div;
 	}
 
 	double fWidth = static_cast<double>(plotWidth);
