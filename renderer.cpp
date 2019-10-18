@@ -51,7 +51,7 @@ void Renderer::Render(const Parameters &parameters, const SpectrogramResults<dou
 	}
 }
 
-void Renderer::drawGrid(double nyquist, double div, int64_t beginTime, int64_t endTime)
+void Renderer::drawGrid(double nyquist, double div, double beginTime, double endTime, int n)
 {
 	cairo_set_line_width (cr, 1.0);
 	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
@@ -66,7 +66,7 @@ void Renderer::drawGrid(double nyquist, double div, int64_t beginTime, int64_t e
 	}
 
 	double fWidth = static_cast<double>(plotWidth);
-	double xStep = fWidth / 5.0;
+	double xStep = fWidth / n;
 	double x = plotOriginX;
 
 	while(x < fWidth) {
@@ -92,7 +92,7 @@ void Renderer::drawBorder()
 	cairo_stroke(cr);
 }
 
-void Renderer::drawTickmarks(double nyquist, double div, int64_t beginTime, int64_t endTime)
+void Renderer::drawTickmarks(double nyquist, double div, double beginTime, double endTime, int n)
 {
 	cairo_set_line_width (cr, 2);
 	cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
@@ -107,29 +107,45 @@ void Renderer::drawTickmarks(double nyquist, double div, int64_t beginTime, int6
 	double y = plotOriginY + plotHeight - 1 ;
 	int f = 0;
 
-	char txt[20];
+	char fLabelBuf[20];
 
 	while(y > plotOriginY) {
-		itoa(static_cast<int>(f), txt, 10);
+		itoa(static_cast<int>(f), fLabelBuf, 10);
 		cairo_move_to(cr, plotOriginX + plotWidth, y);
 		cairo_line_to(cr, plotOriginX + s + plotWidth - 1, y);
 		cairo_move_to(cr, plotOriginX + fx + plotWidth - 1, y + fy);
-		cairo_show_text(cr, txt);
+		cairo_show_text(cr, fLabelBuf);
 		y -= yStep;
 		f += div;
 	}
 
 	double fWidth = static_cast<double>(plotWidth);
-	double xStep = fWidth / 5.0;
+	double xStep = fWidth / n;
 	double x = plotOriginX;
 
+	char tLabelBuf[20];
+	double tStep = (endTime - beginTime) / n;
+	double t = 0.0;
+	int tx = -5;
+	int ty = s + 15;
+
 	while(x < fWidth) {
+		sprintf(tLabelBuf, "%6.3f", t);
 		cairo_move_to(cr, x, plotOriginY + plotHeight);
 		cairo_line_to(cr, x, plotOriginY + plotHeight + s -1);
+		cairo_move_to(cr, x + tx, plotOriginY + plotHeight + ty -1);
+		cairo_show_text(cr, tLabelBuf);
 		x += xStep;
+		t += tStep;
 	}
 
 	cairo_stroke (cr);
+}
+
+void Renderer::clear()
+{
+	cairo_set_source_rgb (cr, 0, 0, 0);
+	cairo_paint(cr);
 }
 
 int Renderer::getPlotWidth() const
