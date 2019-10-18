@@ -51,7 +51,7 @@ void Renderer::Render(const Parameters &parameters, const SpectrogramResults<dou
 	}
 }
 
-void Renderer::drawGrid(double nyquist, double div)
+void Renderer::drawGrid(double nyquist, double div, int64_t beginTime, int64_t endTime)
 {
 	cairo_set_line_width (cr, 1.0);
 	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
@@ -92,7 +92,7 @@ void Renderer::drawBorder()
 	cairo_stroke(cr);
 }
 
-void Renderer::drawTickmarks(double nyquist, double div)
+void Renderer::drawTickmarks(double nyquist, double div, int64_t beginTime, int64_t endTime)
 {
 	cairo_set_line_width (cr, 2);
 	cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
