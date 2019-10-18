@@ -14,17 +14,18 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 {
 	static const int reservedChannels(2); // stereo (most common use case)
 
-	auto fftSize = Spectrum::selectBestFFTSizeFromSpectrumSize(parameters.getImgHeight());
+	// prepare a renderer
+	Renderer renderer(parameters.getImgWidth(), parameters.getImgHeight());
+
+	auto fftSize = Spectrum::selectBestFFTSizeFromSpectrumSize(renderer.getPlotHeight());
 	auto spectrumSize = Spectrum::convertFFTSizeToSpectrumSize(fftSize);
 	std::cout << "fft size " << fftSize << " spectrum size " << spectrumSize << std::endl;
+	int plotWidth = renderer.getPlotWidth();
 
 	// make a suitable FFT Window
 	Sndspec::KaiserWindow<double> k;
 	k.setBeta(Sndspec::KaiserWindow<double>::betaFromDecibels(parameters.getDynRange()));
 	k.generate(fftSize);
-
-	// prepare a renderer
-	Renderer renderer(parameters.getImgWidth(), spectrumSize);
 
 	// prepare storage for spectrogram results
 	SpectrogramResults<double> spectrogramData;
@@ -36,7 +37,7 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 
 	for(const std::string& inputFilename : parameters.getInputFiles()) {
 		std::cout << "Opening input file: " << inputFilename << " ... ";
-		Sndspec::Reader<double> r(inputFilename, fftSize, parameters.getImgWidth());
+		Sndspec::Reader<double> r(inputFilename, fftSize, plotWidth);
 
 		if(r.getSndFileHandle() == nullptr || r.getSndFileHandle()->error() != SF_ERR_NO_ERROR) {
 			std::cout << "couldn't open file !" << std::endl;
@@ -49,7 +50,7 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			r.setWindow(k.getData());
 
 			// resize output storage (according to number of channels)
-			spectrogramData.resize(nChannels, std::vector<std::vector<double>>(parameters.getImgWidth(), std::vector<double>(spectrumSize, 0.0)));
+			spectrogramData.resize(nChannels, std::vector<std::vector<double>>(plotWidth, std::vector<double>(spectrumSize, 0.0)));
 
 			for(int ch = 0; ch < nChannels; ch ++) {
 

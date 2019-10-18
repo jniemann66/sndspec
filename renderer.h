@@ -4,6 +4,8 @@
 #include "parameters.h"
 #include "spectrogram.h"
 
+#include <cairo.h>
+
 extern "C" {
 #include <cairo.h>
 }
@@ -13,7 +15,7 @@ namespace Sndspec {
 class Renderer
 {
 public:
-	Renderer(int width, int height);
+	Renderer(int width, int height, double marginLeft = 0.08, double marginTop = 0.06, double marginRight = 0.08, double marginBottom = 0.06);
 	~Renderer();
 
 	void Render(const Parameters& parameters, const SpectrogramResults<double>& spectrogramData);
@@ -23,9 +25,20 @@ public:
 	bool writeToFile(const std::string &filename);
 	void drawGrid(double nyquist, double div);
 
+	int getPlotWidth() const;
+	int getPlotHeight() const;
+
 private:
 	int width;
 	int height;
+	int plotWidth;
+	int plotHeight;
+	int plotOriginX;
+	int plotOriginY;
+	double marginLeft;
+	double marginTop;
+	double marginRight;
+	double marginBottom;
 	std::vector<uint32_t> pixelBuffer;
 	int stride32;
 	cairo_surface_t* surface;
