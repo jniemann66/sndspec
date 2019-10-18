@@ -16,8 +16,11 @@ soundfile-to-spectrogram utility
 ### todo
 
 ~grid, tickmarks - frequency axis~
+- tickmarks - time axis
 - heat map legend
-- labels
+- axis labels
+- heading
+- info, metadata
 - filename management 
 - directory traversal
 - channel selection / sum
