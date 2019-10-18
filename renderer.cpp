@@ -54,7 +54,7 @@ void Renderer::Render(const Parameters &parameters, const SpectrogramResults<dou
 void Renderer::drawGrid(double nyquist, double div)
 {
 	cairo_set_line_width (cr, 1.5);
-	cairo_set_source_rgb (cr, 0.5, 0.5, 0.5);
+	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
 
 	double yStep = plotHeight * div / nyquist;
 	double y = plotOriginY + plotHeight - 1 ;
@@ -72,6 +72,49 @@ void Renderer::drawGrid(double nyquist, double div)
 	while(x < fWidth) {
 		cairo_move_to(cr, x, plotOriginY);
 		cairo_line_to(cr, x, plotOriginY + plotHeight - 1);
+		x += xStep;
+	}
+
+	cairo_stroke (cr);
+}
+
+void Renderer::drawBorder()
+{
+	cairo_set_line_width (cr, 2);
+	cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
+	int s = -1;
+	cairo_move_to(cr, plotOriginX - s, plotOriginY - s);
+	cairo_line_to(cr, plotOriginX + plotWidth + s, plotOriginY - s);
+	cairo_line_to(cr, plotOriginX + plotWidth + s, plotOriginY + plotHeight + s);
+	cairo_line_to(cr, plotOriginX - s,  plotOriginY + plotHeight + s);
+	cairo_close_path(cr);
+
+	cairo_stroke(cr);
+}
+
+void Renderer::drawTickmarks(double nyquist, double div)
+{
+	cairo_set_line_width (cr, 2);
+	cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
+
+	int s = 10;
+
+	double yStep = plotHeight * div / nyquist;
+	double y = plotOriginY + plotHeight - 1 ;
+
+	while(y > plotOriginY) {
+		cairo_move_to(cr, plotOriginX + plotWidth, y);
+		cairo_line_to(cr, plotOriginX + s + plotWidth - 1, y);
+		y -= yStep;
+	}
+
+	double fWidth = static_cast<double>(plotWidth);
+	double xStep = fWidth / 5.0;
+	double x = plotOriginX;
+
+	while(x < fWidth) {
+		cairo_move_to(cr, x, plotOriginY + plotHeight);
+		cairo_line_to(cr, x, plotOriginY + plotHeight + s -1);
 		x += xStep;
 	}
 

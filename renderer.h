@@ -24,10 +24,12 @@ public:
 	void setHeatMapPalette(const std::vector<int32_t> &value);
 	bool writeToFile(const std::string &filename);
 	void drawGrid(double nyquist, double div);
+	void drawBorder();
 
 	int getPlotWidth() const;
 	int getPlotHeight() const;
 
+	void drawTickmarks(double nyquist, double div);
 private:
 	int width;
 	int height;
@@ -64,6 +66,7 @@ private:
 		0x00010213,
 		0x00000000
 	};
+
 };
 
 } // namespace Sndspec
