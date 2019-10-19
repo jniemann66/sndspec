@@ -84,6 +84,7 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			renderer.drawGrid(22050, 5000, startTime, finishTime, 5);
 			renderer.drawBorder();
 			renderer.drawTickmarks(22050, 5000, startTime, finishTime, 5);
+			renderer.drawText("Spectrogram", inputFilename, "Time (s)", "Frequency (Hz)");
 			std::cout << "Done\n";
 
 			// save output file. todo : proper management of paths / filenames / extensions

@@ -26,10 +26,12 @@ public:
 	void drawGrid(double nyquist, double div, double beginTime, double endTime, int n);
 	void drawBorder();
 	void drawTickmarks(double nyquist, double div, double beginTime, double endTime, int n);
+	void drawText(const std::string &heading, const std::string &info, const std::string &horizAxis, const std::string &vertAxis);
 	void clear();
 
 	int getPlotWidth() const;
 	int getPlotHeight() const;
+
 
 
 private:

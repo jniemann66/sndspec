@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <cstddef>
 #include <cstdint>
+#include <cmath>
 
 namespace Sndspec {
 
@@ -141,6 +142,43 @@ void Renderer::drawTickmarks(double nyquist, double div, double beginTime, doubl
 
 	cairo_stroke (cr);
 }
+
+void Renderer::drawText(const std::string& heading, const std::string& info, const std::string& horizAxis, const std::string& vertAxis)
+{
+	double s = 20.0;
+
+	// heading
+	cairo_text_extents_t headingTextExtents;
+	cairo_set_font_size(cr, 16);
+	cairo_text_extents(cr, heading.c_str(), &headingTextExtents);
+	cairo_move_to(cr, plotOriginX + (plotWidth - headingTextExtents.x_advance) / 2.0, s); // place at center of plot area
+	cairo_show_text(cr, heading.c_str());
+	cairo_set_font_size(cr, 13);
+
+	// info
+	cairo_text_extents_t infoExtents;
+	cairo_text_extents(cr, info.c_str(), &infoExtents);
+	cairo_move_to(cr, plotOriginX, plotOriginY - infoExtents.height);
+	cairo_show_text(cr, info.c_str());
+
+	// horizAxis
+	cairo_text_extents_t horizAxisLabelExtents;
+	cairo_text_extents(cr, horizAxis.c_str(), &horizAxisLabelExtents);
+	cairo_move_to(cr, plotOriginX + (plotWidth - horizAxisLabelExtents.x_advance) / 2.0, height - horizAxisLabelExtents.height);
+	cairo_show_text(cr, horizAxis.c_str());
+
+	// vertAxis
+	cairo_text_extents_t vertAxisLabelExtents;
+	cairo_text_extents(cr, vertAxis.c_str(), &vertAxisLabelExtents);
+	cairo_save(cr);
+	cairo_move_to(cr, width - s /*vertAxisLabelExtents.height */, plotOriginY + (plotHeight) / 2.0);
+	cairo_rotate(cr, M_PI_2);
+
+	cairo_show_text(cr, vertAxis.c_str());
+	cairo_restore(cr);
+
+}
+
 
 void Renderer::clear()
 {
