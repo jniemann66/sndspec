@@ -26,6 +26,8 @@ public:
 			setStartPos(0LL);
 			setFinishPos(sndFileHandle->frames());
 			nChannels = sndFileHandle->channels();
+			samplerate = sndFileHandle->samplerate();
+			nFrames = sndFileHandle->frames();
 			channelBuffers.resize(nChannels, nullptr);
 
 			// placeholder function
@@ -134,6 +136,26 @@ public:
 		processingFunc = value;
 	}
 
+	int getSamplerate() const
+	{
+		return samplerate;
+	}
+
+	void setSamplerate(int value)
+	{
+		samplerate = value;
+	}
+
+	int getNFrames() const
+	{
+		return nFrames;
+	}
+
+	void setNFrames(int value)
+	{
+		nFrames = value;
+	}
+
 private:
 	std::string filename;
 	ProcessingFunc processingFunc;
@@ -144,6 +166,8 @@ private:
 	int w;
 	std::unique_ptr<SndfileHandle> sndFileHandle;
 	int nChannels;
+	int samplerate;
+	int64_t nFrames;
 	std::vector<T> window;
 	std::vector<T*> channelBuffers;
 };

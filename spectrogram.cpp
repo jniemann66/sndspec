@@ -78,9 +78,9 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			scaleMagnitudeRelativeDb(spectrogramData, /* magSquared = */ true);
 
 			std::cout << "Rendering ... ";
-			renderer.Render(parameters, spectrogramData);
-			double startTime =  r.getStartPos() / r.getSndFileHandle()->samplerate(); // todo Reader needs a getter for sampleRate()
-			double finishTime =  r.getFinishPos() / r.getSndFileHandle()->samplerate();
+			renderer.render(parameters, spectrogramData);
+			double startTime =  r.getStartPos() / r.getSamplerate();
+			double finishTime =  r.getFinishPos() / r.getSamplerate();
 			renderer.drawGrid(22050, 5000, startTime, finishTime, 5);
 			renderer.drawBorder();
 			renderer.drawTickmarks(22050, 5000, startTime, finishTime, 5);

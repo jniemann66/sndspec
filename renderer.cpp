@@ -30,7 +30,7 @@ Renderer::~Renderer()
 	cairo_surface_destroy(surface);
 }
 
-void Renderer::Render(const Parameters &parameters, const SpectrogramResults<double> &spectrogramData)
+void Renderer::render(const Parameters &parameters, const SpectrogramResults<double> &spectrogramData)
 {
 	int numChannels = spectrogramData.size();
 	int numSpectrums = spectrogramData.at(0).size();

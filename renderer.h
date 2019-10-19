@@ -18,7 +18,7 @@ public:
 	Renderer(int width, int height, double marginLeft = 0.08, double marginTop = 0.06, double marginRight = 0.08, double marginBottom = 0.06);
 	~Renderer();
 
-	void Render(const Parameters& parameters, const SpectrogramResults<double>& spectrogramData);
+	void render(const Parameters& parameters, const SpectrogramResults<double>& spectrogramData);
 
 	std::vector<int32_t> getHeatMapPalette() const;
 	void setHeatMapPalette(const std::vector<int32_t> &value);
