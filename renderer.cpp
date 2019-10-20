@@ -158,6 +158,13 @@ void Renderer::drawHeatMap()
 			pixelBuffer[x + lineAddr] = color;
 		}
 	}
+
+	double s = 0.5;
+	cairo_set_source_rgb(cr, 255, 255, 255);
+	cairo_set_line_width (cr, 2);
+	cairo_rectangle(cr, x0-s, plotOriginY - s, w + 2 * s, plotHeight + 2 * s);
+	cairo_stroke(cr);
+
 }
 
 
