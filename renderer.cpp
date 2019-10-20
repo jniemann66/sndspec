@@ -144,6 +144,23 @@ void Renderer::drawTickmarks(double nyquist, double div, double beginTime, doubl
 	cairo_stroke (cr);
 }
 
+void Renderer::drawHeatMap()
+{
+	double sc = static_cast<double>(heatMapPalette.size()) / plotHeight;
+
+	int x0 = 10;
+	int w = 10;
+
+	for(int y = 0; y < plotHeight; y++) {
+		int lineAddr = x0 + (plotOriginY + y) * stride32;
+		int32_t color = heatMapPalette.at(static_cast<int>(sc * y));
+		for (int x = 0; x < w; x++) {
+			pixelBuffer[x + lineAddr] = color;
+		}
+	}
+}
+
+
 void Renderer::drawText(const std::string& heading, const std::string& info, const std::string& horizAxis, const std::string& vertAxis)
 {
 	double s = 20.0;
