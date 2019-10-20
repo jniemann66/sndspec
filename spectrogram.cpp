@@ -4,6 +4,7 @@
 #include "spectrum.h"
 #include "uglyplot.h"
 #include "renderer.h"
+#include "raiitimer.h"
 
 #include <iostream>
 #include <iomanip>
@@ -42,6 +43,8 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 		if(r.getSndFileHandle() == nullptr || r.getSndFileHandle()->error() != SF_ERR_NO_ERROR) {
 			std::cout << "couldn't open file !" << std::endl;
 		} else {
+
+			SndSpec::RaiiTimer _t;
 			std::cout << "ok" << std::endl;
 			int nChannels = r.getNChannels();
 			std::cout << "channels: " << nChannels << std::endl;

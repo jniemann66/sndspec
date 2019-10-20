@@ -1,4 +1,5 @@
 #include "renderer.h"
+#include "raiitimer.h"
 
 #include <inttypes.h>
 
