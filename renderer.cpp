@@ -112,7 +112,8 @@ void Renderer::drawTickmarks(double nyquist, double div, double beginTime, doubl
 	char fLabelBuf[20];
 
 	while(y > plotOriginY) {
-		itoa(static_cast<int>(f), fLabelBuf, 10);
+		sprintf(fLabelBuf, "%d", static_cast<int>(f));
+//		itoa(static_cast<int>(f), fLabelBuf, 10);
 		cairo_move_to(cr, plotOriginX + plotWidth, y);
 		cairo_line_to(cr, plotOriginX + s + plotWidth - 1, y);
 		cairo_move_to(cr, plotOriginX + fx + plotWidth - 1, y + fy);
