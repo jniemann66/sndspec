@@ -1,5 +1,5 @@
 # sndspec
-soundfile-to-spectrogram utility
+*soundfile-to-spectrogram utility*
 
 ### usage
 
@@ -15,11 +15,16 @@ soundfile-to-spectrogram utility
 
 ### todo
 
-~grid, tickmarks - frequency axis~
-~tickmarks - time axis~
-~heat map legend~
-~axis labels~
-~heading~
+~~grid, tickmarks - frequency axis~~
+
+~~tickmarks - time axis~~
+
+~~heat map legend~~
+
+~~axis labels~~
+
+~~heading~~~
+
 - info, metadata
 - filename management 
 - directory traversal
