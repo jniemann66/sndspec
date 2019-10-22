@@ -77,7 +77,7 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			break;
 		case DynRange:
 			if(++argsIt != args.cend()) {
-				dynRange = std::stod(*argsIt);
+				dynRange = std::abs(std::stod(*argsIt));
 				++argsIt;
 				break;
 			}

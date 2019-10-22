@@ -99,9 +99,9 @@ void Renderer::drawTickmarks(double nyquist, double div, double beginTime, doubl
 	cairo_set_line_width (cr, 2);
 	cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
 
-	int s = 10;
-	int fx = s + 5;
-	int fy = 4;
+	const int s = 10;
+	constexpr int fx = s + 5;
+	const int fy = 4;
 
 	cairo_set_font_size(cr, 13);
 
@@ -128,8 +128,8 @@ void Renderer::drawTickmarks(double nyquist, double div, double beginTime, doubl
 	char tLabelBuf[20];
 	double tStep = (endTime - beginTime) / n;
 	double t = 0.0;
-	int tx = -5;
-	int ty = s + 15;
+	const int tx = -5;
+	constexpr int ty = s + 15;
 
 	while(x < fWidth) {
 		sprintf(tLabelBuf, "%6.3f", t);
@@ -144,31 +144,7 @@ void Renderer::drawTickmarks(double nyquist, double div, double beginTime, doubl
 	cairo_stroke (cr);
 }
 
-void Renderer::drawHeatMap()
-{
-	double sc = static_cast<double>(heatMapPalette.size()) / plotHeight;
-
-	int x0 = 10;
-	int w = 10;
-
-	for(int y = 0; y < plotHeight; y++) {
-		int lineAddr = x0 + (plotOriginY + y) * stride32;
-		int32_t color = heatMapPalette.at(static_cast<int>(sc * y));
-		for (int x = 0; x < w; x++) {
-			pixelBuffer[x + lineAddr] = color;
-		}
-	}
-
-	double s = 0.5;
-	cairo_set_source_rgb(cr, 255, 255, 255);
-	cairo_set_line_width (cr, 2);
-	cairo_rectangle(cr, x0-s, plotOriginY - s, w + 2 * s, plotHeight + 2 * s);
-	cairo_stroke(cr);
-
-}
-
-
-void Renderer::drawText(const std::string& heading, const std::string& info, const std::string& horizAxis, const std::string& vertAxis)
+void Renderer::drawText(const std::string& heading, const std::string& info, const std::string& horizAxisLabel, const std::string& vertAxisLabel)
 {
 	double s = 20.0;
 
@@ -188,22 +164,72 @@ void Renderer::drawText(const std::string& heading, const std::string& info, con
 
 	// horizAxis
 	cairo_text_extents_t horizAxisLabelExtents;
-	cairo_text_extents(cr, horizAxis.c_str(), &horizAxisLabelExtents);
+	cairo_text_extents(cr, horizAxisLabel.c_str(), &horizAxisLabelExtents);
 	cairo_move_to(cr, plotOriginX + (plotWidth - horizAxisLabelExtents.x_advance) / 2.0, height - horizAxisLabelExtents.height);
-	cairo_show_text(cr, horizAxis.c_str());
+	cairo_show_text(cr, horizAxisLabel.c_str());
 
 	// vertAxis
 	cairo_text_extents_t vertAxisLabelExtents;
-	cairo_text_extents(cr, vertAxis.c_str(), &vertAxisLabelExtents);
+	cairo_text_extents(cr, vertAxisLabel.c_str(), &vertAxisLabelExtents);
 	cairo_save(cr);
 	cairo_move_to(cr, width - s /*vertAxisLabelExtents.height */, plotOriginY + (plotHeight) / 2.0);
 	cairo_rotate(cr, M_PI_2);
-
-	cairo_show_text(cr, vertAxis.c_str());
+	cairo_show_text(cr, vertAxisLabel.c_str());
 	cairo_restore(cr);
 
 }
 
+void Renderer::drawHeatMap(double dynRange)
+{
+	double sc = static_cast<double>(heatMapPalette.size()) / plotHeight;
+
+	// heatmap origin
+	const int hmOriginX = 10;
+	const int hmOriginY = plotOriginY;
+
+	// heatmap width
+	const int w = 10;
+
+	// draw the heatmap colours
+	for(int y = 0; y < plotHeight; y++) {
+		int lineAddr = hmOriginX + (plotOriginY + y) * stride32;
+		int32_t color = heatMapPalette.at(static_cast<int>(sc * y));
+		for (int x = 0; x < w; x++) {
+			pixelBuffer[x + lineAddr] = color;
+		}
+	}
+
+	// draw the heatmap border
+	double s = 0.5;
+	cairo_set_source_rgb(cr, 255, 255, 255);
+	cairo_set_line_width (cr, 2);
+	cairo_rectangle(cr, hmOriginX-s, plotOriginY - s, w + 2 * s, plotHeight + 2 * s);
+	cairo_stroke(cr);
+
+	// draw the 'dB' heading
+	cairo_text_extents_t dBExtents;
+	cairo_text_extents(cr, "dB", &dBExtents);
+	cairo_move_to(cr, hmOriginX, plotOriginY - dBExtents.height);
+	cairo_show_text(cr, "dB");
+
+	// draw the dB tickmarks and labels
+	double dB = 0.0;
+	double dBsc = plotHeight / dynRange;
+	double xa = hmOriginX + w + s;
+	double xb = xa + 10;
+	char dbBuf[20];
+	while (dB < dynRange) {
+		sprintf(dbBuf, "%3.0f", -dB);
+		double y = plotOriginY + dBsc * dB - s;
+		cairo_move_to(cr, xa, y);
+		cairo_line_to(cr, xb, y);
+		cairo_move_to(cr, xb + 2, y + 3);
+		cairo_show_text(cr, dbBuf);
+		dB += 10.0;
+	}
+
+	cairo_stroke(cr);
+}
 
 void Renderer::clear()
 {
