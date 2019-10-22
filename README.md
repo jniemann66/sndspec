@@ -25,8 +25,9 @@
 
 ~~heading~~
 
+~~Output directory selection~~
+
 - info, metadata
-- filename management 
 - directory traversal
 - channel selection / sum
 - move renderer to another library (?) (to free from dependence on Cairo)

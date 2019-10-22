@@ -91,19 +91,26 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			renderer.drawHeatMap(parameters.getDynRange());
 			std::cout << "Done\n";
 
-			// save output file. todo : proper management of paths / filenames / extensions
-			std::string outFile = replaceFileExt(inputFilename, "png");
-			if(!outFile.empty()) {
-				std::cout << "Saving to " << outFile << std::flush;
-				if(renderer.writeToFile(outFile)) {
+			// determine output filename
+			std::string outputFilename;
+			if(parameters.getOutputPath().empty()) {
+				outputFilename = replaceFileExt(inputFilename, "png");
+			} else {
+				outputFilename = enforceTrailingSeparator(parameters.getOutputPath()) + getFilenameOnly(replaceFileExt(inputFilename, "png"));
+			}
+
+			if(!outputFilename.empty()) {
+				std::cout << "Saving to " << outputFilename << std::flush;
+				if(renderer.writeToFile(outputFilename)) {
 					std::cout << " ... OK" << std::endl;
 				} else {
 					std::cout << " ... ERROR" << std::endl;
 				}
+			} else {
+				std::cout << "Error: couldn't deduce output filename" << std::endl;
 			}
 
 			renderer.clear();
-
 
 		} // ends successful file-open
 	} // ends loop over files
@@ -156,3 +163,61 @@ std::string Sndspec::Spectrogram::replaceFileExt(const std::string& filename, co
 	return filename + "." + newExt;
 }
 
+std::string Sndspec::Spectrogram::getFilenameOnly(const std::string& path)
+{
+
+	static const char universalPathSeparator{'/'};
+	auto lastSep = path.rfind(universalPathSeparator, path.length());
+
+#ifdef _WIN32
+	static const char nativePathSeparator{'\\'};
+	auto lastNSep = path.rfind(nativePathSeparator, path.length());
+	if(lastNSep != std::string::npos) {
+		if(lastSep == std::string::npos) {
+			lastSep = lastNSep;
+		} else {
+			lastSep = std::max(lastSep, lastNSep);
+		}
+	}
+#endif
+
+	if(lastSep == path.length() - 1) { // ends in separator; cannot be a file
+		return {};
+	} else if(lastSep == std::string::npos) { // no separator; path is already just a filename
+		return path;
+	}
+
+	return path.substr(lastSep + 1);
+}
+
+std::string Sndspec::Spectrogram::enforceTrailingSeparator(const std::string& directory)
+{
+
+	static const char universalPathSeparator{'/'};
+	auto lastSep = directory.rfind(universalPathSeparator, directory.length());
+
+#ifdef _WIN32
+	static const char nativePathSeparator{'\\'};
+	auto lastNSep = directory.rfind(nativePathSeparator, directory.length());
+	if(lastNSep != std::string::npos) {
+		if(lastSep == std::string::npos) {
+			lastSep = lastNSep;
+		} else {
+			lastSep = std::max(lastSep, lastNSep);
+		}
+	}
+#else
+	static const char nativePathSeparator{'/'};
+#endif
+
+	if(lastSep == directory.length() - 1) { // ends in separator; good to go ...
+		return directory;
+	}
+
+	// need to append a separator, but what kind ?
+	if(nativePathSeparator != universalPathSeparator && directory.find(universalPathSeparator, directory.length()) != std::string::npos) {
+		return directory + universalPathSeparator;
+	}
+
+	return directory + nativePathSeparator;
+}

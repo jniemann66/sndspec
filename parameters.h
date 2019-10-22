@@ -31,7 +31,7 @@ struct Option
 const std::vector<Option> options
 {
 	{OptionID::DynRange, "--dyn-range", "", 1, false, "Set Dynamic Range in dB", {190}},
-	{OptionID::OutputDir, "--output-dir", "-o", 1, false, "Set Output directory", {"."}},
+	{OptionID::OutputDir, "--output-dir", "-o", 1, false, "Set Output directory", {""}},
 	{OptionID::Height, "--height","-h", 1, false, "Set Image Height in Pixels", {480}},
 	{OptionID::Width, "--width", "-w", 1, false, "Set Image Width in Pixels", {640}},
 	{OptionID::Help, "--help", "", 0, false, "Help", {}}
