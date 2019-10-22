@@ -23,7 +23,7 @@
 
 ~~axis labels~~
 
-~~heading~~~
+~~heading~~
 
 - info, metadata
 - filename management 
