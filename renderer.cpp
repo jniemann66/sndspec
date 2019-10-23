@@ -10,12 +10,8 @@
 
 namespace Sndspec {
 
-// todo: margin params in constructor obsolete ; remove when ready
-Renderer::Renderer(int width, int height, double marginLeft, double marginTop, double marginRight, double marginBottom)
-	: width(width), height(height), marginTop(marginTop), marginRight(marginRight), marginBottom(marginBottom), pixelBuffer(width * height, 0)
+Renderer::Renderer(int width, int height) : width(width), height(height), pixelBuffer(width * height, 0)
 {
-	(void)marginLeft; // unused
-
 	// set up cairo surface
 	const cairo_format_t cairoFormat =  CAIRO_FORMAT_RGB24;
 	int stride =  cairo_format_stride_for_width(cairoFormat, width);
@@ -23,28 +19,13 @@ Renderer::Renderer(int width, int height, double marginLeft, double marginTop, d
 	surface = cairo_image_surface_create_for_data(reinterpret_cast<unsigned char*>(pixelBuffer.data()), cairoFormat, width, height, stride);
 	cr = cairo_create(surface);
 
-	// estimate width of left margin
-	cairo_text_extents_t hmLabelTextExtents;
-	cairo_set_font_size(cr, fontSizeNormal);
-	cairo_text_extents(cr, "- xxxx", &hmLabelTextExtents);
-	_marginLeft = hmOriginX + hmWidth + tickWidth + hmLabelTextExtents.x_advance;
-
-	// estimate width of right margin
-		// todo: tick width + text width + axis label width etc
-
-	// estimate height of top margin
-		// todo: info height + title height etc
-
-	// estimate height of bottom margin
-		// todo: tick height + label height etc + axis label height
-
 	// calculate dimensions of actual plot area
-	plotWidth = width - _marginLeft /*static_cast<int>(marginLeft * width)*/ - static_cast<int>(marginRight * width);
-	plotHeight = height - static_cast<int>(marginTop * height) - static_cast<int>(marginBottom * height);
-	plotOriginX = static_cast<int>(_marginLeft);
-	plotOriginY = static_cast<int>(marginTop * height);
+	setMargins();
+	plotWidth = width - marginLeft - marginRight;
+	plotHeight = height - static_cast<int>(marginTop) - static_cast<int>(marginBottom);
+	plotOriginX = static_cast<int>(marginLeft);
+	plotOriginY = static_cast<int>(marginTop);
 	hmOriginY = plotOriginY; // align top of heatmap with top of plot area
-
 }
 
 Renderer::~Renderer()
@@ -274,6 +255,37 @@ std::vector<int32_t> Renderer::getHeatMapPalette() const
 void Renderer::setHeatMapPalette(const std::vector<int32_t> &value)
 {
 	heatMapPalette = value;
+}
+
+void Renderer::setMargins()
+{
+	// estimate width of left margin
+	cairo_text_extents_t hmLabelTextExtents;
+	cairo_set_font_size(cr, fontSizeNormal);
+	cairo_text_extents(cr, "- xxxx", &hmLabelTextExtents);
+	marginLeft = hmOriginX + hmWidth + tickWidth + hmLabelTextExtents.x_advance;
+
+	// estimate width of right margin
+	cairo_text_extents_t fLabelTextExtents;
+	cairo_set_font_size(cr, fontSizeNormal);
+	cairo_text_extents(cr, "999999", &fLabelTextExtents);
+	marginRight = 1.5 * tickWidth + fLabelTextExtents.x_advance + 2.5 * fLabelTextExtents.height;
+
+	// estimate height of top margin
+	cairo_set_font_size(cr, fontSizeHeading);
+	cairo_text_extents_t titleTextExtents;
+	cairo_text_extents(cr, "Spectrogram", &titleTextExtents);
+	cairo_set_font_size(cr, fontSizeNormal);
+	cairo_text_extents_t infoTextExtents;
+	cairo_text_extents(cr, "XXX", &infoTextExtents);
+	marginTop = 2.0 * (titleTextExtents.height + infoTextExtents.height);
+
+	// estimate height of bottom margin
+	cairo_text_extents_t timeLabelTextExtents;
+	cairo_text_extents(cr, "1.0", &timeLabelTextExtents);
+	cairo_text_extents_t horizAxisLabelTextExtents;
+	cairo_text_extents(cr, "Tims(s)", &horizAxisLabelTextExtents);
+	marginBottom = 2.5 * (timeLabelTextExtents.height + horizAxisLabelTextExtents.height);
 }
 
 } // namespace Sndspec

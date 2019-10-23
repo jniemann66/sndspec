@@ -15,7 +15,7 @@ namespace Sndspec {
 class Renderer
 {
 public:
-	Renderer(int width, int height, double marginLeft = 0.08, double marginTop = 0.06, double marginRight = 0.08, double marginBottom = 0.06);
+	Renderer(int width, int height);
 	~Renderer();
 
 	void render(const Parameters& parameters, const SpectrogramResults<double>& spectrogramData);
@@ -32,9 +32,6 @@ public:
 
 	int getPlotWidth() const;
 	int getPlotHeight() const;
-
-
-
 
 private:
 	// dimensions of whole image
@@ -64,7 +61,8 @@ private:
 	// tick Width
 	const double tickWidth{10.0};
 
-	double _marginLeft;
+	// margins
+	double marginLeft;
 	double marginTop;
 	double marginRight;
 	double marginBottom;
@@ -95,6 +93,7 @@ private:
 		0x00000000
 	};
 
+	void setMargins();
 };
 
 } // namespace Sndspec

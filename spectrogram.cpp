@@ -165,7 +165,6 @@ std::string Sndspec::Spectrogram::replaceFileExt(const std::string& filename, co
 
 std::string Sndspec::Spectrogram::getFilenameOnly(const std::string& path)
 {
-
 	static const char universalPathSeparator{'/'};
 	auto lastSep = path.rfind(universalPathSeparator, path.length());
 
