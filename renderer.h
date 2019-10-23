@@ -37,16 +37,38 @@ public:
 
 
 private:
+	// dimensions of whole image
 	int width;
 	int height;
-	int plotWidth;
-	int plotHeight;
+
+	// font sizes
+	const double fontSizeNormal{13.0};
+	const double fontSizeHeading{16.0};
+
+	// heatmap origin
+	const int hmOriginX{10};
+	int hmOriginY; // depends on marginTop
+
+	// heatmap width
+	const int hmWidth{10};
+	int hmLabelWidth;
+
+	// plot origin
 	int plotOriginX;
 	int plotOriginY;
-	double marginLeft;
+
+	// plot dimensions
+	int plotWidth;
+	int plotHeight;
+
+	// tick Width
+	const double tickWidth{10.0};
+
+	double _marginLeft;
 	double marginTop;
 	double marginRight;
 	double marginBottom;
+
 	std::vector<uint32_t> pixelBuffer;
 	int stride32;
 	cairo_surface_t* surface;

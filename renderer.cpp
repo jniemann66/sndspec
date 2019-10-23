@@ -10,20 +10,41 @@
 
 namespace Sndspec {
 
+// todo: margin params in constructor obsolete ; remove when ready
 Renderer::Renderer(int width, int height, double marginLeft, double marginTop, double marginRight, double marginBottom)
-	: width(width), height(height), marginLeft(marginLeft), marginTop(marginTop), marginRight(marginRight), marginBottom(marginBottom), pixelBuffer(width * height, 0)
+	: width(width), height(height), marginTop(marginTop), marginRight(marginRight), marginBottom(marginBottom), pixelBuffer(width * height, 0)
 {
+	(void)marginLeft; // unused
 
-	plotWidth = width - static_cast<int>(marginLeft * width) - static_cast<int>(marginRight * width);
-	plotHeight = height - static_cast<int>(marginTop * height) - static_cast<int>(marginBottom * height);
-	plotOriginX = static_cast<int>(marginLeft * width);
-	plotOriginY = static_cast<int>(marginTop * height);
-
+	// set up cairo surface
 	const cairo_format_t cairoFormat =  CAIRO_FORMAT_RGB24;
 	int stride =  cairo_format_stride_for_width(cairoFormat, width);
 	stride32 = stride / sizeof(uint32_t);
 	surface = cairo_image_surface_create_for_data(reinterpret_cast<unsigned char*>(pixelBuffer.data()), cairoFormat, width, height, stride);
 	cr = cairo_create(surface);
+
+	// estimate width of left margin
+	cairo_text_extents_t hmLabelTextExtents;
+	cairo_set_font_size(cr, fontSizeNormal);
+	cairo_text_extents(cr, "- xxxx", &hmLabelTextExtents);
+	_marginLeft = hmOriginX + hmWidth + tickWidth + hmLabelTextExtents.x_advance;
+
+	// estimate width of right margin
+		// todo: tick width + text width + axis label width etc
+
+	// estimate height of top margin
+		// todo: info height + title height etc
+
+	// estimate height of bottom margin
+		// todo: tick height + label height etc + axis label height
+
+	// calculate dimensions of actual plot area
+	plotWidth = width - _marginLeft /*static_cast<int>(marginLeft * width)*/ - static_cast<int>(marginRight * width);
+	plotHeight = height - static_cast<int>(marginTop * height) - static_cast<int>(marginBottom * height);
+	plotOriginX = static_cast<int>(_marginLeft);
+	plotOriginY = static_cast<int>(marginTop * height);
+	hmOriginY = plotOriginY; // align top of heatmap with top of plot area
+
 }
 
 Renderer::~Renderer()
@@ -183,18 +204,11 @@ void Renderer::drawHeatMap(double dynRange)
 {
 	double sc = static_cast<double>(heatMapPalette.size()) / plotHeight;
 
-	// heatmap origin
-	const int hmOriginX = 10;
-	const int hmOriginY = plotOriginY;
-
-	// heatmap width
-	const int w = 10;
-
 	// draw the heatmap colours
 	for(int y = 0; y < plotHeight; y++) {
 		int lineAddr = hmOriginX + (plotOriginY + y) * stride32;
 		int32_t color = heatMapPalette.at(static_cast<int>(sc * y));
-		for (int x = 0; x < w; x++) {
+		for (int x = 0; x < hmWidth; x++) {
 			pixelBuffer[x + lineAddr] = color;
 		}
 	}
@@ -203,7 +217,7 @@ void Renderer::drawHeatMap(double dynRange)
 	double s = 0.5;
 	cairo_set_source_rgb(cr, 255, 255, 255);
 	cairo_set_line_width (cr, 2);
-	cairo_rectangle(cr, hmOriginX-s, plotOriginY - s, w + 2 * s, plotHeight + 2 * s);
+	cairo_rectangle(cr, hmOriginX-s, plotOriginY - s, hmWidth + 2 * s, plotHeight + 2 * s);
 	cairo_stroke(cr);
 
 	// draw the 'dB' heading
@@ -215,8 +229,8 @@ void Renderer::drawHeatMap(double dynRange)
 	// draw the dB tickmarks and labels
 	double dB = 0.0;
 	double dBsc = plotHeight / dynRange;
-	double xa = hmOriginX + w + s;
-	double xb = xa + 10;
+	double xa = hmOriginX + hmWidth + s;
+	double xb = xa + tickWidth;
 	char dbBuf[20];
 	while (dB < dynRange) {
 		sprintf(dbBuf, "%3.0f", -dB);
