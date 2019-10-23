@@ -89,13 +89,13 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			}
 		case Height:
 			if(++argsIt != args.cend()) {
-				imgHeight = std::stoi(*argsIt);
+				imgHeight = std::max(160, std::stoi(*argsIt));
 				++argsIt;
 				break;
 			}
 		case Width:
 			if(++argsIt != args.cend()) {
-				imgWidth = std::stoi(*argsIt);
+				imgWidth = std::max(160, std::stoi(*argsIt));
 				++argsIt;
 				break;
 			}
