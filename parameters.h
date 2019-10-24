@@ -14,6 +14,7 @@ enum OptionID
 	OutputDir,
 	Height,
 	Width,
+	TimeRange,
 	Help
 };
 
@@ -25,7 +26,7 @@ struct Option
 	int expectedArgs;
 	bool isMandatory;
 	std::string description;
-	std::vector<std::variant<int, float, std::string>> args;
+	std::vector<std::variant<int, double, std::string>> args;
 };
 
 const std::vector<Option> options
@@ -34,6 +35,7 @@ const std::vector<Option> options
 	{OptionID::OutputDir, "--output-dir", "-o", 1, false, "Set Output directory", {""}},
 	{OptionID::Height, "--height","-h", 1, false, "Set Image Height in Pixels", {480}},
 	{OptionID::Width, "--width", "-w", 1, false, "Set Image Width in Pixels", {640}},
+	{OptionID::TimeRange, "--time-range", "-t", 2, false, "Set Time Range", {0.0, 0.0}},
 	{OptionID::Help, "--help", "", 0, false, "Help", {}}
 };
 
@@ -68,6 +70,8 @@ private:
 	int imgWidth{1024};
 	int imgHeight{768};
 	double dynRange{190};
+	double start{0.0};
+	double finish{0.0};
 };
 
 } // namespace Options

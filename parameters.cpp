@@ -99,6 +99,15 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 				++argsIt;
 				break;
 			}
+		case TimeRange:
+			if(++argsIt != args.cend()) {
+				start = std::max(0.0, std::stod(*argsIt));
+				if(++argsIt != args.cend()) {
+					finish = std::min(0.0, std::stod(*argsIt));
+				}
+				++argsIt;
+				break;
+			}
 		case Help:
 			++argsIt;
 			return showHelp();
