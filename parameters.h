@@ -64,12 +64,19 @@ public:
 
 	std::string showHelp();
 
+	double getStart() const;
+	double getFinish() const;
+
+	bool getTimeRange() const;
+	void setTimeRange(bool value);
+
 private:
 	std::vector<std::string> inputFiles;
 	std::string outputPath;
 	int imgWidth{1024};
 	int imgHeight{768};
 	double dynRange{190};
+	bool timeRange{false};
 	double start{0.0};
 	double finish{0.0};
 };

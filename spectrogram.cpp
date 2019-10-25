@@ -55,6 +55,12 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			// resize output storage (according to number of channels)
 			spectrogramData.resize(nChannels, std::vector<std::vector<double>>(plotWidth, std::vector<double>(spectrumSize, 0.0)));
 
+			// set specific time range
+			if(parameters.getTimeRange()) {
+				r.setStartPos(std::max(0, std::min(static_cast<int>(r.getSamplerate() * parameters.getStart()), r.getNFrames())));
+				r.setFinishPos(std::max(0, std::min(static_cast<int>(r.getSamplerate() * parameters.getFinish()), r.getNFrames())));
+			}
+
 			for(int ch = 0; ch < nChannels; ch ++) {
 
 				// create a spectrum analyzer for each channel if not already existing
@@ -82,8 +88,8 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 
 			std::cout << "Rendering ... ";
 			renderer.render(parameters, spectrogramData);
-			double startTime =  r.getStartPos() / r.getSamplerate();
-			double finishTime =  r.getFinishPos() / r.getSamplerate();
+			double startTime =  static_cast<double>(r.getStartPos()) / r.getSamplerate();
+			double finishTime =  static_cast<double>(r.getFinishPos()) / r.getSamplerate();
 			renderer.drawGrid(22050, 5000, startTime, finishTime, 5);
 			renderer.drawBorder();
 			renderer.drawTickmarks(22050, 5000, startTime, finishTime, 5);

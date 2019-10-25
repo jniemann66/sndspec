@@ -101,9 +101,10 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			}
 		case TimeRange:
 			if(++argsIt != args.cend()) {
+				timeRange = true;
 				start = std::max(0.0, std::stod(*argsIt));
 				if(++argsIt != args.cend()) {
-					finish = std::min(0.0, std::stod(*argsIt));
+					finish = std::max(0.0, std::stod(*argsIt));
 				}
 				++argsIt;
 				break;
@@ -130,6 +131,26 @@ std::string Parameters::showHelp()
 	}
 
 	return helpString;
+}
+
+double Parameters::getStart() const
+{
+	return start;
+}
+
+double Parameters::getFinish() const
+{
+	return finish;
+}
+
+bool Parameters::getTimeRange() const
+{
+	return timeRange;
+}
+
+void Parameters::setTimeRange(bool value)
+{
+	timeRange = value;
 }
 
 } // namespace Sndspec

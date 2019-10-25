@@ -129,7 +129,8 @@ void Renderer::drawTickmarks(double nyquist, double div, double beginTime, doubl
 
 	char tLabelBuf[20];
 	double tStep = (endTime - beginTime) / n;
-	double t = 0.0;
+	std::cout << beginTime <<" "<< endTime <<" "<< "tStep " << tStep << std::endl;
+	double t = beginTime;
 	const int tx = -5;
 	constexpr int ty = s + 15;
 
