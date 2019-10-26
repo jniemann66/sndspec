@@ -24,7 +24,6 @@ struct Option
 	OptionID optionID;
 	std::string longOption;
 	std::string shortOption;
-	int expectedArgs;
 	bool isMandatory;
 	std::string description;
 	std::vector<std::string> args;
@@ -32,13 +31,13 @@ struct Option
 
 const std::vector<Option> options
 {
-	{OptionID::DynRange, "--dyn-range", "", 1, false, "Set Dynamic Range in dB", {"n"}},
-	{OptionID::OutputDir, "--output-dir", "-o", 1, false, "Set Output directory", {"path"}},
-	{OptionID::Height, "--height","-h", 1, false, "Set Image Height in Pixels", {"n"}},
-	{OptionID::Width, "--width", "-w", 1, false, "Set Image Width in Pixels", {"n"}},
-	{OptionID::TimeRange, "--time-range", "-t", 2, false, "Set Time Range in seconds", {"start-time", "finish-time"}},
-	{OptionID::WhiteBackground, "--white-background", "", 0, false, "White Background (instead of black) with inverted heatmap palette", {}},
-	{OptionID::Help, "--help", "", 0, false, "Help", {}}
+	{OptionID::DynRange, "--dyn-range", "", false, "Set Dynamic Range in dB", {"n"}},
+	{OptionID::OutputDir, "--output-dir", "-o", false, "Set Output directory", {"path"}},
+	{OptionID::Height, "--height","-h", false, "Set Image Height in Pixels", {"n"}},
+	{OptionID::Width, "--width", "-w", false, "Set Image Width in Pixels", {"n"}},
+	{OptionID::TimeRange, "--time-range", "-t", false, "Set Time Range in seconds", {"start-time", "finish-time"}},
+	{OptionID::WhiteBackground, "--white-background", "", false, "White Background (instead of black) with inverted heatmap palette", {}},
+	{OptionID::Help, "--help", "", false, "Help", {}}
 };
 
 class Parameters
