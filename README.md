@@ -27,6 +27,10 @@
 
 ~~Output directory selection~~
 
+~~input range selection~~
+
+~~white background option~~
+
 - info, metadata
 - directory traversal
 - channel selection / sum
@@ -34,7 +38,6 @@
 - Quadmath
 - long double
 - Window function selection
-- input range selection
 - spectrums
 - waveforms
 - other color palettes
