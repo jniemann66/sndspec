@@ -6,12 +6,15 @@
 **sndspec filename [filename2 ...] [options]**
 
 ~~~
---dyn-range         Set Dynamic Range in dB
--o, --output-dir    Set Output directory
--h, --height        Set Image Height in Pixels
--w, --width         Set Image Width in Pixels
--t, --time-range    Set Time Range
---help              Help
+Usage: sndspec filename [filename2 ...] [options]
+
+--dyn-range <n>                                   Set Dynamic Range in dB
+-o, --output-dir <path>                           Set Output directory
+-h, --height <n>                                  Set Image Height in Pixels
+-w, --width <n>                                   Set Image Width in Pixels
+-t, --time-range <start-time> <finish-time>       Set Time Range in seconds
+--white-background                                White Background (instead of black) with inverted heatmap palette
+--help                                            Help
 ~~~
 
 ### todo
