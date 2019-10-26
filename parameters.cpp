@@ -124,14 +124,22 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 
 std::string Parameters::showHelp()
 {
+	static const int col0width = 50;
 	std::string helpString{"Usage: sndspec filename [filename2 ...] [options]\n\n"};
 	for(const auto& option : options) {
+		std::string line;
 		if(!option.shortOption.empty()) {
-			helpString.append(option.shortOption);
-			helpString.append(", ");
+			line.append(option.shortOption);
+			line.append(", ");
 		}
 
-		helpString.append(option.longOption).append("\t\t").append(option.description).append("\n");
+		line.append(option.longOption).append(" ");
+		for(const auto& arg : option.args) {
+			line.append("<").append(arg).append("> ");
+		}
+		line.append(std::max(0, col0width - static_cast<int>(line.length())), ' ');
+		line.append(option.description).append("\n");
+		helpString.append(line);
 	}
 
 	return helpString;
