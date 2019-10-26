@@ -10,6 +10,7 @@
 -o, --output-dir    Set Output directory
 -h, --height        Set Image Height in Pixels
 -w, --width         Set Image Width in Pixels
+-t, --time-range    Set Time Range
 --help              Help
 ~~~
 
