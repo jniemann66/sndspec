@@ -15,6 +15,7 @@ enum OptionID
 	Height,
 	Width,
 	TimeRange,
+	WhiteBackground,
 	Help
 };
 
@@ -36,6 +37,7 @@ const std::vector<Option> options
 	{OptionID::Height, "--height","-h", 1, false, "Set Image Height in Pixels", {480}},
 	{OptionID::Width, "--width", "-w", 1, false, "Set Image Width in Pixels", {640}},
 	{OptionID::TimeRange, "--time-range", "-t", 2, false, "Set Time Range", {0.0, 0.0}},
+	{OptionID::WhiteBackground, "--white-background", "", 0, false, "White Background (instead of black) with inverted heatmap palette", {""}},
 	{OptionID::Help, "--help", "", 0, false, "Help", {}}
 };
 
@@ -70,6 +72,9 @@ public:
 	bool getTimeRange() const;
 	void setTimeRange(bool value);
 
+	bool getWhiteBackground() const;
+	void setWhiteBackground(bool value);
+
 private:
 	std::vector<std::string> inputFiles;
 	std::string outputPath;
@@ -79,6 +84,7 @@ private:
 	bool timeRange{false};
 	double start{0.0};
 	double finish{0.0};
+	bool whiteBackground{false};
 };
 
 } // namespace Options

@@ -28,6 +28,7 @@ public:
 	void drawTickmarks(double nyquist, double div, double beginTime, double endTime, int n);
 	void drawText(const std::string &heading, const std::string &info, const std::string &horizAxisLabel, const std::string &vertAxisLabel);
 	void drawHeatMap(double dynRange);
+	void makeNegativeImage();
 	void clear();
 
 	int getPlotWidth() const;

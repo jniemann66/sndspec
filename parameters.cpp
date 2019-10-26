@@ -109,6 +109,10 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 				++argsIt;
 				break;
 			}
+		case WhiteBackground:
+			whiteBackground = true;
+			++argsIt;
+			break;
 		case Help:
 			++argsIt;
 			return showHelp();
@@ -151,6 +155,16 @@ bool Parameters::getTimeRange() const
 void Parameters::setTimeRange(bool value)
 {
 	timeRange = value;
+}
+
+bool Parameters::getWhiteBackground() const
+{
+	return whiteBackground;
+}
+
+void Parameters::setWhiteBackground(bool value)
+{
+	whiteBackground = value;
 }
 
 } // namespace Sndspec

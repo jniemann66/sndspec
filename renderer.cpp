@@ -227,6 +227,17 @@ void Renderer::drawHeatMap(double dynRange)
 	cairo_stroke(cr);
 }
 
+void Renderer::makeNegativeImage()
+{
+	auto endIt = pixelBuffer.end();
+	auto it = pixelBuffer.begin();
+	while (it != endIt)
+	{
+		*it = 0x00ffffff - *it;
+		++it;
+	}
+}
+
 void Renderer::clear()
 {
 	cairo_set_source_rgb (cr, 0, 0, 0);

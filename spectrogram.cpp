@@ -95,6 +95,11 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			renderer.drawTickmarks(22050, 5000, startTime, finishTime, 5);
 			renderer.drawText("Spectrogram", inputFilename, "Time (s)", "Frequency (Hz)");
 			renderer.drawHeatMap(parameters.getDynRange());
+
+			if(parameters.getWhiteBackground()) {
+				renderer.makeNegativeImage();
+			}
+
 			std::cout << "Done\n";
 
 			// determine output filename
