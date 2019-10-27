@@ -55,12 +55,12 @@ void Renderer::render(const Parameters &parameters, const SpectrogramResults<dou
 	}
 }
 
-void Renderer::drawGrid(double nyquist, double div, double beginTime, double endTime, int n)
+void Renderer::drawGrid()
 {
 	cairo_set_line_width (cr, 1.0);
 	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
 
-	double yStep = plotHeight * div / nyquist;
+	double yStep = plotHeight * freqStep / nyquist;
 	double y = plotOriginY + plotHeight - 1 ;
 
 	while(y > plotOriginY) {
@@ -70,7 +70,7 @@ void Renderer::drawGrid(double nyquist, double div, double beginTime, double end
 	}
 
 	double fWidth = static_cast<double>(plotWidth);
-	double xStep = fWidth / n;
+	double xStep = fWidth / numTimeDivs;
 	double x = plotOriginX;
 
 	while(x < fWidth) {
@@ -96,7 +96,7 @@ void Renderer::drawBorder()
 	cairo_stroke(cr);
 }
 
-void Renderer::drawTickmarks(double nyquist, double div, double beginTime, double endTime, int n)
+void Renderer::drawTickmarks()
 {
 	cairo_set_line_width (cr, 2);
 	cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
@@ -107,7 +107,7 @@ void Renderer::drawTickmarks(double nyquist, double div, double beginTime, doubl
 
 	cairo_set_font_size(cr, 13);
 
-	double yStep = plotHeight * div / nyquist;
+	double yStep = plotHeight * freqStep / nyquist;
 	double y = plotOriginY + plotHeight - 1 ;
 	int f = 0;
 
@@ -120,17 +120,17 @@ void Renderer::drawTickmarks(double nyquist, double div, double beginTime, doubl
 		cairo_move_to(cr, plotOriginX + fx + plotWidth - 1, y + fy);
 		cairo_show_text(cr, fLabelBuf);
 		y -= yStep;
-		f += div;
+		f += freqStep;
 	}
 
 	double fWidth = static_cast<double>(plotWidth);
-	double xStep = fWidth / n;
+	double xStep = fWidth / numTimeDivs;
 	double x = plotOriginX;
 
 	char tLabelBuf[20];
-	double tStep = (endTime - beginTime) / n;
-	std::cout << beginTime <<" "<< endTime <<" "<< "tStep " << tStep << std::endl;
-	double t = beginTime;
+	double tStep = (finishTime - startTime) / numTimeDivs;
+	std::cout << startTime <<" "<< finishTime <<" "<< "tStep " << tStep << std::endl;
+	double t = startTime;
 	const int tx = -5;
 	constexpr int ty = s + 15;
 
@@ -147,23 +147,23 @@ void Renderer::drawTickmarks(double nyquist, double div, double beginTime, doubl
 	cairo_stroke (cr);
 }
 
-void Renderer::drawText(const std::string& heading, const std::string& info, const std::string& horizAxisLabel, const std::string& vertAxisLabel)
+void Renderer::drawText()
 {
 	double s = 20.0;
 
 	// heading
 	cairo_text_extents_t headingTextExtents;
 	cairo_set_font_size(cr, 16);
-	cairo_text_extents(cr, heading.c_str(), &headingTextExtents);
+	cairo_text_extents(cr, title.c_str(), &headingTextExtents);
 	cairo_move_to(cr, plotOriginX + (plotWidth - headingTextExtents.x_advance) / 2.0, s); // place at center of plot area
-	cairo_show_text(cr, heading.c_str());
+	cairo_show_text(cr, title.c_str());
 	cairo_set_font_size(cr, 13);
 
 	// info
 	cairo_text_extents_t infoExtents;
-	cairo_text_extents(cr, info.c_str(), &infoExtents);
+	cairo_text_extents(cr, inputFilename.c_str(), &infoExtents);
 	cairo_move_to(cr, plotOriginX, plotOriginY - infoExtents.height);
-	cairo_show_text(cr, info.c_str());
+	cairo_show_text(cr, inputFilename.c_str());
 
 	// horizAxis
 	cairo_text_extents_t horizAxisLabelExtents;
@@ -175,7 +175,7 @@ void Renderer::drawText(const std::string& heading, const std::string& info, con
 	cairo_text_extents_t vertAxisLabelExtents;
 	cairo_text_extents(cr, vertAxisLabel.c_str(), &vertAxisLabelExtents);
 	cairo_save(cr);
-	cairo_move_to(cr, width - s /*vertAxisLabelExtents.height */, plotOriginY + (plotHeight) / 2.0);
+	cairo_move_to(cr, width - s, plotOriginY + (plotHeight) / 2.0);
 	cairo_rotate(cr, M_PI_2);
 	cairo_show_text(cr, vertAxisLabel.c_str());
 	cairo_restore(cr);
@@ -252,6 +252,96 @@ int Renderer::getPlotWidth() const
 int Renderer::getPlotHeight() const
 {
 	return plotHeight;
+}
+
+int Renderer::getNyquist() const
+{
+	return nyquist;
+}
+
+void Renderer::setNyquist(int value)
+{
+	nyquist = value;
+}
+
+int Renderer::getFreqStep() const
+{
+	return freqStep;
+}
+
+void Renderer::setFreqStep(int value)
+{
+	freqStep = value;
+}
+
+int Renderer::getNumTimeDivs() const
+{
+	return numTimeDivs;
+}
+
+void Renderer::setNumTimeDivs(int value)
+{
+	numTimeDivs = value;
+}
+
+double Renderer::getStartTime() const
+{
+	return startTime;
+}
+
+void Renderer::setStartTime(double value)
+{
+	startTime = value;
+}
+
+double Renderer::getFinishTime() const
+{
+	return finishTime;
+}
+
+void Renderer::setFinishTime(double value)
+{
+	finishTime = value;
+}
+
+std::string Renderer::getInputFilename() const
+{
+	return inputFilename;
+}
+
+void Renderer::setInputFilename(const std::string &value)
+{
+	inputFilename = value;
+}
+
+std::string Renderer::getTitle() const
+{
+	return title;
+}
+
+void Renderer::setTitle(const std::string &value)
+{
+	title = value;
+}
+
+std::string Renderer::getHorizAxisLabel() const
+{
+	return horizAxisLabel;
+}
+
+void Renderer::setHorizAxisLabel(const std::string &value)
+{
+	horizAxisLabel = value;
+}
+
+std::string Renderer::getVertAxisLabel() const
+{
+	return vertAxisLabel;
+}
+
+void Renderer::setVertAxisLabel(const std::string &value)
+{
+	vertAxisLabel = value;
 }
 
 bool Renderer::writeToFile(const std::string& filename)

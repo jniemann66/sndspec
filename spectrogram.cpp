@@ -87,13 +87,23 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			scaleMagnitudeRelativeDb(spectrogramData, /* magSquared = */ true);
 
 			std::cout << "Rendering ... ";
+
+			// main plot area
 			renderer.render(parameters, spectrogramData);
+
+			// decorations
 			double startTime =  static_cast<double>(r.getStartPos()) / r.getSamplerate();
 			double finishTime =  static_cast<double>(r.getFinishPos()) / r.getSamplerate();
-			renderer.drawGrid(22050, 5000, startTime, finishTime, 5);
+			renderer.setNyquist(r.getSamplerate() / 2);
+			renderer.setFreqStep(5000);
+			renderer.setNumTimeDivs(5);
+			renderer.setInputFilename(inputFilename);
+			renderer.setStartTime(startTime);
+			renderer.setFinishTime(finishTime);
+			renderer.drawGrid();
 			renderer.drawBorder();
-			renderer.drawTickmarks(22050, 5000, startTime, finishTime, 5);
-			renderer.drawText("Spectrogram", inputFilename, "Time (s)", "Frequency (Hz)");
+			renderer.drawTickmarks();
+			renderer.drawText();
 			renderer.drawHeatMap(parameters.getDynRange());
 
 			if(parameters.hasWhiteBackground()) {
@@ -101,6 +111,7 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			}
 
 			std::cout << "Done\n";
+
 
 			// determine output filename
 			std::string outputFilename;

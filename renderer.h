@@ -23,21 +23,53 @@ public:
 	std::vector<int32_t> getHeatMapPalette() const;
 	void setHeatMapPalette(const std::vector<int32_t> &value);
 	bool writeToFile(const std::string &filename);
-	void drawGrid(double nyquist, double div, double beginTime, double endTime, int n);
+	void drawGrid();
 	void drawBorder();
-	void drawTickmarks(double nyquist, double div, double beginTime, double endTime, int n);
-	void drawText(const std::string &heading, const std::string &info, const std::string &horizAxisLabel, const std::string &vertAxisLabel);
+	void drawTickmarks();
+	void drawText();
 	void drawHeatMap(double dynRange);
 	void makeNegativeImage();
 	void clear();
 
+	// setters
+	void setNyquist(int value);
+	void setFreqStep(int value);
+	void setNumTimeDivs(int value);
+	void setStartTime(double value);
+	void setFinishTime(double value);
+	void setInputFilename(const std::string &value);
+	void setTitle(const std::string &value);
+	void setHorizAxisLabel(const std::string &value);
+	void setVertAxisLabel(const std::string &value);
+
+	// getters
 	int getPlotWidth() const;
 	int getPlotHeight() const;
+	int getNyquist() const;
+	int getFreqStep() const;
+	int getNumTimeDivs() const;
+	double getStartTime() const;
+	double getFinishTime() const;
+	std::string getInputFilename() const;
+	std::string getTitle() const;
+	std::string getHorizAxisLabel() const;
+	std::string getVertAxisLabel() const;
 
 private:
 	// dimensions of whole image
 	int width;
 	int height;
+
+	// properties required for labelling the chart
+	int nyquist;
+	int freqStep;
+	int numTimeDivs{5};
+	double startTime;
+	double finishTime;
+	std::string title{"Spectrogram"};
+	std::string inputFilename;
+	std::string horizAxisLabel{"Time (s)"};
+	std::string vertAxisLabel{"Frequency (Hz)"};
 
 	// font sizes
 	const double fontSizeNormal{13.0};

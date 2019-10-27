@@ -47,17 +47,6 @@ public:
 	std::string fromArgs(const std::vector<std::string>& args);
 	std::string showHelp();
 
-	// getters
-	std::vector<std::string> getInputFiles() const;
-	std::string getOutputPath() const;
-	int getImgWidth() const;
-	int getImgHeight() const;
-	double getDynRange() const;
-	double getStart() const;
-	double getFinish() const;
-	bool hasTimeRange() const;
-	bool hasWhiteBackground() const;
-
 	// setters
 	void setInputFiles(const std::vector<std::string> &value);
 	void setOutputPath(const std::string &value);
@@ -68,6 +57,17 @@ public:
 	void setHasWhiteBackground(bool value);
 	void setStart(double value);
 	void setFinish(double value);
+
+	// getters
+	std::vector<std::string> getInputFiles() const;
+	std::string getOutputPath() const;
+	int getImgWidth() const;
+	int getImgHeight() const;
+	double getDynRange() const;
+	double getStart() const;
+	double getFinish() const;
+	bool hasTimeRange() const;
+	bool hasWhiteBackground() const;
 
 private:
 	std::vector<std::string> inputFiles;
