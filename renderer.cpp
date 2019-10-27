@@ -339,6 +339,11 @@ std::string Renderer::getVertAxisLabel() const
 	return vertAxisLabel;
 }
 
+std::vector<uint32_t> Renderer::getPixelBuffer() const
+{
+	return pixelBuffer;
+}
+
 void Renderer::setVertAxisLabel(const std::string &value)
 {
 	vertAxisLabel = value;

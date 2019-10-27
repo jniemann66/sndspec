@@ -54,6 +54,7 @@ public:
 	std::string getTitle() const;
 	std::string getHorizAxisLabel() const;
 	std::string getVertAxisLabel() const;
+	std::vector<uint32_t> getPixelBuffer() const;
 
 private:
 	// dimensions of whole image
@@ -125,6 +126,30 @@ private:
 		0x00010213,
 		0x00000000
 	};
+
+	// (experimental)
+//	std::vector<int32_t> heatMapPalette {
+//		0x00440154,
+//		0x00481567,
+//		0x00482677,
+//		0x00453781,
+//		0x00404788,
+//		0x0039568C,
+//		0x0033638D,
+//		0x002D708E,
+//		0x00287D8E,
+//		0x00238A8D,
+//		0x001F968B,
+//		0x0020A387,
+//		0x0029AF7F,
+//		0x003CBB75,
+//		0x0055C667,
+//		0x0073D055,
+//		0x0095D840,
+//		0x00B8DE29,
+//		0x00DCE319,
+//		0x00FDE725
+//	};
 
 	void setMargins();
 };
