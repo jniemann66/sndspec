@@ -155,24 +155,34 @@ double Parameters::getFinish() const
 	return finish;
 }
 
-bool Parameters::getTimeRange() const
+bool Parameters::hasTimeRange() const
 {
 	return timeRange;
 }
 
-void Parameters::setTimeRange(bool value)
+void Parameters::setHasTimeRange(bool value)
 {
 	timeRange = value;
 }
 
-bool Parameters::getWhiteBackground() const
+bool Parameters::hasWhiteBackground() const
 {
 	return whiteBackground;
 }
 
-void Parameters::setWhiteBackground(bool value)
+void Parameters::setHasWhiteBackground(bool value)
 {
 	whiteBackground = value;
+}
+
+void Parameters::setStart(double value)
+{
+	start = value;
+}
+
+void Parameters::setFinish(double value)
+{
+	finish = value;
 }
 
 } // namespace Sndspec

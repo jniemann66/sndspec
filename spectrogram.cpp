@@ -56,7 +56,7 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			spectrogramData.resize(nChannels, std::vector<std::vector<double>>(plotWidth, std::vector<double>(spectrumSize, 0.0)));
 
 			// set specific time range
-			if(parameters.getTimeRange()) {
+			if(parameters.hasTimeRange()) {
 				r.setStartPos(std::max(0, std::min(static_cast<int>(r.getSamplerate() * parameters.getStart()), r.getNFrames())));
 				r.setFinishPos(std::max(0, std::min(static_cast<int>(r.getSamplerate() * parameters.getFinish()), r.getNFrames())));
 			}
@@ -96,7 +96,7 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			renderer.drawText("Spectrogram", inputFilename, "Time (s)", "Frequency (Hz)");
 			renderer.drawHeatMap(parameters.getDynRange());
 
-			if(parameters.getWhiteBackground()) {
+			if(parameters.hasWhiteBackground()) {
 				renderer.makeNegativeImage();
 			}
 
