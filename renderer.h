@@ -27,17 +27,18 @@ public:
 	void drawBorder();
 	void drawTickmarks();
 	void drawText();
-	void drawHeatMap(double dynRange);
+	void drawHeatMap();
 	void makeNegativeImage();
 	void clear();
 
 	// setters
-	void setNyquist(int value);
-	void setFreqStep(int value);
-	void setNumTimeDivs(int value);
-	void setStartTime(double value);
-	void setFinishTime(double value);
-	void setInputFilename(const std::string &value);
+	void setNyquist(int value); // required for frequency axis
+	void setFreqStep(int value); // required for frequency axis
+	void setNumTimeDivs(int value); // required for time axis
+	void setStartTime(double value); // required for time axis
+	void setFinishTime(double value); // required for time axis
+	void setInputFilename(const std::string &value); // required to display input filename
+	void setDynRange(double value); // required for showing heatmap dB values
 	void setTitle(const std::string &value);
 	void setHorizAxisLabel(const std::string &value);
 	void setVertAxisLabel(const std::string &value);
@@ -54,7 +55,11 @@ public:
 	std::string getTitle() const;
 	std::string getHorizAxisLabel() const;
 	std::string getVertAxisLabel() const;
+	double getDynRange() const;
 	std::vector<uint32_t> getPixelBuffer() const;
+
+
+
 
 private:
 	// dimensions of whole image
@@ -71,6 +76,7 @@ private:
 	std::string inputFilename;
 	std::string horizAxisLabel{"Time (s)"};
 	std::string vertAxisLabel{"Frequency (Hz)"};
+	double dynRange;
 
 	// font sizes
 	const double fontSizeNormal{13.0};

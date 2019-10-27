@@ -182,7 +182,7 @@ void Renderer::drawText()
 
 }
 
-void Renderer::drawHeatMap(double dynRange)
+void Renderer::drawHeatMap()
 {
 	double sc = static_cast<double>(heatMapPalette.size()) / plotHeight;
 
@@ -342,6 +342,16 @@ std::string Renderer::getVertAxisLabel() const
 std::vector<uint32_t> Renderer::getPixelBuffer() const
 {
 	return pixelBuffer;
+}
+
+double Renderer::getDynRange() const
+{
+	return dynRange;
+}
+
+void Renderer::setDynRange(double value)
+{
+	dynRange = value;
 }
 
 void Renderer::setVertAxisLabel(const std::string &value)

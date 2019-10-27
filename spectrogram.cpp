@@ -100,11 +100,13 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			renderer.setInputFilename(inputFilename);
 			renderer.setStartTime(startTime);
 			renderer.setFinishTime(finishTime);
+			renderer.setDynRange(parameters.getDynRange());
+
 			renderer.drawGrid();
 			renderer.drawBorder();
 			renderer.drawTickmarks();
 			renderer.drawText();
-			renderer.drawHeatMap(parameters.getDynRange());
+			renderer.drawHeatMap();
 
 			if(parameters.hasWhiteBackground()) {
 				renderer.makeNegativeImage();
