@@ -58,9 +58,6 @@ public:
 	double getDynRange() const;
 	std::vector<uint32_t> getPixelBuffer() const;
 
-
-
-
 private:
 	// dimensions of whole image
 	int width;

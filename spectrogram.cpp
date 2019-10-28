@@ -114,7 +114,6 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 
 			std::cout << "Done\n";
 
-
 			// determine output filename
 			std::string outputFilename;
 			if(parameters.getOutputPath().empty()) {

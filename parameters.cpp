@@ -1,5 +1,7 @@
 #include "parameters.h"
 
+#include "directory.h"
+
 namespace Sndspec {
 
 std::vector<std::string> Parameters::getInputFiles() const
@@ -71,7 +73,11 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 		case Filenames:
 			// keep reading filenames until end reached, or another option detected
 			do {
-				inputFiles.push_back(*argsIt);
+				if(enableDirectoryTraversal) {
+					inputFiles.insert(inputFiles.begin(), inputFiles.end(), expand(*argsIt, {".wav"}).end());
+				} else {
+					inputFiles.push_back(*argsIt);
+				}
 				argsIt++;
 			} while (argsIt != args.cend() && argsIt->compare(0, 1, "-") != 0);
 			break;

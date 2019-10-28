@@ -2,6 +2,7 @@ project(sndspec C CXX)
 cmake_minimum_required(VERSION 3.6)
 find_package(Threads REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(NOT CMAKE_CONFIGURATION_TYPES)
 
@@ -28,6 +29,7 @@ set(SOURCE_FILES
 	parameters.cpp
 	tests.cpp
         renderer.cpp
+        directory.cpp
   )
 
 if (WIN32)
@@ -59,7 +61,7 @@ else()
         set(CMAKE_CXX_EXTENSIONS TRUE)  # -std=gnu++11 instead of -std=c++11
         target_link_libraries(sndspecLib sndfile fftw3 quadmath cairo ${CMAKE_THREAD_LIBS_INIT})
     else()
-        target_link_libraries(sndspecLib sndfile fftw3 cairo ${CMAKE_THREAD_LIBS_INIT})
+        target_link_libraries(sndspecLib sndfile fftw3 cairo ${CMAKE_THREAD_LIBS_INIT} )
     endif()
 
 endif()
