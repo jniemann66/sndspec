@@ -29,7 +29,6 @@ set(SOURCE_FILES
 	parameters.cpp
 	tests.cpp
         renderer.cpp
-        directory.cpp
   )
 
 if (WIN32)
@@ -71,7 +70,7 @@ message(STATUS "libsndfile library location: " ${SNDFILE_LIBRARY})
 message(STATUS "fftw library location: " ${FFTW_LIBRARY})
 message(STATUS "cairo library location: "  ${CAIRO_LIBRARY})
 add_executable(sndspec main.cpp)
-target_link_libraries(sndspec sndspecLib ${SNDFILE_LIBRARY} ${FFTW_LIBRARY} ${CAIRO_LIBRARY})
+target_link_libraries(sndspec sndspecLib ${SNDFILE_LIBRARY} ${FFTW_LIBRARY} ${CAIRO_LIBRARY} stdc++fs)
 target_compile_features(sndspecLib PRIVATE cxx_std_17)
 # ---
 

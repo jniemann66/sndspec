@@ -129,7 +129,6 @@ void Renderer::drawTickmarks()
 
 	char tLabelBuf[20];
 	double tStep = (finishTime - startTime) / numTimeDivs;
-	std::cout << startTime <<" "<< finishTime <<" "<< "tStep " << tStep << std::endl;
 	double t = startTime;
 	const int tx = -5;
 	constexpr int ty = s + 15;
