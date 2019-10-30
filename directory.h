@@ -16,7 +16,7 @@ namespace Sndspec {
 
 #if defined(__cpp_lib_experimental_filesystem) || defined(__cpp_lib_filesystem)
 
-const bool directoryTraversalAvailable = true;
+#define FS_AVAILABLE
 
 template <typename DirIteratorType>
 std::vector<std::string> expand(const std::string &path, const std::vector<std::string> &extensions)
@@ -46,8 +46,6 @@ std::vector<std::string> expand(const std::string& path, const std::vector<std::
 	}
 };
 
-#else
-const bool directoryTraversalAvailable = false;
 #endif // defined(__cpp_lib_experimental_filesystem) || defined(__cpp_lib_filesystem)
 
 } // namespace Sndspec
