@@ -23,12 +23,16 @@ std::vector<std::string> expand(const std::string &path, const std::vector<std::
 {
 	std::vector<std::string> retval;
 
-	for(const auto& item : DirIteratorType(path)) {
-		const auto fn = item.path().string();
-		if(fs::is_regular_file(item.status())) {
-			for(const auto& ext : extensions) {
-				if(item.path().extension().string().compare(ext) == 0) {
-					retval.push_back(fn);
+	if(fs::is_regular_file(fs::status(path))) {
+		retval.push_back(path);
+	} else if (fs::is_directory(fs::status(path))) {
+		for(const auto& item : DirIteratorType(path)) {
+			const auto fn = item.path().string();
+			if(fs::is_regular_file(item.status())) {
+				for(const auto& ext : extensions) {
+					if(item.path().extension().string().compare(ext) == 0) {
+						retval.push_back(fn);
+					}
 				}
 			}
 		}
