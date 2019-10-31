@@ -7,6 +7,33 @@
 
 namespace Sndspec {
 
+const std::vector<std::string> fileTypes
+{
+	".aifc",
+	".aiff",
+	".aif",
+	".au",
+	".avr",
+	".caf",
+	".flac",
+	".htk",
+	".iff",
+	".mat",
+	".mpc",
+	".oga",
+	".paf",
+	".pvf",
+	".rf64",
+	".sd2",
+	".sds",
+	".sf",
+	".voc",
+	".w64",
+	".wav",
+	".wve",
+	".xi"
+};
+
 enum OptionID
 {
 	Filenames,

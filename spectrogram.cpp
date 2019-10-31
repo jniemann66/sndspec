@@ -179,7 +179,7 @@ std::string Sndspec::Spectrogram::replaceFileExt(const std::string& filename, co
 
 	if(lastDot != std::string::npos) {
 		std::string _fn{filename};
-		_fn.replace(lastDot + 1, newExt.length(), newExt);
+		_fn.replace(lastDot + 1, std::string::npos, newExt);
 		return _fn;
 	}
 

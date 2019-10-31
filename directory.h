@@ -26,7 +26,10 @@ std::vector<std::string> expand(const std::string &path, const std::vector<std::
 	for(const auto& item : DirIteratorType(path)) {
 		const auto fn = item.path().string();
 		if(fs::is_regular_file(item.status())) {
-			for(const auto& ext : extensions) {
+			for(auto ext : extensions) {
+				std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) {
+					return std::tolower(c);
+				});
 				if(item.path().extension().string().compare(ext) == 0) {
 					retval.push_back(fn);
 				}

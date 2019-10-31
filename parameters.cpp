@@ -76,7 +76,7 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			// keep reading filenames until end reached, or another option detected
 			do {
 				if(directoryTraversalAvailable) {
-					auto list = expand(*argsIt, {".wav"});
+					auto list = expand(*argsIt, fileTypes);
 					inputFiles.insert(inputFiles.end(), list.begin(), list.end());
 				} else {
 					inputFiles.push_back(*argsIt);
