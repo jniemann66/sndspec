@@ -3,6 +3,7 @@
 #include "directory.h"
 
 #include <iostream>
+#include <cmath>
 
 namespace Sndspec {
 
@@ -75,12 +76,14 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 		case Filenames:
 			// keep reading filenames until end reached, or another option detected
 			do {
-				if(directoryTraversalAvailable) {
-					auto list = expand(*argsIt, fileTypes);
-					inputFiles.insert(inputFiles.end(), list.begin(), list.end());
-				} else {
-					inputFiles.push_back(*argsIt);
-				}
+
+#if defined(FS_AVAILABLE)
+				auto list = expand(*argsIt, fileTypes);
+				inputFiles.insert(inputFiles.end(), list.begin(), list.end());
+#else
+				inputFiles.push_back(*argsIt);
+#endif
+
 				argsIt++;
 			} while (argsIt != args.cend() && argsIt->compare(0, 1, "-") != 0);
 			break;

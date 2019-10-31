@@ -16,22 +16,26 @@ namespace Sndspec {
 
 #if defined(__cpp_lib_experimental_filesystem) || defined(__cpp_lib_filesystem)
 
-const bool directoryTraversalAvailable = true;
+#define FS_AVAILABLE
 
 template <typename DirIteratorType>
 std::vector<std::string> expand(const std::string &path, const std::vector<std::string> &extensions)
 {
 	std::vector<std::string> retval;
 
-	for(const auto& item : DirIteratorType(path)) {
-		const auto fn = item.path().string();
-		if(fs::is_regular_file(item.status())) {
-			for(auto ext : extensions) {
-				std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) {
-					return std::tolower(c);
-				});
-				if(item.path().extension().string().compare(ext) == 0) {
-					retval.push_back(fn);
+	if(fs::is_regular_file(fs::status(path))) {
+		retval.push_back(path);
+	} else if (fs::is_directory(fs::status(path))) {
+		for(const auto& item : DirIteratorType(path)) {
+			const auto fn = item.path().string();
+			if(fs::is_regular_file(item.status())) {
+				for(auto ext : extensions) {
+					std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) {
+						return std::tolower(c);
+					});
+					if(item.path().extension().string().compare(ext) == 0) {
+						retval.push_back(fn);
+					}
 				}
 			}
 		}
@@ -49,8 +53,6 @@ std::vector<std::string> expand(const std::string& path, const std::vector<std::
 	}
 };
 
-#else
-const bool directoryTraversalAvailable = false;
 #endif // defined(__cpp_lib_experimental_filesystem) || defined(__cpp_lib_filesystem)
 
 } // namespace Sndspec

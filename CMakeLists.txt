@@ -70,7 +70,13 @@ message(STATUS "libsndfile library location: " ${SNDFILE_LIBRARY})
 message(STATUS "fftw library location: " ${FFTW_LIBRARY})
 message(STATUS "cairo library location: "  ${CAIRO_LIBRARY})
 add_executable(sndspec main.cpp)
-target_link_libraries(sndspec sndspecLib ${SNDFILE_LIBRARY} ${FFTW_LIBRARY} ${CAIRO_LIBRARY} stdc++fs)
+
+if(APPLE)
+    target_link_libraries(sndspec sndspecLib ${SNDFILE_LIBRARY} ${FFTW_LIBRARY} ${CAIRO_LIBRARY} )
+else()
+    target_link_libraries(sndspec sndspecLib ${SNDFILE_LIBRARY} ${FFTW_LIBRARY} ${CAIRO_LIBRARY} stdc++fs)
+endif()
+
 target_compile_features(sndspecLib PRIVATE cxx_std_17)
 # ---
 
