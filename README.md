@@ -35,8 +35,9 @@ Usage: sndspec filename [filename2 ...] [options]
 
 ~~white background option~~
 
+~~directory traversal~~
+
 - info, metadata
-- directory traversal
 - channel selection / sum
 - move renderer to another library (?) (to free from dependence on Cairo)
 - Quadmath
