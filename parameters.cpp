@@ -1,5 +1,4 @@
 #include "parameters.h"
-
 #include "directory.h"
 
 #include <iostream>
@@ -76,17 +75,11 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 		case Filenames:
 			// keep reading filenames until end reached, or another option detected
 			do {
-
-#if defined(FS_AVAILABLE)
-				auto list = expand(*argsIt, fileTypes);
-				inputFiles.insert(inputFiles.end(), list.begin(), list.end());
-#else
 				inputFiles.push_back(*argsIt);
-#endif
-
 				argsIt++;
 			} while (argsIt != args.cend() && argsIt->compare(0, 1, "-") != 0);
 			break;
+
 		case DynRange:
 			if(++argsIt != args.cend()) {
 				dynRange = std::abs(std::stod(*argsIt));
@@ -125,11 +118,28 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			whiteBackground = true;
 			++argsIt;
 			break;
+
+#ifdef FS_AVAILABLE
+		case Recursive:
+			recursiveDirectoryTraversal = true;
+			++argsIt;
+			break;
+#endif
+
 		case Help:
 			++argsIt;
 			return showHelp();
 		}
 	}
+
+#ifdef FS_AVAILABLE
+	std::vector<std::string> expandedFileList;
+	for(const auto& path : inputFiles) {
+		auto list = expand(path, fileTypes, recursiveDirectoryTraversal);
+		expandedFileList.insert(expandedFileList.end(), list.begin(), list.end());
+	}
+	inputFiles = expandedFileList;
+#endif
 
 	return {};
 }

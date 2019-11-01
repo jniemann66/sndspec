@@ -1,6 +1,8 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
+#include "fsdetect.h"
+
 #include <string>
 #include <vector>
 #include <variant>
@@ -43,6 +45,11 @@ enum OptionID
 	Width,
 	TimeRange,
 	WhiteBackground,
+
+#ifdef FS_AVAILABLE
+	Recursive,
+#endif
+
 	Help
 };
 
@@ -64,6 +71,11 @@ const std::vector<Option> options
 	{OptionID::Width, "--width", "-w", false, "Set Image Width in Pixels", {"n"}},
 	{OptionID::TimeRange, "--time-range", "-t", false, "Set Time Range in seconds", {"start-time", "finish-time"}},
 	{OptionID::WhiteBackground, "--white-background", "", false, "White Background (instead of black) with inverted heatmap palette", {}},
+
+#ifdef FS_AVAILABLE
+	{OptionID::Recursive, "--recursive", "-r", false, "Recursive directory traversal", {}},
+#endif
+
 	{OptionID::Help, "--help", "", false, "Help", {}}
 };
 
@@ -106,6 +118,11 @@ private:
 	double start{0.0};
 	double finish{0.0};
 	bool whiteBackground{false};
+
+#ifdef FS_AVAILABLE
+	bool recursiveDirectoryTraversal{false};
+#endif
+
 };
 
 } // namespace Options

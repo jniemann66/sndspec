@@ -1,22 +1,12 @@
 #ifndef DIRECTORY_H
 #define DIRECTORY_H
 
+#include "fsdetect.h"
+
 #include <string>
 #include <vector>
 
-#if __has_include(<filesystem>)
-	#include <filesystem>
-	namespace fs = std::filesystem;
-#elif __has_include(<experimental/filesystem>)
-	#include <experimental/filesystem>
-	namespace fs = std::experimental::filesystem;
-#endif
-
 namespace Sndspec {
-
-#if defined(__cpp_lib_experimental_filesystem) || defined(__cpp_lib_filesystem)
-
-#define FS_AVAILABLE
 
 template <typename DirIteratorType>
 std::vector<std::string> expand(const std::string &path, const std::vector<std::string> &extensions)
@@ -52,8 +42,6 @@ std::vector<std::string> expand(const std::string& path, const std::vector<std::
 		return expand<fs::directory_iterator>(path, extensions);
 	}
 };
-
-#endif // defined(__cpp_lib_experimental_filesystem) || defined(__cpp_lib_filesystem)
 
 } // namespace Sndspec
 
