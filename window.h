@@ -95,7 +95,7 @@ class HannHammingWindow : public Window<FloatType>
 
 	void setHamming()
 	{
-		a0 = 25.0 / 46.0; // 0.543478261
+		a0 = 0.54;
 	}
 
 	void generate(int size) override
