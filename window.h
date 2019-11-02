@@ -83,6 +83,32 @@ private:
 	}
 };
 
+template <typename FloatType>
+class HannHammingWindow : public Window<FloatType>
+{
+	FloatType a0;
+
+	void setHann()
+	{
+		a0 = 0.5;
+	}
+
+	void setHamming()
+	{
+		a0 = 25.0 / 46.0; // 0.543478261
+	}
+
+	void generate(int size) override
+	{
+		FloatType a1 = 1.0 - a0;
+		Window<FloatType>::data.resize(size, 0.0);
+		for (int n = 0; n < size; ++n) {
+			Window<FloatType>::data[n] = a0 - a1 * std::cos((2.0 * M_PI * n) / (size - 1));
+		}
+	}
+};
+
+
 } // namespace Sndspec
 
 #endif // WINDOW_H
