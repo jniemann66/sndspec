@@ -28,42 +28,42 @@ public:
 
 	void generateHann(int size)
 	{
-		return generateGeneralizedCosineWindow(size, {0.5, 0.5} );
+		return generalizedCosineWindow(size, {0.5, 0.5} );
 	}
 
 	void generateHamming(int size)
 	{
-		return generateGeneralizedCosineWindow(size, {0.54, 0.46} );
+		return generalizedCosineWindow(size, {0.54, 0.46} );
 	}
 
 	void generateBlackman(int size)
 	{
-		return generateGeneralizedCosineWindow(size, {0.42, 0.5, 0.08} );
+		return generalizedCosineWindow(size, {0.42, 0.5, 0.08} );
 	}
 
 	void generateNuttall(int size)
 	{
-		return generateGeneralizedCosineWindow(size, {0.355768, 0.487396, 0.144232, 0.012604} );
+		return generalizedCosineWindow(size, {0.355768, 0.487396, 0.144232, 0.012604} );
 	}
 
 	void generateBlackmanNuttall(int size)
 	{
-		return generateGeneralizedCosineWindow(size, {0.3635819, 0.4891775, 0.1365995, 0.0106411} );
+		return generalizedCosineWindow(size, {0.3635819, 0.4891775, 0.1365995, 0.0106411} );
 	}
 
 	void generateBlackmanHarris(int size)
 	{
-		return generateGeneralizedCosineWindow(size, {0.35875, 0.48829, 0.14128, 0.01168} );
+		return generalizedCosineWindow(size, {0.35875, 0.48829, 0.14128, 0.01168} );
 	}
 
 	void generateFlatTop(int size)
 	{
-		return generateGeneralizedCosineWindow(size, {0.21557895, 0.41663158, 0.277263158, 0.083578947, 0.006947368} );
+		return generalizedCosineWindow(size, {0.21557895, 0.41663158, 0.277263158, 0.083578947, 0.006947368} );
 	}
 
 	void generateWindow1(int size)
 	{
-		return generateGeneralizedCosineWindow(size, {
+		return generalizedCosineWindow(size, {
 									   2.374298741532465928226E-01,
 									   3.994704373801009358001E-01,
 									   2.362644608100282475133E-01,
@@ -76,7 +76,7 @@ public:
 								   });
 	}
 
-	void generateGeneralizedCosineWindow(int size, std::vector<FloatType> coeffs)
+	void generalizedCosineWindow(int size, std::vector<FloatType> coeffs)
 	{
 		int N = size;
 		int K = coeffs.size();
