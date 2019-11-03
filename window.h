@@ -8,20 +8,108 @@
 
 namespace Sndspec {
 
-// base class
-
 template <typename FloatType>
 class Window
 {
 public:
 	Window() = default;
 
+	void generateRectangular(int size)
+	{
+		data.resize(size, 1.0);
+	}
+
+	void generateKaiser(int size, FloatType beta) {
+		data.resize(size, 0.0);
+		for (int n = 0; n < size; ++n) {
+			data[n] = I0(beta * sqrt(1.0 - pow((2.0 * n / (size - 1) - 1), 2.0))) / I0(beta);
+		}
+	}
+
+	void generateHann(int size)
+	{
+		return generate1TermCosine(size, 0.5, 0.5);
+	}
+
+	void generateHamming(int size)
+	{
+		return generate1TermCosine(size, 0.54, 0.46);
+	}
+
+	void generateBlackman(int size)
+	{
+		return generate2TermCosine(size, 0.42, 0.5, 0.08);
+	}
+
+	void generateNuttall(int size)
+	{
+		return generate3TermCosine(size, 0.355768, 0.487396, 0.144232, 0.012604);
+	}
+
+	void generateBlackmanNuttall(int size)
+	{
+		return generate3TermCosine(size, 0.3635819, 0.4891775, 0.1365995, 0.0106411);
+	}
+
+	void generateBlackmanHarris(int size)
+	{
+		return generate3TermCosine(size, 0.35875, 0.48829, 0.14128, 0.01168);
+	}
+
+	void generateFlatTop(int size)
+	{
+		return generate4TermCosine(size, 0.21557895, 0.41663158, 0.277263158, 0.083578947, 0.006947368);
+	}
+
+	// generalized cosine windows
+	void generate1TermCosine(int size, FloatType a0, FloatType a1)
+	{
+		Window<FloatType>::data.resize(size, 0.0);
+		for (int n = 0; n < size; ++n) {
+			data[n] = a0 - a1 * std::cos((2.0 * M_PI * n) / (size - 1));
+		}
+	}
+
+	void generate2TermCosine(int size, FloatType a0, FloatType a1, FloatType a2)
+	{
+		Window<FloatType>::data.resize(size, 0.0);
+		for (int n = 0; n < size; ++n) {
+			data[n] = a0
+					- a1 * std::cos((2.0 * M_PI * n) / (size - 1))
+					+ a2 * std::cos((4.0 * M_PI * n) / (size - 1))
+			;
+		}
+	}
+
+	void generate3TermCosine(int size, FloatType a0, FloatType a1, FloatType a2, FloatType a3)
+	{
+		Window<FloatType>::data.resize(size, 0.0);
+		for (int n = 0; n < size; ++n) {
+			data[n] = a0
+					- a1 * std::cos((2.0 * M_PI * n) / (size - 1))
+					+ a2 * std::cos((4.0 * M_PI * n) / (size - 1))
+					- a3 * std::cos((6.0 * M_PI * n) / (size - 1))
+			;
+		}
+	}
+
+	void generate4TermCosine(int size, FloatType a0, FloatType a1, FloatType a2, FloatType a3, FloatType a4)
+	{
+		Window<FloatType>::data.resize(size, 0.0);
+		for (int n = 0; n < size; ++n) {
+			data[n] = a0
+					- a1 * std::cos((2.0 * M_PI * n) / (size - 1))
+					+ a2 * std::cos((4.0 * M_PI * n) / (size - 1))
+					- a3 * std::cos((6.0 * M_PI * n) / (size - 1))
+					+ a4 * std::cos((8.0 * M_PI * n) / (size - 1))
+			;
+		}
+	}
+
 	const std::vector<FloatType>& getData() const
 	{
 		return data;
 	}
-
-	virtual void generate(int size) = 0;
 
 	// in-place application of window to given input
 	void apply(std::vector<FloatType>& input) const
@@ -31,29 +119,7 @@ public:
 		}
 	}
 
-protected:
-	std::vector<FloatType> data;
-};
-
-// Kaiser Window class
-
-template <typename FloatType>
-class KaiserWindow : public Window<FloatType>
-{
-	FloatType beta;
-
-public:
-	KaiserWindow() : Window<FloatType>() {}
-	FloatType getBeta() const { return beta; }
-	void setBeta(const FloatType &value) { beta = value; }
-	void generate(int size) override {
-		Window<FloatType>::data.resize(size, 0.0);
-		for (int n = 0; n < size; ++n) {
-			Window<FloatType>::data[n] = I0(beta * sqrt(1.0 - pow((2.0 * n / (size - 1) - 1), 2.0))) / I0(beta);
-		}
-	}
-
-	static FloatType betaFromDecibels(FloatType dB)
+	static FloatType kaiserBetaFromDecibels(FloatType dB)
 	{
 		if(dB < 21.0) {
 			return 0;
@@ -67,6 +133,7 @@ public:
 	}
 
 private:
+	std::vector<FloatType> data;
 
 	// I0() : 0th-order Modified Bessel function of the first kind:
 	// todo: C++17 now includes this function in math library - worth checking it out
@@ -82,32 +149,6 @@ private:
 		return result;
 	}
 };
-
-template <typename FloatType>
-class HannHammingWindow : public Window<FloatType>
-{
-	FloatType a0;
-
-	void setHann()
-	{
-		a0 = 0.5;
-	}
-
-	void setHamming()
-	{
-		a0 = 0.54;
-	}
-
-	void generate(int size) override
-	{
-		FloatType a1 = 1.0 - a0;
-		Window<FloatType>::data.resize(size, 0.0);
-		for (int n = 0; n < size; ++n) {
-			Window<FloatType>::data[n] = a0 - a1 * std::cos((2.0 * M_PI * n) / (size - 1));
-		}
-	}
-};
-
 
 } // namespace Sndspec
 

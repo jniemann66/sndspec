@@ -24,9 +24,8 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 	int plotWidth = renderer.getPlotWidth();
 
 	// make a suitable FFT Window
-	Sndspec::KaiserWindow<double> k;
-	k.setBeta(Sndspec::KaiserWindow<double>::betaFromDecibels(parameters.getDynRange()));
-	k.generate(fftSize);
+	Sndspec::Window<double> window;
+	window.generateKaiser(fftSize, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
 
 	// prepare storage for spectrogram results
 	SpectrogramResults<double> spectrogramData;
@@ -50,7 +49,7 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			std::cout << "channels: " << nChannels << std::endl;
 
 			// provide the reader with the FFT window. The Reader will apply the window to each block it reads.
-			r.setWindow(k.getData());
+			r.setWindow(window.getData());
 
 			// resize output storage (according to number of channels)
 			spectrogramData.resize(nChannels, std::vector<std::vector<double>>(plotWidth, std::vector<double>(spectrumSize, 0.0)));
