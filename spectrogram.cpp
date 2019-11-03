@@ -26,6 +26,8 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 	// make a suitable FFT Window
 	Sndspec::Window<double> window;
 	window.generateKaiser(fftSize, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
+	//window.generateBlackman(fftSize);
+	//window.generateWindow1(fftSize);
 
 	// prepare storage for spectrogram results
 	SpectrogramResults<double> spectrogramData;

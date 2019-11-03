@@ -28,81 +28,68 @@ public:
 
 	void generateHann(int size)
 	{
-		return generate1TermCosine(size, 0.5, 0.5);
+		return generateGeneralizedCosineWindow(size, {0.5, 0.5} );
 	}
 
 	void generateHamming(int size)
 	{
-		return generate1TermCosine(size, 0.54, 0.46);
+		return generateGeneralizedCosineWindow(size, {0.54, 0.46} );
 	}
 
 	void generateBlackman(int size)
 	{
-		return generate2TermCosine(size, 0.42, 0.5, 0.08);
+		return generateGeneralizedCosineWindow(size, {0.42, 0.5, 0.08} );
 	}
 
 	void generateNuttall(int size)
 	{
-		return generate3TermCosine(size, 0.355768, 0.487396, 0.144232, 0.012604);
+		return generateGeneralizedCosineWindow(size, {0.355768, 0.487396, 0.144232, 0.012604} );
 	}
 
 	void generateBlackmanNuttall(int size)
 	{
-		return generate3TermCosine(size, 0.3635819, 0.4891775, 0.1365995, 0.0106411);
+		return generateGeneralizedCosineWindow(size, {0.3635819, 0.4891775, 0.1365995, 0.0106411} );
 	}
 
 	void generateBlackmanHarris(int size)
 	{
-		return generate3TermCosine(size, 0.35875, 0.48829, 0.14128, 0.01168);
+		return generateGeneralizedCosineWindow(size, {0.35875, 0.48829, 0.14128, 0.01168} );
 	}
 
 	void generateFlatTop(int size)
 	{
-		return generate4TermCosine(size, 0.21557895, 0.41663158, 0.277263158, 0.083578947, 0.006947368);
+		return generateGeneralizedCosineWindow(size, {0.21557895, 0.41663158, 0.277263158, 0.083578947, 0.006947368} );
 	}
 
-	// generalized cosine windows
-	void generate1TermCosine(int size, FloatType a0, FloatType a1)
+	void generateWindow1(int size)
 	{
-		Window<FloatType>::data.resize(size, 0.0);
-		for (int n = 0; n < size; ++n) {
-			data[n] = a0 - a1 * std::cos((2.0 * M_PI * n) / (size - 1));
-		}
+		return generateGeneralizedCosineWindow(size, {
+									   2.374298741532465928226E-01,
+									   3.994704373801009358001E-01,
+									   2.362644608100282475133E-01,
+									   9.620676838363516649024E-02,
+									   2.591512168016078991738E-02,
+									   4.307708101213669512442E-03,
+									   3.904113541372495568636E-04,
+									   1.508613505022821880403E-05,
+									   1.320024271202038321705E-07
+								   });
 	}
 
-	void generate2TermCosine(int size, FloatType a0, FloatType a1, FloatType a2)
+	void generateGeneralizedCosineWindow(int size, std::vector<FloatType> coeffs)
 	{
-		Window<FloatType>::data.resize(size, 0.0);
-		for (int n = 0; n < size; ++n) {
-			data[n] = a0
-					- a1 * std::cos((2.0 * M_PI * n) / (size - 1))
-					+ a2 * std::cos((4.0 * M_PI * n) / (size - 1))
-			;
-		}
-	}
+		int N = size;
+		int K = coeffs.size();
 
-	void generate3TermCosine(int size, FloatType a0, FloatType a1, FloatType a2, FloatType a3)
-	{
 		Window<FloatType>::data.resize(size, 0.0);
 		for (int n = 0; n < size; ++n) {
-			data[n] = a0
-					- a1 * std::cos((2.0 * M_PI * n) / (size - 1))
-					+ a2 * std::cos((4.0 * M_PI * n) / (size - 1))
-					- a3 * std::cos((6.0 * M_PI * n) / (size - 1))
-			;
-		}
-	}
-
-	void generate4TermCosine(int size, FloatType a0, FloatType a1, FloatType a2, FloatType a3, FloatType a4)
-	{
-		Window<FloatType>::data.resize(size, 0.0);
-		for (int n = 0; n < size; ++n) {
-			data[n] = a0
-					- a1 * std::cos((2.0 * M_PI * n) / (size - 1))
-					+ a2 * std::cos((4.0 * M_PI * n) / (size - 1))
-					- a3 * std::cos((6.0 * M_PI * n) / (size - 1))
-					+ a4 * std::cos((8.0 * M_PI * n) / (size - 1))
-			;
+			FloatType s = 1.0; // sign
+			FloatType a = 0.0; // accumulator
+			for(int k = 0; k < K; k++) {
+				a += s * coeffs.at(k) * std::cos(2 * M_PI * k * n / (N - 1));
+				s = -s;
+			}
+			data[n] = a;
 		}
 	}
 
