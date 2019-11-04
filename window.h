@@ -4,76 +4,59 @@
 #include "factorial.h"
 
 #include <vector>
+#include <map>
 #include <cmath>
+#include <algorithm>
+#include <cctype>
 
 namespace Sndspec {
 
 template <typename FloatType>
 class Window
 {
+	enum WindowType
+	{
+		Rectangular,
+		Triangular,
+		Bartlett,
+		CosineSum,
+		Kaiser
+	};
+
+	struct WindowParameters
+	{
+		WindowType windowType;
+		std::vector<FloatType> coefficients;
+	};
+
+	const std::map<std::string, WindowParameters> windowDefinitions
+	{
+		{"rectangular", {Rectangular, {}}},
+		{"triangular", {Triangular, {}}},
+		{"bartlett", {Bartlett, {}}},
+		{"hann", {CosineSum, {0.5, 0.5}}},
+		{"hanning", {CosineSum, {0.5, 0.5}}},
+		{"hamming", {CosineSum, {0.54, 0.46}}},
+		{"blackman", {CosineSum, {0.42, 0.5, 0.08}}},
+		{"nuttall", {CosineSum, {0.355768, 0.487396, 0.144232, 0.012604}}},
+		{"blackmannuttall", {CosineSum, {0.3635819, 0.4891775, 0.1365995, 0.0106411}}},
+		{"blackmanharris", {CosineSum, {0.35875, 0.48829, 0.14128, 0.01168}}},
+		{"5term", {CosineSum, {}}},
+		{"6term", {CosineSum, {}}},
+		{"7term", {CosineSum, {}}},
+		{"8term", {CosineSum, {}}},
+		{"9term", {CosineSum, {}}},
+		{"10term", {CosineSum, {}}},
+		{"11term", {CosineSum, {}}},
+		{"kaiser", {Kaiser, {}}}
+	};
+
 public:
 	Window() = default;
 
 	void generateRectangular(int size)
 	{
 		data.resize(size, 1.0);
-	}
-
-	void generateKaiser(int size, FloatType beta) {
-		data.resize(size, 0.0);
-		for (int n = 0; n < size; ++n) {
-			data[n] = I0(beta * sqrt(1.0 - pow((2.0 * n / (size - 1) - 1), 2.0))) / I0(beta);
-		}
-	}
-
-	void generateHann(int size)
-	{
-		return generalizedCosineWindow(size, {0.5, 0.5} );
-	}
-
-	void generateHamming(int size)
-	{
-		return generalizedCosineWindow(size, {0.54, 0.46} );
-	}
-
-	void generateBlackman(int size)
-	{
-		return generalizedCosineWindow(size, {0.42, 0.5, 0.08} );
-	}
-
-	void generateNuttall(int size)
-	{
-		return generalizedCosineWindow(size, {0.355768, 0.487396, 0.144232, 0.012604} );
-	}
-
-	void generateBlackmanNuttall(int size)
-	{
-		return generalizedCosineWindow(size, {0.3635819, 0.4891775, 0.1365995, 0.0106411} );
-	}
-
-	void generateBlackmanHarris(int size)
-	{
-		return generalizedCosineWindow(size, {0.35875, 0.48829, 0.14128, 0.01168} );
-	}
-
-	void generateFlatTop(int size)
-	{
-		return generalizedCosineWindow(size, {0.21557895, 0.41663158, 0.277263158, 0.083578947, 0.006947368} );
-	}
-
-	void generateWindow1(int size)
-	{
-		return generalizedCosineWindow(size, {
-									   2.374298741532465928226E-01,
-									   3.994704373801009358001E-01,
-									   2.362644608100282475133E-01,
-									   9.620676838363516649024E-02,
-									   2.591512168016078991738E-02,
-									   4.307708101213669512442E-03,
-									   3.904113541372495568636E-04,
-									   1.508613505022821880403E-05,
-									   1.320024271202038321705E-07
-								   });
 	}
 
 	void generalizedCosineWindow(int size, std::vector<FloatType> coeffs)
@@ -91,6 +74,44 @@ public:
 			}
 			data[n] = a;
 		}
+	}
+
+	void generateKaiser(int size, FloatType beta) {
+		data.resize(size, 0.0);
+		for (int n = 0; n < size; ++n) {
+			data[n] = I0(beta * sqrt(1.0 - pow((2.0 * n / (size - 1) - 1), 2.0))) / I0(beta);
+		}
+	}
+
+	void generate(std::string name, int size, FloatType val = 0.0)
+	{
+		// remove non-alphanum characters from name
+		name.erase(std::remove_if(name.begin(), name.end(), [](unsigned char c) -> bool {
+			return !std::isalnum(c);
+		}), name.end());
+
+		// convert name to lowercase
+		std::transform(data.begin(), data.end(), data.begin(), [](unsigned char c) -> unsigned char {
+			return std::tolower(c);
+		});
+
+		if(windowDefinitions.count(name) != 0) {
+			const WindowParameters& windowDefinition = windowDefinitions.at(name);
+			switch(windowDefinition.windowType) {
+			case Rectangular:
+				return generateRectangular(size);
+			case Triangular:
+				return generateRectangular(size);
+			case Bartlett:
+				return generateRectangular(size);
+			case CosineSum:
+				return generalizedCosineWindow(size, windowDefinition.coefficients);
+			case Kaiser:
+				return generateKaiser(size, val);
+			}
+		}
+
+		return generateKaiser(size, val);
 	}
 
 	const std::vector<FloatType>& getData() const

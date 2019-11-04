@@ -17,8 +17,8 @@ bool tests::testUglyPlot()
 bool tests::testWindow()
 {
 	Sndspec::Window<double> w;
-	//w.generateBlackman(7);
-	w.generateWindow1(8);
+	w.generate("rectangulr", 7, 20);
+//	w.generateWindow1(8);
 	for(double v : w.getData())
 	{
 		std::cout << v << std::endl;

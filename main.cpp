@@ -21,6 +21,4 @@ int main(int argc, char** argv)
 
 	Sndspec::Spectrogram::makeSpectrogram(parameters);
 
-
-
 }
