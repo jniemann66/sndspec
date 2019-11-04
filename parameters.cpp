@@ -84,26 +84,26 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			if(++argsIt != args.cend()) {
 				dynRange = std::abs(std::stod(*argsIt));
 				++argsIt;
-				break;
 			}
+			break;
 		case OutputDir:
 			if(++argsIt != args.cend()) {
 				outputPath = *argsIt;
-				++argsIt;
-				break;
+				++argsIt;	
 			}
+			break;
 		case Height:
 			if(++argsIt != args.cend()) {
 				imgHeight = std::max(160, std::stoi(*argsIt));
-				++argsIt;
-				break;
+				++argsIt;	
 			}
+			break;
 		case Width:
 			if(++argsIt != args.cend()) {
 				imgWidth = std::max(160, std::stoi(*argsIt));
-				++argsIt;
-				break;
+				++argsIt;	
 			}
+			break;
 		case TimeRange:
 			if(++argsIt != args.cend()) {
 				timeRange = true;
@@ -111,12 +111,18 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 				if(++argsIt != args.cend()) {
 					finish = std::max(0.0, std::stod(*argsIt));
 				}
-				++argsIt;
-				break;
+				++argsIt;	
 			}
+			break;
 		case WhiteBackground:
 			whiteBackground = true;
 			++argsIt;
+			break;
+		case WindowFunction:
+			if(++argsIt != args.cend()) {
+				windowFunction = *argsIt;
+				++argsIt;
+			}
 			break;
 
 #ifdef FS_AVAILABLE
@@ -190,6 +196,16 @@ void Parameters::setHasTimeRange(bool value)
 bool Parameters::hasWhiteBackground() const
 {
 	return whiteBackground;
+}
+
+std::string Parameters::getWindowFunction() const
+{
+	return windowFunction;
+}
+
+void Parameters::setWindowFunction(const std::string &value)
+{
+	windowFunction = value;
 }
 
 void Parameters::setHasWhiteBackground(bool value)

@@ -45,6 +45,7 @@ enum OptionID
 	Width,
 	TimeRange,
 	WhiteBackground,
+	WindowFunction,
 
 #ifdef FS_AVAILABLE
 	Recursive,
@@ -71,6 +72,7 @@ const std::vector<Option> options
 	{OptionID::Width, "--width", "-w", false, "Set Image Width in Pixels", {"n"}},
 	{OptionID::TimeRange, "--time-range", "-t", false, "Set Time Range in seconds", {"start-time", "finish-time"}},
 	{OptionID::WhiteBackground, "--white-background", "", false, "White Background (instead of black) with inverted heatmap palette", {}},
+	{OptionID::WindowFunction, "--window", "-W", false, "Set the window function", {"name"}},
 
 #ifdef FS_AVAILABLE
 	{OptionID::Recursive, "--recursive", "-r", false, "Recursive directory traversal", {}},
@@ -96,6 +98,7 @@ public:
 	void setHasWhiteBackground(bool value);
 	void setStart(double value);
 	void setFinish(double value);
+	void setWindowFunction(const std::string &value);
 
 	// getters
 	std::vector<std::string> getInputFiles() const;
@@ -107,6 +110,7 @@ public:
 	double getFinish() const;
 	bool hasTimeRange() const;
 	bool hasWhiteBackground() const;
+	std::string getWindowFunction() const;
 
 private:
 	std::vector<std::string> inputFiles;
@@ -118,6 +122,7 @@ private:
 	double start{0.0};
 	double finish{0.0};
 	bool whiteBackground{false};
+	std::string windowFunction{"kaiser"};
 
 #ifdef FS_AVAILABLE
 	bool recursiveDirectoryTraversal{false};
