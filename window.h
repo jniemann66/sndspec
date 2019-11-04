@@ -17,8 +17,8 @@ class Window
 	enum WindowType
 	{
 		Rectangular,
-		Triangular,
 		Bartlett,
+		Triangular,
 		CosineSum,
 		Kaiser
 	};
@@ -32,8 +32,8 @@ class Window
 	const std::map<std::string, WindowParameters> windowDefinitions
 	{
 		{"rectangular", {Rectangular, {}}},
-		{"triangular", {Triangular, {}}},
 		{"bartlett", {Bartlett, {}}},
+		{"triangular", {Triangular, {}}},
 		{"hann", {CosineSum, {0.5, 0.5}}},
 		{"hanning", {CosineSum, {0.5, 0.5}}},
 		{"hamming", {CosineSum, {0.54, 0.46}}},
@@ -59,6 +59,25 @@ public:
 		data.resize(size, 1.0);
 	}
 
+	void generateTriangular(int size)
+	{
+		data.resize(size, 0.0);
+		for(int n = 0 ; n < size; n++)
+		{
+			data[n] = 1.0 - std::abs((n - (size - 1) / 2.0) / ((size + 1) / 2.0));
+		}
+	}
+
+	void generateBartlett(int size)
+	{
+		data.resize(size, 0.0);
+		for(int n = 0 ; n < size; n++)
+		{
+			data[n] = 1.0 - std::abs((n - (size - 1) / 2.0) / ((size - 1) / 2.0));
+		}
+	}
+
+
 	void generalizedCosineWindow(int size, std::vector<FloatType> coeffs)
 	{
 		int N = size;
@@ -70,7 +89,7 @@ public:
 			FloatType a = 0.0; // accumulator
 			for(int k = 0; k < K; k++) {
 				a += s * coeffs.at(k) * std::cos(2 * M_PI * k * n / (N - 1));
-				s = -s;
+				s = -s; // flip sign
 			}
 			data[n] = a;
 		}
@@ -100,10 +119,10 @@ public:
 			switch(windowDefinition.windowType) {
 			case Rectangular:
 				return generateRectangular(size);
-			case Triangular:
-				return generateRectangular(size);
 			case Bartlett:
-				return generateRectangular(size);
+				return generateBartlett(size);
+			case Triangular:
+				return generateTriangular(size);
 			case CosineSum:
 				return generalizedCosineWindow(size, windowDefinition.coefficients);
 			case Kaiser:
