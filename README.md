@@ -14,6 +14,9 @@ Usage: sndspec filename [filename2 ...] [options]
 -w, --width <n>                                   Set Image Width in Pixels
 -t, --time-range <start-time> <finish-time>       Set Time Range in seconds
 --white-background                                White Background (instead of black) with inverted heatmap palette
+-W, --window <name>                               Set the window function
+--show-windows                                    Show a list of available window functions
+-r, --recursive                                   Recursive directory traversal
 --help                                            Help
 ~~~
 
