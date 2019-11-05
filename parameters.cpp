@@ -187,7 +187,7 @@ std::string Parameters::showWindowList()
 
 	std::ostringstream oss;
 	std::copy(names.begin(), names.end(), std::ostream_iterator<std::string>(oss, delim));
-	return std::string{oss.str()};
+	return oss.str();
 }
 
 double Parameters::getStart() const
