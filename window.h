@@ -11,45 +11,55 @@
 
 namespace Sndspec {
 
+enum WindowType
+{
+	Rectangular,
+	Bartlett,
+	Triangular,
+	CosineSum,
+	Kaiser
+};
+
+struct WindowParameters
+{
+	WindowType windowType;
+	std::vector<double> coefficients;
+};
+
+static const std::map<std::string, WindowParameters> windowDefinitions
+{
+	{"rectangular", {Rectangular, {}}},
+	{"bartlett", {Bartlett, {}}},
+	{"triangular", {Triangular, {}}},
+	{"hann", {CosineSum, {0.5, 0.5}}},
+	{"hanning", {CosineSum, {0.5, 0.5}}},
+	{"hamming", {CosineSum, {0.54, 0.46}}},
+	{"blackman", {CosineSum, {0.42, 0.5, 0.08}}},
+	{"nuttall", {CosineSum, {0.355768, 0.487396, 0.144232, 0.012604}}},
+	{"blackmannuttall", {CosineSum, {0.3635819, 0.4891775, 0.1365995, 0.0106411}}},
+	{"blackmanharris", {CosineSum, {0.35875, 0.48829, 0.14128, 0.01168}}},
+	{"5term", {CosineSum, {}}},
+	{"6term", {CosineSum, {}}},
+	{"7term", {CosineSum, {}}},
+	{"8term", {CosineSum, {}}},
+	{"9term", {CosineSum, {}}},
+	{"10term", {CosineSum, {}}},
+	{"11term", {CosineSum, {}}},
+	{"kaiser", {Kaiser, {}}}
+};
+
+static std::vector<std::string> getWindowNames()
+{
+	std::vector<std::string> names;
+	for(const auto& w : windowDefinitions) {
+		names.push_back(w.first);
+	}
+	return names;
+}
+
 template <typename FloatType>
 class Window
 {
-	enum WindowType
-	{
-		Rectangular,
-		Bartlett,
-		Triangular,
-		CosineSum,
-		Kaiser
-	};
-
-	struct WindowParameters
-	{
-		WindowType windowType;
-		std::vector<FloatType> coefficients;
-	};
-
-	const std::map<std::string, WindowParameters> windowDefinitions
-	{
-		{"rectangular", {Rectangular, {}}},
-		{"bartlett", {Bartlett, {}}},
-		{"triangular", {Triangular, {}}},
-		{"hann", {CosineSum, {0.5, 0.5}}},
-		{"hanning", {CosineSum, {0.5, 0.5}}},
-		{"hamming", {CosineSum, {0.54, 0.46}}},
-		{"blackman", {CosineSum, {0.42, 0.5, 0.08}}},
-		{"nuttall", {CosineSum, {0.355768, 0.487396, 0.144232, 0.012604}}},
-		{"blackmannuttall", {CosineSum, {0.3635819, 0.4891775, 0.1365995, 0.0106411}}},
-		{"blackmanharris", {CosineSum, {0.35875, 0.48829, 0.14128, 0.01168}}},
-		{"5term", {CosineSum, {}}},
-		{"6term", {CosineSum, {}}},
-		{"7term", {CosineSum, {}}},
-		{"8term", {CosineSum, {}}},
-		{"9term", {CosineSum, {}}},
-		{"10term", {CosineSum, {}}},
-		{"11term", {CosineSum, {}}},
-		{"kaiser", {Kaiser, {}}}
-	};
 
 public:
 	Window() = default;
@@ -158,6 +168,8 @@ public:
 			return 0.1102 * (dB - 8.7);
 		}
 	}
+
+
 
 private:
 	std::vector<FloatType> data;

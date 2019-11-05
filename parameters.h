@@ -46,6 +46,7 @@ enum OptionID
 	TimeRange,
 	WhiteBackground,
 	WindowFunction,
+	ShowWindows,
 
 #ifdef FS_AVAILABLE
 	Recursive,
@@ -73,6 +74,7 @@ const std::vector<Option> options
 	{OptionID::TimeRange, "--time-range", "-t", false, "Set Time Range in seconds", {"start-time", "finish-time"}},
 	{OptionID::WhiteBackground, "--white-background", "", false, "White Background (instead of black) with inverted heatmap palette", {}},
 	{OptionID::WindowFunction, "--window", "-W", false, "Set the window function", {"name"}},
+	{OptionID::ShowWindows, "--show-windows", "", false, "Show a list of available window functions", {}},
 
 #ifdef FS_AVAILABLE
 	{OptionID::Recursive, "--recursive", "-r", false, "Recursive directory traversal", {}},
@@ -87,6 +89,7 @@ public:
 	Parameters() = default;
 	std::string fromArgs(const std::vector<std::string>& args);
 	std::string showHelp();
+	std::string showWindowList();
 
 	// setters
 	void setInputFiles(const std::vector<std::string> &value);
@@ -99,6 +102,7 @@ public:
 	void setStart(double value);
 	void setFinish(double value);
 	void setWindowFunction(const std::string &value);
+	void setShowWindows(bool value);
 
 	// getters
 	std::vector<std::string> getInputFiles() const;
@@ -111,6 +115,8 @@ public:
 	bool hasTimeRange() const;
 	bool hasWhiteBackground() const;
 	std::string getWindowFunction() const;
+	bool getShowWindows() const;
+
 
 private:
 	std::vector<std::string> inputFiles;
@@ -123,6 +129,7 @@ private:
 	double finish{0.0};
 	bool whiteBackground{false};
 	std::string windowFunction{"kaiser"};
+	bool showWindows;
 
 #ifdef FS_AVAILABLE
 	bool recursiveDirectoryTraversal{false};

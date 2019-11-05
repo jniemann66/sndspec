@@ -1,8 +1,11 @@
 #include "parameters.h"
 #include "directory.h"
+#include "window.h"
 
 #include <iostream>
 #include <cmath>
+#include <sstream>
+#include <iterator>
 
 namespace Sndspec {
 
@@ -124,6 +127,10 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 				++argsIt;
 			}
 			break;
+		case ShowWindows:
+			showWindows = true;
+			++argsIt;
+			return showWindowList();
 
 #ifdef FS_AVAILABLE
 		case Recursive:
@@ -173,6 +180,16 @@ std::string Parameters::showHelp()
 	return helpString;
 }
 
+std::string Parameters::showWindowList()
+{
+	const auto names = Sndspec::getWindowNames();
+	const char* const delim = "\n";
+
+	std::ostringstream oss;
+	std::copy(names.begin(), names.end(), std::ostream_iterator<std::string>(oss, delim));
+	return std::string{oss.str()};
+}
+
 double Parameters::getStart() const
 {
 	return start;
@@ -201,6 +218,16 @@ bool Parameters::hasWhiteBackground() const
 std::string Parameters::getWindowFunction() const
 {
 	return windowFunction;
+}
+
+bool Parameters::getShowWindows() const
+{
+	return showWindows;
+}
+
+void Parameters::setShowWindows(bool value)
+{
+	showWindows = value;
 }
 
 void Parameters::setWindowFunction(const std::string &value)
