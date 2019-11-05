@@ -37,12 +37,13 @@ Usage: sndspec filename [filename2 ...] [options]
 
 ~~directory traversal~~
 
+~~Window function selection~~
+
 - info, metadata
 - channel selection / sum
 - move renderer to another library (?) (to free from dependence on Cairo)
 - Quadmath
 - long double
-- Window function selection
 - spectrums
 - waveforms
 - other color palettes
