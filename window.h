@@ -13,6 +13,7 @@ namespace Sndspec {
 
 enum WindowType
 {
+	Unknown,
 	Rectangular,
 	Bartlett,
 	Triangular,
@@ -22,37 +23,38 @@ enum WindowType
 
 struct WindowParameters
 {
+	std::string displayName;
 	WindowType windowType;
 	std::vector<double> coefficients;
 };
 
-static const std::map<std::string, WindowParameters> windowDefinitions
+static const std::vector<std::pair<std::string, WindowParameters>> windowDefinitions
 {
-	{"rectangular", {Rectangular, {}}},
-	{"bartlett", {Bartlett, {}}},
-	{"triangular", {Triangular, {}}},
-	{"hann", {CosineSum, {0.5, 0.5}}},
-	{"hanning", {CosineSum, {0.5, 0.5}}},
-	{"hamming", {CosineSum, {0.54, 0.46}}},
-	{"blackman", {CosineSum, {0.42, 0.5, 0.08}}},
-	{"nuttall", {CosineSum, {0.355768, 0.487396, 0.144232, 0.012604}}},
-	{"blackmannuttall", {CosineSum, {0.3635819, 0.4891775, 0.1365995, 0.0106411}}},
-	{"blackmanharris", {CosineSum, {0.35875, 0.48829, 0.14128, 0.01168}}},
-	{"5term", {CosineSum, {}}},
-	{"6term", {CosineSum, {}}},
-	{"7term", {CosineSum, {}}},
-	{"8term", {CosineSum, {}}},
-	{"9term", {CosineSum, {}}},
-	{"10term", {CosineSum, {}}},
-	{"11term", {CosineSum, {}}},
-	{"kaiser", {Kaiser, {}}}
+	{"rectangular",		{"Rectangular", Rectangular, {}}},
+	{"bartlett",		{"Bartlett", Bartlett, {}}},
+	{"triangular",		{"Triangular", Triangular, {}}},
+	{"hann",			{"Hann", CosineSum, {0.5, 0.5}}},
+	{"hanning",			{"Hanning", CosineSum, {0.5, 0.5}}},
+	{"hamming",			{"Hamming", CosineSum, {0.54, 0.46}}},
+	{"blackman",		{"Blackman", CosineSum, {0.42, 0.5, 0.08}}},
+	{"nuttall",			{"Nuttall", CosineSum, {0.355768, 0.487396, 0.144232, 0.012604}}},
+	{"blackmannuttall",	{"Blackman-Nuttall", CosineSum, {0.3635819, 0.4891775, 0.1365995, 0.0106411}}},
+	{"blackmanharris",	{"Blackman-Harris", CosineSum, {0.35875, 0.48829, 0.14128, 0.01168}}},
+	{"5term",			{"5-term", CosineSum, {}}},
+	{"6term",			{"6-term", CosineSum, {}}},
+	{"7term",			{"7-term", CosineSum, {}}},
+	{"8term",			{"8-term", CosineSum, {}}},
+	{"9term",			{"9-term", CosineSum, {}}},
+	{"10term",			{"10-term", CosineSum, {}}},
+	{"11term",			{"11-term", CosineSum, {}}},
+	{"kaiser",			{"Kaiser", Kaiser, {}}}
 };
 
 static std::vector<std::string> getWindowNames()
 {
 	std::vector<std::string> names;
 	for(const auto& w : windowDefinitions) {
-		names.push_back(w.first);
+		names.push_back(w.second.displayName);
 	}
 	return names;
 }
@@ -114,6 +116,25 @@ public:
 
 	void generate(std::string name, int size, FloatType val = 0.0)
 	{
+		const auto w = findWindow(name);
+		switch(w.windowType)
+		{
+		case Rectangular:
+			return generateRectangular(size);
+		case Bartlett:
+			return generateBartlett(size);
+		case Triangular:
+			return generateTriangular(size);
+		case CosineSum:
+			return generalizedCosineWindow(size, w.coefficients);
+		case Kaiser:
+		case Unknown:
+			return generateKaiser(size, val);
+		}
+	}
+
+	WindowParameters findWindow(std::string name)
+	{
 		// remove non-alphanum characters from name
 		name.erase(std::remove_if(name.begin(), name.end(), [](unsigned char c) -> bool {
 			return !std::isalnum(c);
@@ -124,24 +145,15 @@ public:
 			return std::tolower(c);
 		});
 
-		if(windowDefinitions.count(name) != 0) {
-			const WindowParameters& windowDefinition = windowDefinitions.at(name);
-			switch(windowDefinition.windowType) {
-			case Rectangular:
-				return generateRectangular(size);
-			case Bartlett:
-				return generateBartlett(size);
-			case Triangular:
-				return generateTriangular(size);
-			case CosineSum:
-				return generalizedCosineWindow(size, windowDefinition.coefficients);
-			case Kaiser:
-				return generateKaiser(size, val);
+		for(const auto& w : windowDefinitions) {
+			if(w.first.compare(name) == 0) {
+				return w.second;
 			}
 		}
 
-		return generateKaiser(size, val);
+		return {"Unknown", Unknown, {}};
 	}
+
 
 	const std::vector<FloatType>& getData() const
 	{
