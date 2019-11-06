@@ -4,6 +4,7 @@
 #include "fsdetect.h"
 
 #include <string>
+#include <algorithm>
 #include <vector>
 
 namespace Sndspec {
