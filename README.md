@@ -20,6 +20,13 @@ Usage: sndspec filename [filename2 ...] [options]
 --help                                            Help
 ~~~
 
+### notes
+
+- input filenames can be either directories or files. If they are directories, all suitable files within them are processed. Combinations of files and directories are ok. 
+- if recursive directory traversal is enabled, directories within directories will also be processed
+- case and punctuation of window names is ignored. Kaiser window is the default, and it is tuned to the requested dynamic-range
+
+
 ### todo
 
 ~~grid, tickmarks - frequency axis~~
