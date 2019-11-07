@@ -10,6 +10,8 @@
 #include <cctype>
 #include <string>
 
+#include <iostream>
+
 namespace Sndspec {
 
 enum WindowType
@@ -255,15 +257,22 @@ private:
 	static FloatType I0(FloatType z)
 	{
 		FloatType result = 0.0;
-		for (int k = 0; k < 34; ++k) {
+		FloatType oldResult = 0.0;
+		int k = 0;
+		do {
 			FloatType kfact = factorial[k];
-			FloatType x = pow(z * z / 4.0, k) / (kfact * kfact); // square first
-			result += x;
+			oldResult = result;
 
-			// FloatType x = pow(z / 2.0, k) / kfact;
-			// result += x * x; // square last
+			//	FloatType x = pow(z * z / 4.0, k) / (kfact * kfact); // square first
+			//	result += x;
 
-		}
+			FloatType x = pow(z / 2.0, k) / kfact;
+			result += x * x; // square last
+
+			k++;
+
+		} while (std::fpclassify(result - oldResult) == FP_NORMAL);
+
 		return result;
 	}
 };
