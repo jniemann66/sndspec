@@ -1,5 +1,9 @@
 #include "parameters.h"
+
+#ifdef FS_AVAILABLE
 #include "directory.h"
+#endif
+
 #include "window.h"
 
 #include <iostream>
