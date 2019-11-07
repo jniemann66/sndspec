@@ -246,7 +246,6 @@ public:
 	}
 
 
-
 private:
 	std::vector<FloatType> data;
 
@@ -258,8 +257,12 @@ private:
 		FloatType result = 0.0;
 		for (int k = 0; k < 34; ++k) {
 			FloatType kfact = factorial[k];
-			FloatType x = pow(z * z / 4.0, k) / (kfact * kfact);
+			FloatType x = pow(z * z / 4.0, k) / (kfact * kfact); // square first
 			result += x;
+
+			// FloatType x = pow(z / 2.0, k) / kfact;
+			// result += x * x; // square last
+
 		}
 		return result;
 	}
