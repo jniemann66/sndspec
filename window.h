@@ -252,8 +252,6 @@ private:
 	std::vector<FloatType> data;
 
 	// I0() : 0th-order Modified Bessel function of the first kind:
-	// todo: C++17 now includes this function in math library - worth checking it out
-
 	static FloatType I0(FloatType z)
 	{
 		FloatType result = 0.0;
