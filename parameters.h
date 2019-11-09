@@ -133,8 +133,8 @@ private:
 	bool whiteBackground{false};
 	std::string windowFunction{"kaiser"};
 	std::string windowFunctionDisplayName{"Kaiser"};
-	bool showWindowFunctionLabel{false};
-	bool showWindows;
+	bool showWindowFunctionLabel{false}; // flag to show the name of window function on the rendered output
+	bool showWindows{false}; // flag to provide a list of available window functions
 
 #ifdef FS_AVAILABLE
 	bool recursiveDirectoryTraversal{false};
