@@ -26,39 +26,40 @@ enum WindowType
 
 struct WindowParameters
 {
+	std::string name;
 	std::string displayName;
 	WindowType windowType;
 	std::vector<double> coefficients;
 };
 
-static const std::vector<std::pair<std::string, WindowParameters>> windowDefinitions
+static const std::vector<WindowParameters> windowDefinitions
 {
-	{"rectangular",		{"Rectangular", Rectangular, {}}},
-	{"bartlett",		{"Bartlett", Bartlett, {}}},
-	{"triangular",		{"Triangular", Triangular, {}}},
-	{"hann",			{"Hann", CosineSum, {0.5, 0.5}}},
-	{"hanning",			{"Hanning", CosineSum, {0.5, 0.5}}},
-	{"hamming",			{"Hamming", CosineSum, {0.54, 0.46}}},
-	{"blackman",		{"Blackman", CosineSum, {0.42, 0.5, 0.08}}},
-	{"nuttall",			{"Nuttall", CosineSum, {0.355768, 0.487396, 0.144232, 0.012604}}},
-	{"blackmannuttall",	{"Blackman-Nuttall", CosineSum, {0.3635819, 0.4891775, 0.1365995, 0.0106411}}},
-	{"blackmanharris",	{"Blackman-Harris", CosineSum, {0.35875, 0.48829, 0.14128, 0.01168}}},
-	{"5term",			{"5-term", CosineSum, {
+	{"rectangular",		"Rectangular", Rectangular, {}},
+	{"bartlett",		"Bartlett", Bartlett, {}},
+	{"triangular",		"Triangular", Triangular, {}},
+	{"hann",			"Hann", CosineSum, {0.5, 0.5}},
+	{"hanning",			"Hanning", CosineSum, {0.5, 0.5}},
+	{"hamming",			"Hamming", CosineSum, {0.54, 0.46}},
+	{"blackman",		"Blackman", CosineSum, {0.42, 0.5, 0.08}},
+	{"nuttall",			"Nuttall", CosineSum, {0.355768, 0.487396, 0.144232, 0.012604}},
+	{"blackmannuttall",	"Blackman-Nuttall", CosineSum, {0.3635819, 0.4891775, 0.1365995, 0.0106411}},
+	{"blackmanharris",	"Blackman-Harris", CosineSum, {0.35875, 0.48829, 0.14128, 0.01168}},
+	{"5term", "5-term", CosineSum, {
 				3.232153788877343e-01,
 				4.714921439576260e-01,
 				1.755341299601972e-01,
 				2.849699010614994e-02,
 				1.261357088292677e-03
-			}}}, // (1)
-	{"6term",			{"6-term", CosineSum, {
+			}}, // (1)
+	{"6term", "6-term", CosineSum, {
 				2.935578950102797e-01,
 				4.519357723474506e-01,
 				2.014164714263962e-01,
 				4.792610922105837e-02,
 				5.026196426859393e-03,
 				1.375555679558877e-04
-			}}},
-	{"7term",			{"7-term", CosineSum, {
+			}},
+	{"7term", "7-term", CosineSum, {
 				2.712203605850388e-001,
 				4.334446123274422e-001,
 				2.180041228929303e-001,
@@ -66,8 +67,8 @@ static const std::vector<std::pair<std::string, WindowParameters>> windowDefinit
 				1.076186730534183e-002,
 				7.700127105808265e-004,
 				1.368088305992921e-005
-			}}},
-	{"8term",			{"8-term", CosineSum, {
+			}},
+	{"8term", "8-term", CosineSum, {
 				2.533176817029088e-001,
 				4.163269305810218e-001,
 				2.288396213719708e-001,
@@ -76,8 +77,8 @@ static const std::vector<std::pair<std::string, WindowParameters>> windowDefinit
 				2.096702749032688e-003,
 				1.067741302205525e-004,
 				1.280702090361482e-006
-			}}},
-	{"9term",			{"9-term", CosineSum, {
+			}},
+	{"9term", "9-term", CosineSum, {
 				2.384331152777942e-001,
 				4.005545348643820e-001,
 				2.358242530472107e-001,
@@ -87,8 +88,8 @@ static const std::vector<std::pair<std::string, WindowParameters>> windowDefinit
 				3.685604163298180e-004,
 				1.384355593917030e-005,
 				1.161808358932861e-007,
-			}}},
-	{"10term",			{"10-term", CosineSum, {
+			}},
+	{"10term", "10-term", CosineSum, {
 				2.257345387130214e-001,
 				3.860122949150963e-001,
 				2.401294214106057e-001,
@@ -99,8 +100,8 @@ static const std::vector<std::pair<std::string, WindowParameters>> windowDefinit
 				6.008598932721187e-005,
 				1.710716472110202e-006,
 				1.027272130265191e-008,
-			}}},
-	{"11term",			{"11-term", CosineSum, {
+			}},
+	{"11term", "11-term", CosineSum, {
 				2.151527506679809e-001,
 				3.731348357785249e-001,
 				2.424243358446660e-001,
@@ -112,15 +113,15 @@ static const std::vector<std::pair<std::string, WindowParameters>> windowDefinit
 				8.884663168541479e-006,
 				1.938617116029048e-007,
 				8.482485599330470e-010
-			}}},
-	{"kaiser",			{"Kaiser", Kaiser, {}}}
+			}},
+	{"kaiser", "Kaiser", Kaiser, {}}
 };
 
 static std::vector<std::string> getWindowNames()
 {
 	std::vector<std::string> names;
 	for(const auto& w : windowDefinitions) {
-		names.push_back(w.second.displayName);
+		names.push_back(w.displayName);
 	}
 	return names;
 }
@@ -199,7 +200,7 @@ public:
 		}
 	}
 
-	WindowParameters findWindow(std::string name)
+	static WindowParameters findWindow(std::string name)
 	{
 		// remove non-alphanum characters from name
 		name.erase(std::remove_if(name.begin(), name.end(), [](unsigned char c) -> bool {
@@ -207,17 +208,17 @@ public:
 		}), name.end());
 
 		// convert name to lowercase
-		std::transform(data.begin(), data.end(), data.begin(), [](unsigned char c) -> unsigned char {
+		std::transform(name.begin(), name.end(), name.begin(), [](unsigned char c) -> unsigned char {
 			return std::tolower(c);
 		});
 
 		for(const auto& w : windowDefinitions) {
-			if(w.first.compare(name) == 0) {
-				return w.second;
+			if(w.name.compare(name) == 0) {
+				return w;
 			}
 		}
 
-		return {"Unknown", Unknown, {}};
+		return {"unknown", "Unknown", Unknown, {}};
 	}
 
 

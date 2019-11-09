@@ -102,6 +102,8 @@ public:
 	void setStart(double value);
 	void setFinish(double value);
 	void setWindowFunction(const std::string &value);
+	void setWindowFunctionDisplayName(const std::string &value);
+	void setShowWindowFunctionLabel(bool value);
 	void setShowWindows(bool value);
 
 	// getters
@@ -115,8 +117,9 @@ public:
 	bool hasTimeRange() const;
 	bool hasWhiteBackground() const;
 	std::string getWindowFunction() const;
+	std::string getWindowFunctionDisplayName() const;
 	bool getShowWindows() const;
-
+	bool getShowWindowFunctionLabel() const;
 
 private:
 	std::vector<std::string> inputFiles;
@@ -129,6 +132,8 @@ private:
 	double finish{0.0};
 	bool whiteBackground{false};
 	std::string windowFunction{"kaiser"};
+	std::string windowFunctionDisplayName{"Kaiser"};
+	bool showWindowFunctionLabel{false};
 	bool showWindows;
 
 #ifdef FS_AVAILABLE

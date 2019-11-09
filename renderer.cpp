@@ -42,6 +42,8 @@ void Renderer::render(const Parameters &parameters, const SpectrogramResults<dou
 	int h = plotHeight - 1;
 	double colorScale = heatMapPalette.size() / -parameters.getDynRange();
 	int lastColorIndex = std::max(0, static_cast<int>(heatMapPalette.size()) - 1);
+	windowFunctionLabel = "Window: " + parameters.getWindowFunctionDisplayName();
+	showWindowFunctionLabel = parameters.getShowWindowFunctionLabel();
 
 	for(int c = 0; c < 1 /*numChannels*/; c++) {
 		for(int y = 0; y < numBins; y++) {
@@ -163,6 +165,14 @@ void Renderer::drawText()
 	cairo_text_extents(cr, inputFilename.c_str(), &infoExtents);
 	cairo_move_to(cr, plotOriginX, plotOriginY - infoExtents.height);
 	cairo_show_text(cr, inputFilename.c_str());
+
+	// window function label
+	if(showWindowFunctionLabel) {
+		cairo_text_extents_t windowFuncExtents;
+		cairo_text_extents(cr, windowFunctionLabel.c_str(), &windowFuncExtents);
+		cairo_move_to(cr, plotOriginX + plotWidth - windowFuncExtents.x_advance, plotOriginY - infoExtents.height);
+		cairo_show_text(cr, windowFunctionLabel.c_str());
+	}
 
 	// horizAxis
 	cairo_text_extents_t horizAxisLabelExtents;

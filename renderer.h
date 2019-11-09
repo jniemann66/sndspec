@@ -73,6 +73,8 @@ private:
 	std::string inputFilename;
 	std::string horizAxisLabel{"Time (s)"};
 	std::string vertAxisLabel{"Frequency (Hz)"};
+	std::string windowFunctionLabel;
+	bool showWindowFunctionLabel{false};
 	double dynRange;
 
 	// font sizes

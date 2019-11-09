@@ -127,7 +127,15 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			break;
 		case WindowFunction:
 			if(++argsIt != args.cend()) {
-				windowFunction = *argsIt;
+				showWindowFunctionLabel = true;
+				auto wp = Window<double>::findWindow(*argsIt);
+				if(wp.windowType == Unknown) {
+					windowFunction = "kaiser";
+					windowFunctionDisplayName = "Kaiser";
+				} else {
+					windowFunction = wp.name;
+					windowFunctionDisplayName = wp.displayName;
+				}
 				++argsIt;
 			}
 			break;
@@ -227,6 +235,26 @@ std::string Parameters::getWindowFunction() const
 bool Parameters::getShowWindows() const
 {
 	return showWindows;
+}
+
+std::string Parameters::getWindowFunctionDisplayName() const
+{
+	return windowFunctionDisplayName;
+}
+
+void Parameters::setWindowFunctionDisplayName(const std::string &value)
+{
+	windowFunctionDisplayName = value;
+}
+
+bool Parameters::getShowWindowFunctionLabel() const
+{
+	return showWindowFunctionLabel;
+}
+
+void Parameters::setShowWindowFunctionLabel(bool value)
+{
+	showWindowFunctionLabel = value;
 }
 
 void Parameters::setShowWindows(bool value)
