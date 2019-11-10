@@ -34,7 +34,7 @@ Renderer::~Renderer()
 	cairo_surface_destroy(surface);
 }
 
-void Renderer::render(const Parameters &parameters, const SpectrogramResults<double> &spectrogramData)
+void Renderer::renderSpectrogram(const Parameters &parameters, const SpectrogramResults<double> &spectrogramData)
 {
 	int numChannels = spectrogramData.size();
 	int numSpectrums = spectrogramData.at(0).size();
@@ -57,7 +57,7 @@ void Renderer::render(const Parameters &parameters, const SpectrogramResults<dou
 	}
 }
 
-void Renderer::drawGrid()
+void Renderer::drawSpectrogramGrid()
 {
 	cairo_set_line_width (cr, 1.0);
 	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);

@@ -18,12 +18,12 @@ public:
 	Renderer(int width, int height);
 	~Renderer();
 
-	void render(const Parameters& parameters, const SpectrogramResults<double>& spectrogramData);
+	void renderSpectrogram(const Parameters& parameters, const SpectrogramResults<double>& spectrogramData);
 
 	std::vector<int32_t> getHeatMapPalette() const;
 	void setHeatMapPalette(const std::vector<int32_t> &value);
 	bool writeToFile(const std::string &filename);
-	void drawGrid();
+	void drawSpectrogramGrid();
 	void drawBorder();
 	void drawTickmarks();
 	void drawText();

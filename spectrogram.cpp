@@ -88,7 +88,7 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			std::cout << "Rendering ... ";
 
 			// main plot area
-			renderer.render(parameters, spectrogramData);
+			renderer.renderSpectrogram(parameters, spectrogramData);
 
 			// decorations
 			double startTime =  static_cast<double>(r.getStartPos()) / r.getSamplerate();
@@ -101,7 +101,7 @@ void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters
 			renderer.setFinishTime(finishTime);
 			renderer.setDynRange(parameters.getDynRange());
 
-			renderer.drawGrid();
+			renderer.drawSpectrogramGrid();
 			renderer.drawBorder();
 			renderer.drawTickmarks();
 			renderer.drawText();
