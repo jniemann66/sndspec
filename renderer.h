@@ -19,6 +19,7 @@ public:
 	~Renderer();
 
 	void renderSpectrogram(const Parameters& parameters, const SpectrogramResults<double>& spectrogramData);
+	void renderSpectrum(const Parameters& parameters, const std::vector<std::vector<double> > spectrumData);
 	void makeNegativeImage();
 	bool writeToFile(const std::string &filename);
 	void clear();

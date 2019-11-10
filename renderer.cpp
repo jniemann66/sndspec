@@ -63,6 +63,26 @@ void Renderer::renderSpectrogram(const Parameters &parameters, const Spectrogram
 	drawSpectrogramHeatMap();
 }
 
+
+void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<std::vector<double>> spectrumData)
+{
+	int numChannels = spectrumData.size();
+	int numBins = spectrumData.at(0).size();
+
+
+
+	for(int c = 0; c < numChannels; c++) {
+		int32_t color = 0xffffffff;
+	//	int lineAddr = plotOriginX + (plotOriginY + h - y) * stride32;
+		for(int x = 0; x < numBins; x++) {
+
+		//	pixelBuffer[x + lineAddr] = color;
+		}
+
+	}
+
+}
+
 void Renderer::drawSpectrogramGrid()
 {
 	cairo_set_line_width (cr, 1.0);
