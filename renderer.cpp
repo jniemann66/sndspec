@@ -55,6 +55,12 @@ void Renderer::renderSpectrogram(const Parameters &parameters, const Spectrogram
 			}
 		}
 	}
+
+	drawSpectrogramGrid();
+	drawBorder();
+	drawSpectrogramTickmarks();
+	drawSpectrogramText();
+	drawSpectrogramHeatMap();
 }
 
 void Renderer::drawSpectrogramGrid()
@@ -98,7 +104,7 @@ void Renderer::drawBorder()
 	cairo_stroke(cr);
 }
 
-void Renderer::drawTickmarks()
+void Renderer::drawSpectrogramTickmarks()
 {
 	cairo_set_line_width (cr, 2);
 	cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
@@ -148,7 +154,7 @@ void Renderer::drawTickmarks()
 	cairo_stroke (cr);
 }
 
-void Renderer::drawText()
+void Renderer::drawSpectrogramText()
 {
 	double s = 20.0;
 
@@ -191,7 +197,7 @@ void Renderer::drawText()
 
 }
 
-void Renderer::drawHeatMap()
+void Renderer::drawSpectrogramHeatMap()
 {
 	double sc = static_cast<double>(heatMapPalette.size()) / plotHeight;
 

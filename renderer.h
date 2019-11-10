@@ -19,19 +19,12 @@ public:
 	~Renderer();
 
 	void renderSpectrogram(const Parameters& parameters, const SpectrogramResults<double>& spectrogramData);
-
-	std::vector<int32_t> getHeatMapPalette() const;
-	void setHeatMapPalette(const std::vector<int32_t> &value);
-	bool writeToFile(const std::string &filename);
-	void drawSpectrogramGrid();
-	void drawBorder();
-	void drawTickmarks();
-	void drawText();
-	void drawHeatMap();
 	void makeNegativeImage();
+	bool writeToFile(const std::string &filename);
 	void clear();
 
 	// setters
+	void setHeatMapPalette(const std::vector<int32_t> &value);
 	void setNyquist(int value); // required for frequency axis
 	void setFreqStep(int value); // required for frequency axis
 	void setNumTimeDivs(int value); // required for time axis
@@ -44,6 +37,7 @@ public:
 	void setVertAxisLabel(const std::string &value);
 
 	// getters
+	std::vector<int32_t> getHeatMapPalette() const;
 	int getPlotWidth() const;
 	int getPlotHeight() const;
 	int getNyquist() const;
@@ -59,6 +53,12 @@ public:
 	std::vector<uint32_t> getPixelBuffer() const;
 
 private:
+	void drawSpectrogramGrid();
+	void drawBorder();
+	void drawSpectrogramTickmarks();
+	void drawSpectrogramText();
+	void drawSpectrogramHeatMap();
+
 	// dimensions of whole image
 	int width;
 	int height;
