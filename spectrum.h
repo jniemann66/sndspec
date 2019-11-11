@@ -27,6 +27,7 @@ public:
 	static int convertFFTSizeToSpectrumSize(int fft_size);
 	static int selectBestFFTSizeFromSpectrumSize(int spectrum_size);
 	static int selectBestFFTSize(int requested_size); // pick a good FFT size for FFTW (of the form 2^a * 3^b * 5^c * 7^d * [1|11|13] )
+	static void scaleMagnitudeRelativeDb(std::vector<std::vector<double> > &s, bool fromMagSquared);
 
 private:
 	fftw_plan plan;
