@@ -47,6 +47,7 @@ enum OptionID
 	WhiteBackground,
 	WindowFunction,
 	ShowWindows,
+	SpectrumMode,
 
 #ifdef FS_AVAILABLE
 	Recursive,
@@ -75,6 +76,7 @@ const std::vector<Option> options
 	{OptionID::WhiteBackground, "--white-background", "", false, "White Background (instead of black) with inverted heatmap palette", {}},
 	{OptionID::WindowFunction, "--window", "-W", false, "Set the window function", {"name"}},
 	{OptionID::ShowWindows, "--show-windows", "", false, "Show a list of available window functions", {}},
+	{OptionID::SpectrumMode, "--spectrum", "", false, "Plot a Spectrum instead of Spectrogram", {}},
 
 #ifdef FS_AVAILABLE
 	{OptionID::Recursive, "--recursive", "-r", false, "Recursive directory traversal", {}},
@@ -105,6 +107,7 @@ public:
 	void setWindowFunctionDisplayName(const std::string &value);
 	void setShowWindowFunctionLabel(bool value);
 	void setShowWindows(bool value);
+	void setSpectrumMode(bool value);
 
 	// getters
 	std::vector<std::string> getInputFiles() const;
@@ -120,6 +123,7 @@ public:
 	std::string getWindowFunctionDisplayName() const;
 	bool getShowWindows() const;
 	bool getShowWindowFunctionLabel() const;
+	bool getSpectrumMode() const;
 
 private:
 	std::vector<std::string> inputFiles;
@@ -135,6 +139,7 @@ private:
 	std::string windowFunctionDisplayName{"Kaiser"};
 	bool showWindowFunctionLabel{false}; // flag to show the name of window function on the rendered output
 	bool showWindows{false}; // flag to provide a list of available window functions
+	bool spectrumMode{false};
 
 #ifdef FS_AVAILABLE
 	bool recursiveDirectoryTraversal{false};

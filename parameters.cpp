@@ -143,6 +143,10 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			showWindows = true;
 			++argsIt;
 			return showWindowList();
+		case SpectrumMode:
+			spectrumMode = true;
+			++argsIt;
+			break;
 
 #ifdef FS_AVAILABLE
 		case Recursive:
@@ -250,6 +254,16 @@ void Parameters::setWindowFunctionDisplayName(const std::string &value)
 bool Parameters::getShowWindowFunctionLabel() const
 {
 	return showWindowFunctionLabel;
+}
+
+bool Parameters::getSpectrumMode() const
+{
+	return spectrumMode;
+}
+
+void Parameters::setSpectrumMode(bool value)
+{
+	spectrumMode = value;
 }
 
 void Parameters::setShowWindowFunctionLabel(bool value)

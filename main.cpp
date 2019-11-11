@@ -1,4 +1,5 @@
 #include "spectrogram.h"
+#include "spectrum.h"
 #include "parameters.h"
 
 #include "tests.h"
@@ -19,6 +20,9 @@ int main(int argc, char** argv)
 		return 0;
 	}
 
-	Sndspec::Spectrogram::makeSpectrogram(parameters);
-
+	if(parameters.getSpectrumMode()) {
+		// todo: make a spectrum
+	} else {
+		Sndspec::Spectrogram::makeSpectrogram(parameters);
+	}
 }
