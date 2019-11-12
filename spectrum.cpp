@@ -156,7 +156,6 @@ void Spectrum::scaleMagnitudeRelativeDb(std::vector<std::vector<double>> &s, boo
 	}
 }
 
-template <typename FloatType>
 void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 {
 	// prepare a renderer
@@ -169,7 +168,7 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 
 		// open file
 		std::cout << "Opening input file: " << inputFilename << " ... ";
-		Sndspec::Reader<FloatType> r(inputFilename, 0, 1);
+		Sndspec::Reader<double> r(inputFilename, 0, 1);
 		if(r.getSndFileHandle() == nullptr || r.getSndFileHandle()->error() != SF_ERR_NO_ERROR) {
 			std::cout << "couldn't open file !" << std::endl;
 		} else {
@@ -187,21 +186,19 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		r.setBlockSize(blockSize);
 
 		// create window
-		Sndspec::Window<FloatType> window;
+		Sndspec::Window<double> window;
 		window.generate(parameters.getWindowFunction(), blockSize, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
 
 		// prepare the spectrum analyzers
-		std::vector<Spectrum> analyzers(nChannels, blockSize);
-
-		// give the reader direct write-access to the analyzer input buffer
+		std::vector<Spectrum> analyzers;
 		for(int ch = 0; ch < nChannels; ch ++) {
-			r.setChannelBuffer(ch, analyzers.at(ch).getTdBuf());
+			analyzers.emplace_back(blockSize);
+			r.setChannelBuffer(ch, analyzers.at(ch).getTdBuf()); // give the reader direct write-access to the analyzer input buffer
 		}
 
 		// set a callback function to execute spectrum analysis for each block read
 		r.setProcessingFunc([&analyzers](int pos, int channel, const double* data) -> void {
-			Spectrum* analyzer = &analyzers.at(channel);
-			analyzer->exec();
+			analyzers.at(channel).exec();
 		});
 
 		// read (and analyze) the file
@@ -219,6 +216,7 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		Spectrum::scaleMagnitudeRelativeDb(results, true);
 
 		// render
+		renderer.renderSpectrum(parameters, results);
 	}
 }
 
