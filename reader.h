@@ -156,6 +156,15 @@ public:
 		nFrames = value;
 	}
 
+	int getBlockSize() const
+	{
+		return blockSize;
+	}
+	void setBlockSize(int value)
+	{
+		blockSize = value;
+	}
+
 private:
 	std::string filename;
 	ProcessingFunc processingFunc;

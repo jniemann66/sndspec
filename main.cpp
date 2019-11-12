@@ -23,6 +23,6 @@ int main(int argc, char** argv)
 	if(parameters.getSpectrumMode()) {
 		// todo: make a spectrum
 	} else {
-		Sndspec::Spectrogram::makeSpectrogram(parameters);
+		Sndspec::Spectrogram::makeSpectrogramFromFile(parameters);
 	}
 }

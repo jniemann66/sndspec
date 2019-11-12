@@ -11,7 +11,7 @@
 
 #include <cassert>
 
-void Sndspec::Spectrogram::makeSpectrogram(const Sndspec::Parameters &parameters)
+void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &parameters)
 {
 	static const int reservedChannels(2); // stereo (most common use case)
 

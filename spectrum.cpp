@@ -1,4 +1,7 @@
 #include "spectrum.h"
+#include "renderer.h"
+#include "reader.h"
+#include "window.h"
 
 #include <vector>
 #include <cmath>
@@ -153,5 +156,45 @@ void Spectrum::scaleMagnitudeRelativeDb(std::vector<std::vector<double>> &s, boo
 	}
 }
 
+template <typename FloatType>
+void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
+{
+	static const int reservedChannels(2); // stereo (most common use case)
+
+	// prepare a renderer
+	Renderer renderer(parameters.getImgWidth(), parameters.getImgHeight());
+
+	// loop over the files
+	for(const std::string& inputFilename : parameters.getInputFiles()) {
+		int nChannels;
+		int sampleRate;
+
+		// open file
+		std::cout << "Opening input file: " << inputFilename << " ... ";
+		Sndspec::Reader<FloatType> r(inputFilename, 0, 0);
+		if(r.getSndFileHandle() == nullptr || r.getSndFileHandle()->error() != SF_ERR_NO_ERROR) {
+			std::cout << "couldn't open file !" << std::endl;
+		} else {
+			std::cout << "ok" << std::endl;
+			nChannels = r.getNChannels();
+			sampleRate = r.getSamplerate();
+		}
+
+		// calculate blocksize
+		int64_t startPos = parameters.getStart() * sampleRate;
+		int64_t finishPos = parameters.getFinish() * sampleRate;
+		int64_t interval = std::max(0LL, finishPos - startPos);
+		int fftsize = Spectrum::selectBestFFTSize(interval);
+
+		// create window
+		Sndspec::Window<FloatType> window;
+		window.generate(parameters.getWindowFunction(), fftSize, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
+
+		// read relevant section from file
+
+		// get fft of each channel
+		// render
+	}
+}
 
 } // namespace Sndspec

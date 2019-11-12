@@ -11,7 +11,7 @@ using SpectrogramResults = std::vector<std::vector<std::vector<T>>>; // (channel
 class Spectrogram {
 
 public:
-	static void makeSpectrogram(const Parameters& parameters);
+	static void makeSpectrogramFromFile(const Parameters& parameters);
 	static void scaleMagnitudeRelativeDb(SpectrogramResults<double>& s, bool fromMagSquared = true);
 
 private:
