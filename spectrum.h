@@ -18,7 +18,7 @@ public:
 	double* getTdBuf() const;
 	const fftw_complex *getFdBuf() const;
 	template <typename FloatType>
-	void makeSpectrumFromFile(const Sndspec::Parameters &parameters);
+	static void makeSpectrumFromFile(const Sndspec::Parameters &parameters);
 	void getMag(std::vector<double>& buf);
 	void getMagSquared(std::vector<double> &buf);
 	void getPhase(std::vector<double>& buf);

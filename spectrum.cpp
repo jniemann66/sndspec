@@ -159,8 +159,6 @@ void Spectrum::scaleMagnitudeRelativeDb(std::vector<std::vector<double>> &s, boo
 template <typename FloatType>
 void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 {
-	static const int reservedChannels(2); // stereo (most common use case)
-
 	// prepare a renderer
 	Renderer renderer(parameters.getImgWidth(), parameters.getImgHeight());
 
@@ -171,7 +169,7 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 
 		// open file
 		std::cout << "Opening input file: " << inputFilename << " ... ";
-		Sndspec::Reader<FloatType> r(inputFilename, 0, 0);
+		Sndspec::Reader<FloatType> r(inputFilename, 0, 1);
 		if(r.getSndFileHandle() == nullptr || r.getSndFileHandle()->error() != SF_ERR_NO_ERROR) {
 			std::cout << "couldn't open file !" << std::endl;
 		} else {
@@ -181,18 +179,45 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		}
 
 		// calculate blocksize
-		int64_t startPos = parameters.getStart() * sampleRate;
-		int64_t finishPos = parameters.getFinish() * sampleRate;
-		int64_t interval = std::max(0LL, finishPos - startPos);
-		int fftsize = Spectrum::selectBestFFTSize(interval);
+		r.setStartPos(std::max(0, std::min(static_cast<int>(r.getSamplerate() * parameters.getStart()), r.getNFrames())));
+		int64_t finishPos = std::max(0, std::min(static_cast<int>(r.getSamplerate() * parameters.getFinish()), r.getNFrames()));
+		int interval = static_cast<int>(std::max(0LL, finishPos - r.getStartPos()));
+		int blockSize = Spectrum::selectBestFFTSize(interval);
+		r.setFinishPos(r.getStartPos() + blockSize);
+		r.setBlockSize(blockSize);
 
 		// create window
 		Sndspec::Window<FloatType> window;
-		window.generate(parameters.getWindowFunction(), fftSize, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
+		window.generate(parameters.getWindowFunction(), blockSize, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
 
-		// read relevant section from file
+		// prepare the spectrum analyzers
+		std::vector<Spectrum> analyzers(nChannels, blockSize);
 
-		// get fft of each channel
+		// give the reader direct write-access to the analyzer input buffer
+		for(int ch = 0; ch < nChannels; ch ++) {
+			r.setChannelBuffer(ch, analyzers.at(ch).getTdBuf());
+		}
+
+		// set a callback function to execute spectrum analysis for each block read
+		r.setProcessingFunc([&analyzers](int pos, int channel, const double* data) -> void {
+			Spectrum* analyzer = &analyzers.at(channel);
+			analyzer->exec();
+		});
+
+		// read (and analyze) the file
+		r.readDeinterleaved();
+
+		// prepare and populate results buffers
+		auto spectrumSize = Spectrum::convertFFTSizeToSpectrumSize(blockSize);
+		std::vector<std::vector<double>> results;
+		for(int ch = 0; ch < nChannels; ch ++) {
+			results.emplace_back(spectrumSize, 0.0);
+			analyzers.at(ch).getMagSquared(results.at(ch));
+		}
+
+		// scale to dB
+		Spectrum::scaleMagnitudeRelativeDb(results, true);
+
 		// render
 	}
 }
