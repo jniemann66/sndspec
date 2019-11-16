@@ -15,9 +15,7 @@ public:
 	static void scaleMagnitudeRelativeDb(SpectrogramResults<double>& s, bool fromMagSquared = true);
 
 private:
-	static std::string replaceFileExt(const std::string &filename, const std::string &newExt);
-	static std::string getFilenameOnly(const std::string &path);
-	static std::string enforceTrailingSeparator(const std::string &directory);
+
 };
 
 } // namespace Sndspec

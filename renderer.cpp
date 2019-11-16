@@ -69,18 +69,20 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 	int numChannels = spectrumData.size();
 	int numBins = spectrumData.at(0).size();
 
-
+	double hScaling = plotWidth / numBins;
+	double vScaling = plotHeight / parameters.getDynRange();
 
 	for(int c = 0; c < numChannels; c++) {
-		int32_t color = 0xffffffff;
-	//	int lineAddr = plotOriginX + (plotOriginY + h - y) * stride32;
+		cairo_set_line_width (cr, 1.0);
+		cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
+
+		cairo_move_to(cr, plotOriginX, plotOriginY + vScaling * spectrumData.at(c).at(0));
 		for(int x = 0; x < numBins; x++) {
-
-		//	pixelBuffer[x + lineAddr] = color;
+			cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY + vScaling * spectrumData.at(c).at(x));
 		}
-
 	}
 
+	cairo_stroke(cr);
 }
 
 void Renderer::drawSpectrogramGrid()

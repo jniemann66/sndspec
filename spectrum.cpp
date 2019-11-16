@@ -34,7 +34,7 @@ Spectrum::~Spectrum()
 }
 
 void Spectrum::exec()
-{
+{	
 	fftw_execute(plan);
 }
 
@@ -188,6 +188,7 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		// create window
 		Sndspec::Window<double> window;
 		window.generate(parameters.getWindowFunction(), blockSize, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
+		r.setWindow(window.getData());
 
 		// prepare the spectrum analyzers
 		std::vector<Spectrum> analyzers;
@@ -208,7 +209,7 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		auto spectrumSize = Spectrum::convertFFTSizeToSpectrumSize(blockSize);
 		std::vector<std::vector<double>> results;
 		for(int ch = 0; ch < nChannels; ch ++) {
-			results.emplace_back(spectrumSize, 0.0);
+			results.emplace_back(blockSize, 0.0);
 			analyzers.at(ch).getMagSquared(results.at(ch));
 		}
 
@@ -217,6 +218,27 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 
 		// render
 		renderer.renderSpectrum(parameters, results);
+
+		// determine output filename
+		std::string outputFilename;
+		if(parameters.getOutputPath().empty()) {
+			outputFilename = replaceFileExt(inputFilename, "png");
+		} else {
+			outputFilename = enforceTrailingSeparator(parameters.getOutputPath()) + getFilenameOnly(replaceFileExt(inputFilename, "png"));
+		}
+
+		if(!outputFilename.empty()) {
+			std::cout << "Saving to " << outputFilename << std::flush;
+			if(renderer.writeToFile(outputFilename)) {
+				std::cout << " ... OK" << std::endl;
+			} else {
+				std::cout << " ... ERROR" << std::endl;
+			}
+		} else {
+			std::cout << "Error: couldn't deduce output filename" << std::endl;
+		}
+
+
 	}
 }
 
