@@ -21,7 +21,7 @@ int main(int argc, char** argv)
 	}
 
 	if(parameters.getSpectrumMode()) {
-	//	Sndspec::Spectrum::makeSpectrumFromFile(parameters);
+		Sndspec::Spectrum::makeSpectrumFromFile(parameters);
 	} else {
 		Sndspec::Spectrogram::makeSpectrogramFromFile(parameters);
 	}

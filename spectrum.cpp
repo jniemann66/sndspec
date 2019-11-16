@@ -191,26 +191,26 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		r.setWindow(window.getData());
 
 		// prepare the spectrum analyzers
-		std::vector<Spectrum> analyzers;
+		std::vector<std::unique_ptr<Spectrum>> analyzers;
 		for(int ch = 0; ch < nChannels; ch ++) {
-			analyzers.emplace_back(blockSize);
-			r.setChannelBuffer(ch, analyzers.at(ch).getTdBuf()); // give the reader direct write-access to the analyzer input buffer
+			// create a spectrum analyzer for each channel if not already existing
+			analyzers.emplace_back(new Spectrum(blockSize));
+			r.setChannelBuffer(ch, analyzers.at(ch)->getTdBuf()); // give the reader direct write-access to the analyzer input buffer
 		}
 
 		// set a callback function to execute spectrum analysis for each block read
 		r.setProcessingFunc([&analyzers](int pos, int channel, const double* data) -> void {
-			analyzers.at(channel).exec();
+			analyzers.at(channel)->exec();
 		});
 
 		// read (and analyze) the file
 		r.readDeinterleaved();
 
 		// prepare and populate results buffers
-		auto spectrumSize = Spectrum::convertFFTSizeToSpectrumSize(blockSize);
 		std::vector<std::vector<double>> results;
 		for(int ch = 0; ch < nChannels; ch ++) {
 			results.emplace_back(blockSize, 0.0);
-			analyzers.at(ch).getMagSquared(results.at(ch));
+			analyzers.at(ch)->getMagSquared(results.at(ch));
 		}
 
 		// scale to dB
@@ -237,8 +237,6 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		} else {
 			std::cout << "Error: couldn't deduce output filename" << std::endl;
 		}
-
-
 	}
 }
 
