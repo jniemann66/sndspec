@@ -209,7 +209,7 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		// prepare and populate results buffers
 		std::vector<std::vector<double>> results;
 		for(int ch = 0; ch < nChannels; ch ++) {
-			results.emplace_back(blockSize, 0.0);
+			results.emplace_back(analyzers.at(ch)->getSpectrumSize(), 0.0);
 			analyzers.at(ch)->getMagSquared(results.at(ch));
 		}
 
