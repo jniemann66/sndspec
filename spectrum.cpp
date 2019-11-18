@@ -217,6 +217,7 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		Spectrum::scaleMagnitudeRelativeDb(results, true);
 
 		// render
+		renderer.setDynRange(parameters.getDynRange());
 		renderer.renderSpectrum(parameters, results);
 
 		if(parameters.hasWhiteBackground()) {

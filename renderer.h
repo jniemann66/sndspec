@@ -59,6 +59,7 @@ private:
 	void drawSpectrogramTickmarks();
 	void drawSpectrogramText();
 	void drawSpectrogramHeatMap();
+	void drawSpectrumGrid();
 
 	// dimensions of whole image
 	int width;
@@ -158,6 +159,7 @@ private:
 //	};
 
 	void setMargins();
+
 };
 
 } // namespace Sndspec

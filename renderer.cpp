@@ -84,6 +84,8 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 	}
 
 	cairo_stroke(cr);
+	drawBorder();
+	drawSpectrumGrid();
 }
 
 void Renderer::drawSpectrogramGrid()
@@ -112,6 +114,36 @@ void Renderer::drawSpectrogramGrid()
 
 	cairo_stroke (cr);
 }
+
+void Renderer::drawSpectrumGrid()
+{
+	cairo_set_line_width (cr, 1.0);
+	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
+
+
+	double yScale = plotHeight / dynRange;
+	double yStep = yScale * 10;
+	double y = plotOriginY + plotHeight - 1 ;
+
+	while(y > plotOriginY) {
+		cairo_move_to(cr, plotOriginX, y);
+		cairo_line_to(cr, plotOriginX + plotWidth - 1, y);
+		y -= yStep;
+	}
+
+//	double fWidth = static_cast<double>(plotWidth);
+//	double xStep = 5000 * fWidth / nyquist;
+//	double x = plotOriginX;
+
+//	while(x < fWidth) {
+//		cairo_move_to(cr, x, plotOriginY);
+//		cairo_line_to(cr, x, plotOriginY + plotHeight - 1);
+//		x += xStep;
+//	}
+
+	cairo_stroke (cr);
+}
+
 
 void Renderer::drawBorder()
 {
