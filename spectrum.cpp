@@ -219,6 +219,10 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		// render
 		renderer.renderSpectrum(parameters, results);
 
+		if(parameters.hasWhiteBackground()) {
+			renderer.makeNegativeImage();
+		}
+
 		// determine output filename
 		std::string outputFilename;
 		if(parameters.getOutputPath().empty()) {
