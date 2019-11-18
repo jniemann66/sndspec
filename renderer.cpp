@@ -73,15 +73,13 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 	double hScaling = static_cast<double>(plotWidth) / numBins;
 	double vScaling = static_cast<double>(plotHeight) / parameters.getDynRange();
 
-	double h = static_cast<double>(plotOriginY) + plotHeight;
-
 	for(int c = 0; c < numChannels; c++) {
 		cairo_set_line_width (cr, 1.0);
 		cairo_set_source_rgba(cr, 0.5, 1.0, 0.5, 1.0);
 
-		cairo_move_to(cr, plotOriginX, h - vScaling * spectrumData.at(c).at(0));
+		cairo_move_to(cr, plotOriginX, plotOriginY - vScaling * spectrumData.at(c).at(0));
 		for(int x = 0; x < numBins; x++) {
-			cairo_line_to(cr, plotOriginX + hScaling * x, h - vScaling * spectrumData.at(c).at(x));
+			cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * spectrumData.at(c).at(x));
 		}
 	}
 
