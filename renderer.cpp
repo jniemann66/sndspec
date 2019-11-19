@@ -120,7 +120,6 @@ void Renderer::drawSpectrumGrid()
 	cairo_set_line_width (cr, 1.0);
 	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
 
-
 	double yScale = plotHeight / dynRange;
 	double yStep = yScale * 10;
 	double y = plotOriginY + plotHeight - 1 ;
