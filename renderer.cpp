@@ -131,15 +131,16 @@ void Renderer::drawSpectrumGrid()
 		y -= yStep;
 	}
 
-//	double fWidth = static_cast<double>(plotWidth);
-//	double xStep = 5000 * fWidth / nyquist;
-//	double x = plotOriginX;
+	double fWidth = static_cast<double>(plotWidth);
+	double xStep = fWidth * freqStep / nyquist;
+	double x = plotOriginX;
+	double xf = plotOriginX + fWidth;
 
-//	while(x < fWidth) {
-//		cairo_move_to(cr, x, plotOriginY);
-//		cairo_line_to(cr, x, plotOriginY + plotHeight - 1);
-//		x += xStep;
-//	}
+	while(x < xf) {
+		cairo_move_to(cr, x, plotOriginY);
+		cairo_line_to(cr, x, plotOriginY + plotHeight - 1);
+		x += xStep;
+	}
 
 	cairo_stroke (cr);
 }
