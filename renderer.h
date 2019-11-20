@@ -54,12 +54,13 @@ public:
 	std::vector<uint32_t> getPixelBuffer() const;
 
 private:
-	void drawSpectrogramGrid();
 	void drawBorder();
+	void drawSpectrogramGrid();
 	void drawSpectrogramTickmarks();
 	void drawSpectrogramText();
 	void drawSpectrogramHeatMap();
 	void drawSpectrumGrid();
+	void drawSpectrumTickmarks();
 
 	// dimensions of whole image
 	int width;
@@ -159,6 +160,7 @@ private:
 //	};
 
 	void setMargins();
+
 
 };
 

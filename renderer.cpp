@@ -117,24 +117,48 @@ void Renderer::drawSpectrogramGrid()
 
 void Renderer::drawSpectrumGrid()
 {
-	cairo_set_line_width (cr, 1.0);
-	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
+	const int s = 10;
+	constexpr int fx = s + 5;
+	const int fy = 4;
 
 	double yScale = plotHeight / dynRange;
 	double yStep = yScale * 10;
 	double y = plotOriginY + plotHeight - 1 ;
 
+	// draw horizontal gridlines
+	cairo_set_line_width (cr, 1.0);
+	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
 	while(y > plotOriginY) {
 		cairo_move_to(cr, plotOriginX, y);
 		cairo_line_to(cr, plotOriginX + plotWidth - 1, y);
 		y -= yStep;
 	}
+	cairo_stroke (cr);
+
+	// draw dB tickmarks and labels
+	cairo_set_line_width (cr, 2);
+	cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
+	y = plotOriginY + plotHeight - 1 ;
+	char dbLabelBuf[20];
+	double dB = dynRange;
+	while(y > plotOriginY) {
+		sprintf(dbLabelBuf, "%d", static_cast<int>(-dB));
+		cairo_move_to(cr, plotOriginX + plotWidth, y);
+		cairo_line_to(cr, plotOriginX + s + plotWidth - 1, y);
+		cairo_move_to(cr, plotOriginX + fx + plotWidth - 1, y + fy);
+		cairo_show_text(cr, dbLabelBuf);
+		y -= yStep;
+		dB -= 10;
+	}
+	cairo_stroke (cr);
 
 	double fWidth = static_cast<double>(plotWidth);
 	double xStep = fWidth * freqStep / nyquist;
 	double x = plotOriginX;
 	double xf = plotOriginX + fWidth;
 
+	cairo_set_line_width (cr, 1.0);
+	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
 	while(x < xf) {
 		cairo_move_to(cr, x, plotOriginY);
 		cairo_line_to(cr, x, plotOriginY + plotHeight - 1);
@@ -144,6 +168,10 @@ void Renderer::drawSpectrumGrid()
 	cairo_stroke (cr);
 }
 
+void Renderer::drawSpectrumTickmarks()
+{
+
+}
 
 void Renderer::drawBorder()
 {
