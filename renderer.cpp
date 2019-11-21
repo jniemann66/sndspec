@@ -86,6 +86,8 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 	cairo_stroke(cr);
 	drawBorder();
 	drawSpectrumGrid();
+	drawSpectrumTickmarks();
+	drawSpectrumText();
 }
 
 void Renderer::drawSpectrogramGrid()
@@ -117,10 +119,6 @@ void Renderer::drawSpectrogramGrid()
 
 void Renderer::drawSpectrumGrid()
 {
-	const int s = 10;
-	constexpr int fx = s + 5;
-	const int fy = 4;
-
 	double yScale = plotHeight / dynRange;
 	double yStep = yScale * 10;
 	double y = plotOriginY + plotHeight - 1 ;
@@ -134,6 +132,34 @@ void Renderer::drawSpectrumGrid()
 		y -= yStep;
 	}
 	cairo_stroke (cr);
+
+
+
+	double fWidth = static_cast<double>(plotWidth);
+	double xStep = fWidth * freqStep / nyquist;
+	double x = plotOriginX;
+	double xf = plotOriginX + fWidth;
+
+	cairo_set_line_width (cr, 1.0);
+	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
+	while(x < xf) {
+		cairo_move_to(cr, x, plotOriginY);
+		cairo_line_to(cr, x, plotOriginY + plotHeight - 1);
+		x += xStep;
+	}
+
+	cairo_stroke (cr);
+}
+
+void Renderer::drawSpectrumTickmarks()
+{
+	const int s = 10;
+	constexpr int fx = s + 5;
+	const int fy = 4;
+
+	double yScale = plotHeight / dynRange;
+	double yStep = yScale * 10;
+	double y = plotOriginY + plotHeight - 1 ;
 
 	// draw dB tickmarks and labels
 	cairo_set_line_width (cr, 2);
@@ -155,23 +181,70 @@ void Renderer::drawSpectrumGrid()
 	double fWidth = static_cast<double>(plotWidth);
 	double xStep = fWidth * freqStep / nyquist;
 	double x = plotOriginX;
-	double xf = plotOriginX + fWidth;
+	double f = 0.0;
+	const int tx = -15;
+	constexpr int ty = s + 15;
 
-	cairo_set_line_width (cr, 1.0);
-	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
-	while(x < xf) {
-		cairo_move_to(cr, x, plotOriginY);
-		cairo_line_to(cr, x, plotOriginY + plotHeight - 1);
+	char fLabelBuf[20];
+	while(x < (fWidth + plotOriginX) ) {
+		sprintf(fLabelBuf, "%6.0f", f);
+		cairo_text_extents_t freqLabelTextExtents;
+		cairo_text_extents(cr, fLabelBuf, &freqLabelTextExtents);
+		cairo_move_to(cr, x, plotOriginY + plotHeight);
+		cairo_line_to(cr, x, plotOriginY + plotHeight + s -1);
+		cairo_move_to(cr, x - freqLabelTextExtents.x_advance * 0.5, plotOriginY + plotHeight + ty -1);
+		cairo_show_text(cr, fLabelBuf);
 		x += xStep;
+		f += freqStep;
 	}
 
 	cairo_stroke (cr);
+
 }
 
-void Renderer::drawSpectrumTickmarks()
+void Renderer::drawSpectrumText()
 {
+	double s = 20.0;
+
+	// heading
+	cairo_text_extents_t headingTextExtents;
+	cairo_set_font_size(cr, 16);
+	cairo_text_extents(cr, title.c_str(), &headingTextExtents);
+	cairo_move_to(cr, plotOriginX + (plotWidth - headingTextExtents.x_advance) / 2.0, s); // place at center of plot area
+	cairo_show_text(cr, title.c_str());
+	cairo_set_font_size(cr, 13);
+
+	// info
+	cairo_text_extents_t infoExtents;
+	cairo_text_extents(cr, inputFilename.c_str(), &infoExtents);
+	cairo_move_to(cr, plotOriginX, plotOriginY - infoExtents.height);
+	cairo_show_text(cr, inputFilename.c_str());
+
+	// window function label
+	if(showWindowFunctionLabel) {
+		cairo_text_extents_t windowFuncExtents;
+		cairo_text_extents(cr, windowFunctionLabel.c_str(), &windowFuncExtents);
+		cairo_move_to(cr, plotOriginX + plotWidth - windowFuncExtents.x_advance, plotOriginY - infoExtents.height);
+		cairo_show_text(cr, windowFunctionLabel.c_str());
+	}
+
+	// horizAxis
+	cairo_text_extents_t horizAxisLabelExtents;
+	cairo_text_extents(cr, horizAxisLabel.c_str(), &horizAxisLabelExtents);
+	cairo_move_to(cr, plotOriginX + (plotWidth - horizAxisLabelExtents.x_advance) / 2.0, height - horizAxisLabelExtents.height);
+	cairo_show_text(cr, horizAxisLabel.c_str());
+
+	// vertAxis
+	cairo_text_extents_t vertAxisLabelExtents;
+	cairo_text_extents(cr, vertAxisLabel.c_str(), &vertAxisLabelExtents);
+	cairo_save(cr);
+	cairo_move_to(cr, width - s, plotOriginY + (plotHeight) / 2.0);
+	cairo_rotate(cr, M_PI_2);
+	cairo_show_text(cr, vertAxisLabel.c_str());
+	cairo_restore(cr);
 
 }
+
 
 void Renderer::drawBorder()
 {

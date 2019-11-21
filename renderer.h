@@ -53,14 +53,18 @@ public:
 	double getDynRange() const;
 	std::vector<uint32_t> getPixelBuffer() const;
 
+
 private:
 	void drawBorder();
+
 	void drawSpectrogramGrid();
 	void drawSpectrogramTickmarks();
 	void drawSpectrogramText();
 	void drawSpectrogramHeatMap();
+
 	void drawSpectrumGrid();
 	void drawSpectrumTickmarks();
+	void drawSpectrumText();
 
 	// dimensions of whole image
 	int width;

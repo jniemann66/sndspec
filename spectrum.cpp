@@ -219,7 +219,11 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		Spectrum::scaleMagnitudeRelativeDb(results, true);
 
 		// render
+		renderer.setInputFilename(inputFilename);
 		renderer.setDynRange(parameters.getDynRange());
+		renderer.setTitle("Spectrum");
+		renderer.setHorizAxisLabel("Frequency (Hz)");
+		renderer.setVertAxisLabel("Relative Magnitude (dB)");
 		renderer.renderSpectrum(parameters, results);
 
 		if(parameters.hasWhiteBackground()) {
