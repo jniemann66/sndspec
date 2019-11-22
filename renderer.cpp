@@ -75,15 +75,16 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 
 	for(int c = 0; c < numChannels; c++) {
 		cairo_set_line_width (cr, 1.0);
-		cairo_set_source_rgba(cr, 0.5, 1.0, 0.5, 1.0);
-
+		Rgb chColor = spectrumChannelColors[std::min(static_cast<int>(spectrumChannelColors.size() - 1), c)];
+		cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, 0.8);
 		cairo_move_to(cr, plotOriginX, plotOriginY - vScaling * spectrumData.at(c).at(0));
 		for(int x = 0; x < numBins; x++) {
 			cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * spectrumData.at(c).at(x));
 		}
+		cairo_stroke(cr);
 	}
 
-	cairo_stroke(cr);
+
 	drawBorder();
 	drawSpectrumGrid();
 	drawSpectrumTickmarks();

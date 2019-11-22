@@ -12,6 +12,13 @@ extern "C" {
 
 namespace Sndspec {
 
+struct Rgb
+{
+	double red;
+	double green;
+	double blue;
+};
+
 class Renderer
 {
 public:
@@ -162,6 +169,16 @@ private:
 //		0x00DCE319,
 //		0x00FDE725
 //	};
+
+	std::vector<Rgb> spectrumChannelColors
+	{
+		{0.5, 1.0, 1.0},
+		{1.0, 0.5, 1.0},
+		{1.0, 1.0, 0.5},
+		{1.0, 0.5, 0.5},
+		{0.5, 1.0, 0.5},
+		{0.5, 0.5, 1.0}
+	};
 
 	void setMargins();
 
