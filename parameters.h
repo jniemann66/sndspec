@@ -73,7 +73,7 @@ const std::vector<Option> options
 	{OptionID::Height, "--height","-h", false, "Set Image Height in Pixels", {"n"}},
 	{OptionID::Width, "--width", "-w", false, "Set Image Width in Pixels", {"n"}},
 	{OptionID::TimeRange, "--time-range", "-t", false, "Set Time Range in seconds", {"start-time", "finish-time"}},
-	{OptionID::WhiteBackground, "--white-background", "", false, "White Background (instead of black) with inverted heatmap palette", {}},
+	{OptionID::WhiteBackground, "--white-background", "", false, "White Background (instead of black) with inverted colors", {}},
 	{OptionID::WindowFunction, "--window", "-W", false, "Set the window function", {"name"}},
 	{OptionID::ShowWindows, "--show-windows", "", false, "Show a list of available window functions", {}},
 	{OptionID::SpectrumMode, "--spectrum", "", false, "Plot a Spectrum instead of Spectrogram", {}},
