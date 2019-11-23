@@ -34,10 +34,12 @@ Usage: sndspec filename [filename2 ...] [options]
 - move renderer to another library (?) (to free from dependence on Cairo)
 - Quadmath
 - long double
-- spectrums
 - waveforms
 - other color palettes
 - log frequency scale
+- downsampling of spectrum data
+
+~~spectrums~~
 
 ~~grid, tickmarks - frequency axis~~
 
