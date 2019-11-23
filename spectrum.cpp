@@ -129,29 +129,23 @@ void Spectrum::scaleMagnitudeRelativeDb(std::vector<std::vector<double>> &s, boo
 	int numChannels = s.size();
 	int numBins = s.at(0).size();
 
-	std::vector<double> peak(numChannels, 0.0);
-
+	// find peak
+	double peak{0.0};
 	for(int c = 0; c < numChannels; c++) {
-
-		// find peak
-		double peak{0.0};
-		for(int x = 0; x < numChannels; x++) {
-			for(int b = 0; b < numBins; b++) {
-				peak = std::max(peak, s[c][b]);
-			}
+		for(int b = 0; b < numBins; b++) {
+			peak = std::max(peak, s[c][b]);
 		}
+	}
 
-		if(std::fpclassify(peak) != FP_ZERO) {
+	if(std::fpclassify(peak) != FP_ZERO) { // scale the data
 
-			// function to convert to dB
-			auto scaleFunc = [scale = 1.0 / peak, dBMult = fromMagSquared ? 10.0 : 20.0] (double v) -> double {
-				return dBMult * std::log10(scale * v);
-			};
+		// function to convert to dB
+		auto scaleFunc = [scale = 1.0 / peak, dBMult = fromMagSquared ? 10.0 : 20.0] (double v) -> double {
+			return dBMult * std::log10(scale * v);
+		};
 
-			// scale the data
-			for(int x = 0; x < numChannels; x++) {
-				std::transform (s[x].begin(), s[x].end(), s[x].begin(), scaleFunc);
-			}
+		for(int c = 0; c < numChannels; c++) {
+			std::transform (s[c].begin(), s[c].end(), s[c].begin(), scaleFunc);
 		}
 	}
 }
