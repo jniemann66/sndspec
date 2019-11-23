@@ -13,7 +13,7 @@ Usage: sndspec filename [filename2 ...] [options]
 -h, --height <n>                                  Set Image Height in Pixels
 -w, --width <n>                                   Set Image Width in Pixels
 -t, --time-range <start-time> <finish-time>       Set Time Range in seconds
---white-background                                White Background (instead of black) with inverted heatmap palette
+--white-background                                White Background (instead of black) with inverted colours 
 -W, --window <name>                               Set the window function
 --show-windows                                    Show a list of available window functions
 --spectrum                                        Plot a Spectrum instead of Spectrogram
@@ -27,7 +27,7 @@ Usage: sndspec filename [filename2 ...] [options]
 - if recursive directory traversal is enabled, directories within directories will also be processed
 - case and punctuation of window names is ignored. Kaiser window is the default, and it is tuned to the requested dynamic-range
 - output filename is input filename with .png extension
-- when plotting a spectrum, a single FFT is performed, so the time range must be reasonable to prevent FFT being too large. (Therefore, don't forget to put in a time range to ensure the FFT is not too large)
+- when plotting a *spectrum*, a single FFT is performed, so the time range must be reasonable to prevent FFT being too large. (Therefore, don't forget to put in a sensible time range to ensure the FFT is not too large)
 
 ### todo
 
