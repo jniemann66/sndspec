@@ -16,6 +16,7 @@ Usage: sndspec filename [filename2 ...] [options]
 --white-background                                White Background (instead of black) with inverted heatmap palette
 -W, --window <name>                               Set the window function
 --show-windows                                    Show a list of available window functions
+--spectrum                                        Plot a Spectrum instead of Spectrogram
 -r, --recursive                                   Recursive directory traversal
 --help                                            Help
 ~~~
