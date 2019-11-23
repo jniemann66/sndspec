@@ -44,6 +44,7 @@ static const std::vector<WindowParameters> windowDefinitions
 	{"nuttall",			"Nuttall", CosineSum, {0.355768, 0.487396, 0.144232, 0.012604}},
 	{"blackmannuttall",	"Blackman-Nuttall", CosineSum, {0.3635819, 0.4891775, 0.1365995, 0.0106411}},
 	{"blackmanharris",	"Blackman-Harris", CosineSum, {0.35875, 0.48829, 0.14128, 0.01168}},
+	{"flattop",			"Flat top", CosineSum, {0.21557895, 0.41663158, 0.277263158, 0.083578947, 0.006947368}},
 	{"5term", "5-term", CosineSum, {
 				3.232153788877343e-01,
 				4.714921439576260e-01,
