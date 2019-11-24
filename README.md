@@ -1,6 +1,9 @@
 # sndspec
 *soundfile-to-spectrogram utility*
 
+![screenshot](./screenshots/sweep-0-to22050_44_1k32f_log.png)
+
+
 ### usage
 
 **sndspec filename [filename2 ...] [options]**
