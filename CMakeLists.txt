@@ -55,6 +55,7 @@ else()
     find_library(CAIRO_LIBRARY NAMES cairo)
 
     add_library(sndspecLib SHARED ${SOURCE_FILES})
+#	set_property(TARGET sndspecLib PROPERTY POSITION_INDEPENDENT_CODE ON)
     if(CMAKE_BUILD_TYPE STREQUAL "ReleaseQuadmath")
         message(STATUS "Linking with Quadmath library")
         set(CMAKE_CXX_EXTENSIONS TRUE)  # -std=gnu++11 instead of -std=c++11
@@ -70,6 +71,7 @@ message(STATUS "libsndfile library location: " ${SNDFILE_LIBRARY})
 message(STATUS "fftw library location: " ${FFTW_LIBRARY})
 message(STATUS "cairo library location: "  ${CAIRO_LIBRARY})
 add_executable(sndspec main.cpp)
+
 
 if(APPLE)
     target_link_libraries(sndspec sndspecLib ${SNDFILE_LIBRARY} ${FFTW_LIBRARY} ${CAIRO_LIBRARY} )
