@@ -32,6 +32,15 @@ Usage: sndspec filename [filename2 ...] [options]
 - output filename is input filename with .png extension
 - when plotting a *spectrum*, a single FFT is performed, so the time range must be reasonable to prevent FFT being too large. (Therefore, don't forget to put in a sensible time range to ensure the FFT is not too large)
 
+### compiling
+~~~
+cd directory-of-your-choice
+cmake path-to-sndspec-source
+make
+~~~
+
+*note: this project requires C++17 or higher. (gcc &gt;= 8 / Clang &gt;= 7)* 
+
 ### todo
 
 - info, metadata
