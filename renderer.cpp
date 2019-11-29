@@ -85,15 +85,12 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 			acc += spectrumData.at(c).at(x);
 		}
 
-		int m = L;
 		for(int x = L; x < numBins; x++) {
 			acc += spectrumData.at(c).at(x);
 			acc -= spectrumData.at(c).at(x - L);
-			if(m-- == 0) {
-				m = L;
-				cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * acc);
-			}
+			cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * acc);
 		}
+
 		cairo_stroke(cr);
 	}
 
