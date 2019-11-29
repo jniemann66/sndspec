@@ -70,20 +70,32 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 	int numChannels = spectrumData.size();
 	int numBins =  spectrumData.at(0).size();
 
+	int L = numBins / plotWidth; // size of moving average filter
 	double hScaling = static_cast<double>(plotWidth) / numBins;
-	double vScaling = static_cast<double>(plotHeight) / parameters.getDynRange();
+	double vScaling = static_cast<double>(plotHeight) / parameters.getDynRange() / L;
 
 	for(int c = 0; c < numChannels; c++) {
 		cairo_set_line_width (cr, 1.0);
 		Rgb chColor = spectrumChannelColors[std::min(static_cast<int>(spectrumChannelColors.size() - 1), c)];
 		cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, 0.8);
 		cairo_move_to(cr, plotOriginX, plotOriginY - vScaling * spectrumData.at(c).at(0));
-		for(int x = 0; x < numBins; x++) {
-			cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * spectrumData.at(c).at(x));
+		double acc = 0.0;
+
+		for(int x = 0; x < L; x++) {
+			acc += spectrumData.at(c).at(x);
+		}
+
+		int m = L;
+		for(int x = L; x < numBins; x++) {
+			acc += spectrumData.at(c).at(x);
+			acc -= spectrumData.at(c).at(x - L);
+			if(m-- == 0) {
+				m = L;
+				cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * acc);
+			}
 		}
 		cairo_stroke(cr);
 	}
-
 
 	drawBorder();
 	drawSpectrumGrid();
