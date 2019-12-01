@@ -11,6 +11,13 @@
 
 namespace Sndspec {
 
+enum SpectrumSmoothingMode
+{
+	None,
+	MovingAverage,
+	MovingPeak
+};
+
 Renderer::Renderer(int width, int height) : width(width), height(height), pixelBuffer(width * height, 0)
 {
 	// set up cairo surface
@@ -70,27 +77,54 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 	int numChannels = spectrumData.size();
 	int numBins =  spectrumData.at(0).size();
 
-	int L = numBins / plotWidth; // size of moving average filter
+	SpectrumSmoothingMode spectrumSmootingMode(MovingPeak);
+
+	int L = numBins / plotWidth; // size of smoothing filter
 	double hScaling = static_cast<double>(plotWidth) / numBins;
-	double vScaling = static_cast<double>(plotHeight) / parameters.getDynRange() / L;
+
+	double vScaling = (spectrumSmootingMode == MovingAverage) ?
+				static_cast<double>(plotHeight) / parameters.getDynRange() / L :
+				static_cast<double>(plotHeight) / parameters.getDynRange();
 
 	for(int c = 0; c < numChannels; c++) {
 		cairo_set_line_width (cr, 1.0);
 		Rgb chColor = spectrumChannelColors[std::min(static_cast<int>(spectrumChannelColors.size() - 1), c)];
 		cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, 0.8);
 		cairo_move_to(cr, plotOriginX, plotOriginY - vScaling * spectrumData.at(c).at(0));
-		double acc = 0.0;
 
-		for(int x = 0; x < L; x++) {
-			acc += spectrumData.at(c).at(x);
+		if(spectrumSmootingMode == None) {
+			for(int x = 0; x < numBins; x++) {
+				cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * spectrumData.at(c).at(x));
+			}
+		} else if(spectrumSmootingMode == MovingAverage) {
+			double acc = 0.0;
+			for(int x = 0; x < L; x++) {
+				acc += spectrumData.at(c).at(x);
+			}
+
+			for(int x = L; x < numBins; x++) {
+				acc += spectrumData.at(c).at(x);
+				acc -= spectrumData.at(c).at(x - L);
+				cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * acc);
+			}
+		} else if(spectrumSmootingMode == MovingPeak) {
+			for(int x = 0; x < L; x++) {
+				double maxDB(-300);
+				for (int a = 0; a <= x; a++) { // 0 1 2 3 4
+					maxDB = std::max(maxDB, spectrumData.at(c).at(a));	
+				}
+				cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * maxDB);
+			}
+
+			for(int x = L; x < numBins; x++) {
+				double maxDB(-300);
+				for (int a = x - L + 1; a <= x; a++) {  // 1 2 3 4 5, 2 3 4 5 6, etc
+					maxDB = std::max(maxDB, spectrumData.at(c).at(a));	
+				}
+				cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * maxDB);
+			}
+
 		}
-
-		for(int x = L; x < numBins; x++) {
-			acc += spectrumData.at(c).at(x);
-			acc -= spectrumData.at(c).at(x - L);
-			cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * acc);
-		}
-
 		cairo_stroke(cr);
 	}
 
@@ -98,8 +132,8 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 	drawSpectrumGrid();
 	drawSpectrumTickmarks();
 	drawSpectrumText();
-}
 
+}
 void Renderer::drawSpectrogramGrid()
 {
 	cairo_set_line_width (cr, 1.0);
