@@ -110,7 +110,7 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 		} else if(spectrumSmootingMode == MovingPeak) {
 			for(int x = 0; x < L; x++) {
 				double maxDB(-300);
-				for (int a = 0; a <= x; a++) { // 0 1 2 3 4
+				for (int a = 0; a <= x; a++) {
 					maxDB = std::max(maxDB, spectrumData.at(c).at(a));	
 				}
 				cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * maxDB);
@@ -118,7 +118,7 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 
 			for(int x = L; x < numBins; x++) {
 				double maxDB(-300);
-				for (int a = x - L + 1; a <= x; a++) {  // 1 2 3 4 5, 2 3 4 5 6, etc
+				for (int a = x - L + 1; a <= x; a++) {
 					maxDB = std::max(maxDB, spectrumData.at(c).at(a));	
 				}
 				cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * maxDB);
