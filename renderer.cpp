@@ -11,13 +11,6 @@
 
 namespace Sndspec {
 
-enum SpectrumSmoothingMode
-{
-	None,
-	MovingAverage,
-	MovingPeak
-};
-
 Renderer::Renderer(int width, int height) : width(width), height(height), pixelBuffer(width * height, 0)
 {
 	// set up cairo surface
@@ -77,12 +70,12 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 	int numChannels = spectrumData.size();
 	int numBins =  spectrumData.at(0).size();
 
-	SpectrumSmoothingMode spectrumSmootingMode(MovingPeak);
+	const SpectrumSmoothingMode spectrumSmoothingMode = parameters.getSpectrumSmoothingMode();
 
 	int L = numBins / plotWidth; // size of smoothing filter
 	double hScaling = static_cast<double>(plotWidth) / numBins;
 
-	double vScaling = (spectrumSmootingMode == MovingAverage) ?
+	double vScaling = (spectrumSmoothingMode == MovingAverage) ?
 				static_cast<double>(plotHeight) / parameters.getDynRange() / L :
 				static_cast<double>(plotHeight) / parameters.getDynRange();
 
@@ -92,11 +85,11 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 		cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, 0.8);
 		cairo_move_to(cr, plotOriginX, plotOriginY - vScaling * spectrumData.at(c).at(0));
 
-		if(spectrumSmootingMode == None) {
+		if(spectrumSmoothingMode == None) {
 			for(int x = 0; x < numBins; x++) {
 				cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * spectrumData.at(c).at(x));
 			}
-		} else if(spectrumSmootingMode == MovingAverage) {
+		} else if(spectrumSmoothingMode == MovingAverage) {
 			double acc = 0.0;
 			for(int x = 0; x < L; x++) {
 				acc += spectrumData.at(c).at(x);
@@ -107,7 +100,7 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 				acc -= spectrumData.at(c).at(x - L);
 				cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * acc);
 			}
-		} else if(spectrumSmootingMode == MovingPeak) {
+		} else if(spectrumSmoothingMode == Peak) {
 			for(int x = 0; x < L; x++) {
 				double maxDB(-300);
 				for (int a = 0; a <= x; a++) {

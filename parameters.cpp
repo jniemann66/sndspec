@@ -147,6 +147,25 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			spectrumMode = true;
 			++argsIt;
 			break;
+		case Smoothing:
+			if(++argsIt != args.cend()) {
+				std::string s{*argsIt};
+
+				// convert name to lowercase
+				std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) -> unsigned char {
+					return std::tolower(c);
+				});
+
+				if(s.compare(0, 6, "moving") == 0) {
+					spectrumSmoothingMode = MovingAverage;
+				} else if(s.compare(0, 4, "peak") == 0) {
+					spectrumSmoothingMode = Peak;
+				} else if(s.compare(0, 4, "none") == 0 ) {
+					spectrumSmoothingMode = None;
+				}
+				++argsIt;
+				break;
+			}
 
 #ifdef FS_AVAILABLE
 		case Recursive:
@@ -259,6 +278,16 @@ bool Parameters::getShowWindowFunctionLabel() const
 bool Parameters::getSpectrumMode() const
 {
 	return spectrumMode;
+}
+
+SpectrumSmoothingMode Parameters::getSpectrumSmoothingMode() const
+{
+	return spectrumSmoothingMode;
+}
+
+void Parameters::setSpectrumSmoothingMode(const SpectrumSmoothingMode &value)
+{
+	spectrumSmoothingMode = value;
 }
 
 void Parameters::setSpectrumMode(bool value)

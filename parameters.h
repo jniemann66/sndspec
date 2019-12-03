@@ -48,6 +48,7 @@ enum OptionID
 	WindowFunction,
 	ShowWindows,
 	SpectrumMode,
+	Smoothing,
 
 #ifdef FS_AVAILABLE
 	Recursive,
@@ -66,6 +67,13 @@ struct Option
 	std::vector<std::string> args;
 };
 
+enum SpectrumSmoothingMode
+{
+	None,
+	MovingAverage,
+	Peak
+};
+
 const std::vector<Option> options
 {
 	{OptionID::DynRange, "--dyn-range", "", false, "Set Dynamic Range in dB", {"n"}},
@@ -77,6 +85,7 @@ const std::vector<Option> options
 	{OptionID::WindowFunction, "--window", "-W", false, "Set the window function", {"name"}},
 	{OptionID::ShowWindows, "--show-windows", "", false, "Show a list of available window functions", {}},
 	{OptionID::SpectrumMode, "--spectrum", "", false, "Plot a Spectrum instead of Spectrogram", {}},
+	{OptionID::Smoothing, "--smoothing", "-S", false, "Set Spectrum Smoothing Mode (default:peak)", {"moving average|peak|none"}},
 
 #ifdef FS_AVAILABLE
 	{OptionID::Recursive, "--recursive", "-r", false, "Recursive directory traversal", {}},
@@ -108,6 +117,7 @@ public:
 	void setShowWindowFunctionLabel(bool value);
 	void setShowWindows(bool value);
 	void setSpectrumMode(bool value);
+	void setSpectrumSmoothingMode(const SpectrumSmoothingMode &value);
 
 	// getters
 	std::vector<std::string> getInputFiles() const;
@@ -124,6 +134,7 @@ public:
 	bool getShowWindows() const;
 	bool getShowWindowFunctionLabel() const;
 	bool getSpectrumMode() const;
+	SpectrumSmoothingMode getSpectrumSmoothingMode() const;
 
 private:
 	std::vector<std::string> inputFiles;
@@ -140,6 +151,7 @@ private:
 	bool showWindowFunctionLabel{false}; // flag to show the name of window function on the rendered output
 	bool showWindows{false}; // flag to provide a list of available window functions
 	bool spectrumMode{false};
+	SpectrumSmoothingMode spectrumSmoothingMode{Peak};
 
 #ifdef FS_AVAILABLE
 	bool recursiveDirectoryTraversal{false};
