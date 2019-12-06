@@ -46,13 +46,11 @@ make
 
 - info, metadata
 - channel selection / sum
-- move renderer to another library (?) (to free from dependence on Cairo)
 - Quadmath
 - long double
 - waveforms
 - other color palettes
 - log frequency scale
-- Savitzky - Golay smoothing
 
 ~~smoothing of spectrum data~~
 
