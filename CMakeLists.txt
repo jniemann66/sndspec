@@ -52,8 +52,8 @@ else()
 
 	find_library(SNDFILE_LIBRARY NAMES sndfile)
 	# on my system, fftw library gets put in /usr/lib/x86_64-linux-gnu/ but ymmv. on other systems it may be lib64 etc
-	#find_library(FFTW_LIBRARY NAMES fftw3 HINTS /usr/lib/x86_64-linux-gnu/)
-	find_library(FFTW_LIBRARY NAMES fftw3)
+	find_library(FFTW_LIBRARY NAMES fftw3 HINTS /usr/lib/x86_64-linux-gnu/)
+	#find_library(FFTW_LIBRARY NAMES fftw3)
     find_library(CAIRO_LIBRARY NAMES cairo)
 
 	add_library(sndspecLib SHARED ${SOURCE_FILES})
