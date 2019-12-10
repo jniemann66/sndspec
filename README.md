@@ -42,6 +42,15 @@ make
 
 *note: this project requires C++17 or higher. (gcc &gt;= 8 / Clang &gt;= 7)* 
 
+#### known compiling problems
+if you get an error like this (from the linker) on Linux:
+~~~
+error: /usr/local/lib/libfftw3.a(apiplan.o): relocation R_X86_64_32S against `.rodata' can not be used when making a PIE object; recompile with -fPIC
+~~~
+... it means that the linker is trying to link to the static version (.a) of libfftw3, probably because it can't find the shared (.so) version.
+Find where libfftw3.so is installed, and set the find_libary() hints in CMakeLists.txt accordingly.
+(Also, Remember that Cmake stores these variables, so clear the cmake configuration after making a change before running cmake)
+
 ### todo
 
 - info, metadata
