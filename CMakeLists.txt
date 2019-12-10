@@ -46,16 +46,16 @@ else()
         # (see https://stackoverflow.com/questions/54068035/linking-not-working-in-homebrews-cmake-since-mojave)
         link_directories(/usr/local/lib)
         include_directories(/usr/local/include /usr/local/include/cairo)
-                                else()
-                                                                include_directories(/usr/local/include /usr/include /usr/include/cairo)
+	    else()
+			include_directories(/usr/local/include /usr/include /usr/include/cairo)
     endif()
 
-    find_library(SNDFILE_LIBRARY NAMES sndfile)
-    find_library(FFTW_LIBRARY NAMES fftw3)
+	find_library(SNDFILE_LIBRARY NAMES sndfile)
+	# on my system, fftw library gets put in /usr/lib/x86_64-linux-gnu/ but ymmv. on other systems it may be lib64 etc
+	find_library(FFTW_LIBRARY NAMES fftw3 HINTS /usr/lib/x86_64-linux-gnu/)
     find_library(CAIRO_LIBRARY NAMES cairo)
 
-    add_library(sndspecLib SHARED ${SOURCE_FILES})
-#	set_property(TARGET sndspecLib PROPERTY POSITION_INDEPENDENT_CODE ON)
+	add_library(sndspecLib SHARED ${SOURCE_FILES})
     if(CMAKE_BUILD_TYPE STREQUAL "ReleaseQuadmath")
         message(STATUS "Linking with Quadmath library")
         set(CMAKE_CXX_EXTENSIONS TRUE)  # -std=gnu++11 instead of -std=c++11
@@ -71,7 +71,6 @@ message(STATUS "libsndfile library location: " ${SNDFILE_LIBRARY})
 message(STATUS "fftw library location: " ${FFTW_LIBRARY})
 message(STATUS "cairo library location: "  ${CAIRO_LIBRARY})
 add_executable(sndspec main.cpp)
-
 
 if(APPLE)
     target_link_libraries(sndspec sndspecLib ${SNDFILE_LIBRARY} ${FFTW_LIBRARY} ${CAIRO_LIBRARY} )
