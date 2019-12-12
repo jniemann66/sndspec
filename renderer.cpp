@@ -159,6 +159,8 @@ void Renderer::drawSpectrumGrid()
 	double yScale = plotHeight / dynRange;
 	double yStep = yScale * 10;
 	double y = plotOriginY + plotHeight - 1 ;
+	double dashpattern[] = {4.0, 2.0};
+	cairo_set_dash(cr, dashpattern, 2, 0.0);
 
 	// draw horizontal gridlines
 	cairo_set_line_width (cr, 1.0);
@@ -177,6 +179,7 @@ void Renderer::drawSpectrumGrid()
 	double x = plotOriginX;
 	double xf = plotOriginX + fWidth;
 
+	// draw vertical gridlines
 	cairo_set_line_width (cr, 1.0);
 	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
 	while(x < xf) {
@@ -186,6 +189,7 @@ void Renderer::drawSpectrumGrid()
 	}
 
 	cairo_stroke (cr);
+	cairo_set_dash(cr, dashpattern, 0, 0.0);
 }
 
 void Renderer::drawSpectrumTickmarks()
