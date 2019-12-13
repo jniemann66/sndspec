@@ -11,18 +11,18 @@
 
 namespace Sndspec {
 
-Renderer::Renderer(int width, int height) : width(width), height(height), pixelBuffer(width * height, 0)
+Renderer::Renderer(int width, int height) : width(width), height(height), pixelBuffer(static_cast<size_t>(width * height), 0)
 {
 	// set up cairo surface
 	const cairo_format_t cairoFormat =  CAIRO_FORMAT_RGB24;
 	int stride =  cairo_format_stride_for_width(cairoFormat, width);
-	stride32 = stride / sizeof(uint32_t);
+	stride32 = stride / static_cast<int>(sizeof(uint32_t));
 	surface = cairo_image_surface_create_for_data(reinterpret_cast<unsigned char*>(pixelBuffer.data()), cairoFormat, width, height, stride);
 	cr = cairo_create(surface);
 
 	// calculate dimensions of actual plot area
 	setMargins();
-	plotWidth = width - marginLeft - marginRight;
+	plotWidth = static_cast<int>(width - marginLeft - marginRight);
 	plotHeight = height - static_cast<int>(marginTop) - static_cast<int>(marginBottom);
 	plotOriginX = static_cast<int>(marginLeft);
 	plotOriginY = static_cast<int>(marginTop);
@@ -63,7 +63,6 @@ void Renderer::renderSpectrogram(const Parameters &parameters, const Spectrogram
 	drawSpectrogramText();
 	drawSpectrogramHeatMap();
 }
-
 
 void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<std::vector<double>> spectrumData)
 {
@@ -171,8 +170,6 @@ void Renderer::drawSpectrumGrid()
 		y -= yStep;
 	}
 	cairo_stroke (cr);
-
-
 
 	double fWidth = static_cast<double>(plotWidth);
 	double xStep = fWidth * freqStep / nyquist;
