@@ -13,6 +13,10 @@
 
 void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &parameters)
 {
+	if(parameters.getInputFiles().empty()) {
+		std::cout << "No input files specified. Nothing to do." << std::endl;
+	}
+
 	static const int reservedChannels(2); // stereo (most common use case)
 
 	// prepare a renderer
@@ -20,7 +24,6 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 
 	auto fftSize = Spectrum::selectBestFFTSizeFromSpectrumSize(renderer.getPlotHeight());
 	auto spectrumSize = Spectrum::convertFFTSizeToSpectrumSize(fftSize);
-	std::cout << "fft size " << fftSize << " spectrum size " << spectrumSize << std::endl;
 	int plotWidth = renderer.getPlotWidth();
 
 	// make a suitable FFT Window
