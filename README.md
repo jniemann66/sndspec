@@ -1,8 +1,11 @@
 # sndspec
-*soundfile-to-spectrogram utility*
+*soundfile-to-spectrogram / spectrum utility*
 
-![screenshot](./screenshots/sweep-0-to22050_44_1k32f_log.png)
+![spectrogram](./screenshots/sweep-0-to22050_44_1k32f_log.png)
+*above: spectrogram showing 0-22050 Hz frequency sweep*
 
+![spectrum](./screenshots/2khzSquare_48k16.png)
+*above: spectrum showing spectrum of 2khz square wave*
 
 ### usage
 
