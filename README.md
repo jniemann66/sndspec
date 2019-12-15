@@ -5,7 +5,7 @@
 *above: spectrogram showing 0-22050 Hz frequency sweep*
 
 ![spectrum](./screenshots/2khzSquare_48k16.png)
-*above: spectrum showing spectrum of 2khz square wave*
+*above: frequency spectrum of 2khz square wave*
 
 ### usage
 
