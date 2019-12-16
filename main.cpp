@@ -14,7 +14,7 @@ int main(int argc, char** argv)
 	std::string msg(parameters.fromArgs({argv + 1, argv + argc}));
 	if(!msg.empty()) {
 		std::cout << msg << std::endl;
-		return 0;
+		exit(0);
 	}
 
 	if(parameters.getSpectrumMode()) {
@@ -22,4 +22,6 @@ int main(int argc, char** argv)
 	} else {
 		Sndspec::Spectrogram::makeSpectrogramFromFile(parameters);
 	}
+
+	return 0;
 }
