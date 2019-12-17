@@ -242,6 +242,8 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		} else {
 			std::cout << "Error: couldn't deduce output filename" << std::endl;
 		}
+
+		renderer.clear();
 	}
 }
 
