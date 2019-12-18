@@ -43,6 +43,7 @@ public:
 	void setTitle(const std::string &value);
 	void setHorizAxisLabel(const std::string &value);
 	void setVertAxisLabel(const std::string &value);
+	void setChannelsEnabled(const std::vector<bool> &value);
 
 	// getters
 	std::vector<int32_t> getHeatMapPalette() const;
@@ -59,7 +60,7 @@ public:
 	std::string getVertAxisLabel() const;
 	double getDynRange() const;
 	std::vector<uint32_t> getPixelBuffer() const;
-
+	std::vector<bool> getChannelsEnabled() const;
 
 private:
 	void drawBorder();
@@ -72,6 +73,9 @@ private:
 	void drawSpectrumGrid();
 	void drawSpectrumTickmarks();
 	void drawSpectrumText();
+
+	// vector indicating which channels to plot or not plot
+	std::vector<bool> channelsEnabled;
 
 	// dimensions of whole image
 	int width;

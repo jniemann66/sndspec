@@ -283,6 +283,16 @@ void Renderer::drawSpectrumText()
 
 }
 
+std::vector<bool> Renderer::getChannelsEnabled() const
+{
+	return channelsEnabled;
+}
+
+void Renderer::setChannelsEnabled(const std::vector<bool> &value)
+{
+	channelsEnabled = value;
+}
+
 
 void Renderer::drawBorder()
 {
