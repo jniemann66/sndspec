@@ -86,9 +86,9 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 			r.readDeinterleaved();
 
 			// scale the data into dB
-			scaleMagnitudeRelativeDb(spectrogramData, /* magSquared = */ true);
+			convertToDb(spectrogramData, /* magSquared = */ true);
 
-			// decorations
+			// set render parameters
 			double startTime =  static_cast<double>(r.getStartPos()) / r.getSamplerate();
 			double finishTime =  static_cast<double>(r.getFinishPos()) / r.getSamplerate();
 			renderer.setNyquist(r.getSamplerate() / 2);
@@ -134,11 +134,12 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 	} // ends loop over files
 }
 
-void Sndspec::Spectrogram::scaleMagnitudeRelativeDb(SpectrogramResults<double> &s, bool fromMagSquared)
+std::vector<bool> Sndspec::Spectrogram::convertToDb(SpectrogramResults<double> &s, bool fromMagSquared)
 {
 	int numChannels = s.size();
 	int numSpectrums = s.at(0).size();
 	int numBins = s.at(0).at(0).size();
+	std::vector<bool> hasSignal(numChannels, false);
 
 	for(int c = 0; c < numChannels; c++) {
 
@@ -152,6 +153,7 @@ void Sndspec::Spectrogram::scaleMagnitudeRelativeDb(SpectrogramResults<double> &
 
 		if(std::fpclassify(peak) != FP_ZERO) {
 
+			hasSignal[c] = true;
 			double dBMult = fromMagSquared ? 10.0 : 20.0;
 
 			// set a floor to avoid log(0) problems
@@ -169,4 +171,6 @@ void Sndspec::Spectrogram::scaleMagnitudeRelativeDb(SpectrogramResults<double> &
 			}
 		}
 	}
+
+	return hasSignal;
 }

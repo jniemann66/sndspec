@@ -12,7 +12,7 @@ class Spectrogram {
 
 public:
 	static void makeSpectrogramFromFile(const Parameters& parameters);
-	static void scaleMagnitudeRelativeDb(SpectrogramResults<double>& s, bool fromMagSquared = true);
+	static std::vector<bool> convertToDb(SpectrogramResults<double>& s, bool fromMagSquared = true); // return value indicates whether each channel has a signal (ie not silent)
 
 private:
 
