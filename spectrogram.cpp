@@ -88,8 +88,6 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 			// scale the data into dB
 			scaleMagnitudeRelativeDb(spectrogramData, /* magSquared = */ true);
 
-
-
 			// decorations
 			double startTime =  static_cast<double>(r.getStartPos()) / r.getSamplerate();
 			double finishTime =  static_cast<double>(r.getFinishPos()) / r.getSamplerate();
@@ -104,7 +102,6 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 			std::cout << "Rendering ... ";
 			// main plot area
 			renderer.renderSpectrogram(parameters, spectrogramData);
-
 
 			if(parameters.hasWhiteBackground()) {
 				renderer.makeNegativeImage();
@@ -157,9 +154,15 @@ void Sndspec::Spectrogram::scaleMagnitudeRelativeDb(SpectrogramResults<double> &
 
 		if(std::fpclassify(peak) != FP_ZERO) {
 
+			double dBMult = fromMagSquared ? 10.0 : 20.0;
+
+			// set a floor to avoid log(0) problems
+			double floor = std::max(std::numeric_limits<double>::min(), peak * pow(10.0, -300.0 / dBMult)); // 300dB below peak or smallest normal number
+			assert(std::isnormal(floor));
+
 			// function to convert to dB
-			auto scaleFunc = [scale = 1.0 / peak, dBMult = fromMagSquared ? 10.0 : 20.0] (double v) -> double {
-				return dBMult * std::log10(scale * v);
+			auto scaleFunc = [scale = 1.0 / peak, dBMult, floor] (double v) -> double {
+				return dBMult * std::log10(std::max(scale * v, floor));
 			};
 
 			// scale the data
