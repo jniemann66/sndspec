@@ -140,8 +140,6 @@ void Sndspec::Spectrogram::scaleMagnitudeRelativeDb(SpectrogramResults<double> &
 	int numSpectrums = s.at(0).size();
 	int numBins = s.at(0).at(0).size();
 
-	std::vector<double> peak(numChannels, 0.0);
-
 	for(int c = 0; c < numChannels; c++) {
 
 		// find peak
