@@ -38,8 +38,13 @@ Renderer::~Renderer()
 void Renderer::renderSpectrogram(const Parameters &parameters, const SpectrogramResults<double> &spectrogramData)
 {
 	int numChannels = spectrogramData.size();
+	if(channelsEnabled.empty()) {
+		channelsEnabled.resize(numChannels, true);
+	}
+
 	int numSpectrums = spectrogramData.at(0).size();
 	int numBins = spectrogramData.at(0).at(0).size();
+
 	int h = plotHeight - 1;
 	double colorScale = heatMapPalette.size() / -parameters.getDynRange();
 	int lastColorIndex = std::max(0, static_cast<int>(heatMapPalette.size()) - 1);
@@ -47,6 +52,11 @@ void Renderer::renderSpectrogram(const Parameters &parameters, const Spectrogram
 	showWindowFunctionLabel = parameters.getShowWindowFunctionLabel();
 
 	for(int c = 0; c < 1 /*numChannels*/; c++) {
+
+		if(!channelsEnabled.at(c)) {
+			continue;
+		}
+
 		for(int y = 0; y < numBins; y++) {
 			int lineAddr = plotOriginX + (plotOriginY + h - y) * stride32;
 			for(int x = 0; x < numSpectrums; x++) {
@@ -67,6 +77,10 @@ void Renderer::renderSpectrogram(const Parameters &parameters, const Spectrogram
 void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<std::vector<double>> spectrumData)
 {
 	int numChannels = spectrumData.size();
+	if(channelsEnabled.empty()) {
+		channelsEnabled.resize(numChannels, true);
+	}
+
 	int numBins =  spectrumData.at(0).size();
 
 	const SpectrumSmoothingMode spectrumSmoothingMode = parameters.getSpectrumSmoothingMode();
@@ -79,6 +93,11 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 				static_cast<double>(plotHeight) / parameters.getDynRange();
 
 	for(int c = 0; c < numChannels; c++) {
+
+		if(!channelsEnabled.at(c)) {
+			continue;
+		}
+
 		cairo_set_line_width (cr, 1.0);
 		Rgb chColor = spectrumChannelColors[std::min(static_cast<int>(spectrumChannelColors.size() - 1), c)];
 		cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, 0.8);

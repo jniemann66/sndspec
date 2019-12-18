@@ -86,11 +86,11 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 			r.readDeinterleaved();
 
 			// scale the data into dB
-			convertToDb(spectrogramData, /* magSquared = */ true);
+			renderer.setChannelsEnabled(convertToDb(spectrogramData, /* magSquared = */ true));
 
 			// set render parameters
-			double startTime =  static_cast<double>(r.getStartPos()) / r.getSamplerate();
-			double finishTime =  static_cast<double>(r.getFinishPos()) / r.getSamplerate();
+			double startTime = static_cast<double>(r.getStartPos()) / r.getSamplerate();
+			double finishTime = static_cast<double>(r.getFinishPos()) / r.getSamplerate();
 			renderer.setNyquist(r.getSamplerate() / 2);
 			renderer.setFreqStep(5000);
 			renderer.setNumTimeDivs(5);
