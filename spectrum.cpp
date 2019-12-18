@@ -155,6 +155,8 @@ bool Spectrum::convertToDb(std::vector<std::vector<double>> &s, bool fromMagSqua
 			std::transform (s[c].begin(), s[c].end(), s[c].begin(), scaleFunc);
 		}
 	}
+
+	return hasSignal;
 }
 
 void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
