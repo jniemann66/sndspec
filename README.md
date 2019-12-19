@@ -36,6 +36,23 @@ Usage: sndspec filename [filename2 ...] [options]
 - output filename is input filename with .png extension
 - when plotting a *spectrum*, a single FFT is performed, so the time range must be reasonable to prevent FFT being too large. (Therefore, don't forget to put in a sensible time range to ensure the FFT is not too large)
 
+### motivation and design goals
+
+I have used the spectrogram tool from libsndfile tools for testing ReSampler for some time,
+but I wanted to improve upon the method of generating spectrograms (and spectrums) in the following ways:
+
+- directory traversal : allows processing a whole directory (and subdirectories, if desired) of sound files without having to rely on scripts
+- speed : by processing sound files in batches, the overhead of starting up the program and initializing resources can be done just once, thereby saving a lot of processing time
+- ability to plot spectrums (in addition to spectrograms)
+- ability to choose from a variety of window functions
+- incorporate the core functions in a library component, to be used in other future software projects
+- potential quad-precision (or long double) implementations
+- potential customisation of color palettes and targeting of paper formats as well as screen
+- potential plotting of cepstrums and other types of transforms / plots
+
+Although the produced plots bear a strong resemblance to those produced by the libsndfile spectrogram program,
+the code is entirely original.
+
 ### compiling
 ~~~
 cd directory-of-your-choice
