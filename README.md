@@ -38,7 +38,7 @@ Usage: sndspec filename [filename2 ...] [options]
 
 ### motivation and design goals
 
-I have used the spectrogram tool from [sndfile-tools](http://www.mega-nerd.com/libsndfile/tools) for testing [ReSampler](https://github.com/jniemann66/ReSampler) for some time,
+I have used the spectrogram tool from [sndfile-tools](http://www.mega-nerd.com/libsndfile/tools/#spectrogram) for testing [ReSampler](https://github.com/jniemann66/ReSampler) for some time,
 but I wanted to improve upon the method of generating spectrograms (and spectrums) in the following ways:
 
 - **directory traversal** : allows processing a whole directory (and subdirectories, if desired) of sound files without having to rely on scripts
