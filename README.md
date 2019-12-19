@@ -38,20 +38,20 @@ Usage: sndspec filename [filename2 ...] [options]
 
 ### motivation and design goals
 
-I have used the spectrogram tool from libsndfile tools for testing ReSampler for some time,
+I have used the spectrogram tool from [sndfile-tools](http://www.mega-nerd.com/libsndfile/tools) for testing [ReSampler](https://github.com/jniemann66/ReSampler) for some time,
 but I wanted to improve upon the method of generating spectrograms (and spectrums) in the following ways:
 
-- directory traversal : allows processing a whole directory (and subdirectories, if desired) of sound files without having to rely on scripts
-- speed : by processing sound files in batches, the overhead of starting up the program and initializing resources can be done just once, thereby saving a lot of processing time
-- ability to plot spectrums (in addition to spectrograms)
-- ability to choose from a variety of window functions
-- incorporate the core functions in a library component, to be used in other future software projects
-- potential quad-precision (or long double) implementations
-- potential customisation of color palettes and targeting of paper formats as well as screen
-- potential plotting of cepstrums and other types of transforms / plots
+- **directory traversal** : allows processing a whole directory (and subdirectories, if desired) of sound files without having to rely on scripts
+- **speed** : by processing sound files in batches, the overhead of starting up the program and initializing resources can be done just once, thereby saving a lot of processing time
+- **ability to plot spectrums** (in addition to spectrograms)
+- **ability to choose from a variety of window functions**
+- **core functions in a library component**, to be used in other future software projects
+- **potential quad-precision (or long double)** implementations
+- **potential customisation of color palettes** and targeting of paper formats as well as screen
+- **potential plotting of [cepstrums](https://en.wikipedia.org/wiki/Cepstrum)** and other types of transforms / plots
 
-Although the produced plots bear a strong resemblance to those produced by the libsndfile spectrogram program,
-the code is entirely original.
+Although the produced plots bear a strong resemblance to those produced by the sndfile-tools spectrogram program,
+the code for sndspec is entirely original.
 
 ### compiling
 ~~~
