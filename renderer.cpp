@@ -85,7 +85,7 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 
 	const SpectrumSmoothingMode spectrumSmoothingMode = parameters.getSpectrumSmoothingMode();
 
-	int L = numBins / plotWidth; // size of smoothing filter
+	int L = std::max(1, numBins / plotWidth); // size of smoothing filter
 	double hScaling = static_cast<double>(plotWidth) / numBins;
 
 	double vScaling = (spectrumSmoothingMode == MovingAverage) ?
