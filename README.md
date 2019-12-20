@@ -35,6 +35,8 @@ Usage: sndspec filename [filename2 ...] [options]
 - case and punctuation of window names is ignored. Kaiser window is the default, and it is tuned to the requested dynamic-range
 - output filename is input filename with .png extension
 - when plotting a *spectrum*, a single FFT is performed, so the time range must be reasonable to prevent FFT being too large. (Therefore, don't forget to put in a sensible time range to ensure the FFT is not too large)
+- if you want to plot the frequency response of an impulse response, you might want to switch-off the default Kaiser Window, by using **-W rectangular**, particularly if your impulse response is asymmetrical,
+as the window might skew your results in an undesirable way.
 
 ### motivation and design goals
 
