@@ -2,7 +2,6 @@
 #include "window.h"
 #include "reader.h"
 #include "spectrum.h"
-#include "uglyplot.h"
 #include "renderer.h"
 #include "raiitimer.h"
 
