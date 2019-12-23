@@ -49,6 +49,7 @@ enum OptionID
 	ShowWindows,
 	SpectrumMode,
 	Smoothing,
+	Channel,
 
 #ifdef FS_AVAILABLE
 	Recursive,
@@ -74,6 +75,13 @@ enum SpectrumSmoothingMode
 	Peak
 };
 
+enum ChannelMode
+{
+	Normal,
+	Sum,
+	Difference
+};
+
 const std::vector<Option> options
 {
 	{OptionID::DynRange, "--dyn-range", "", false, "Set Dynamic Range in dB", {"n"}},
@@ -86,6 +94,7 @@ const std::vector<Option> options
 	{OptionID::ShowWindows, "--show-windows", "", false, "Show a list of available window functions", {}},
 	{OptionID::SpectrumMode, "--spectrum", "", false, "Plot a Spectrum instead of Spectrogram", {}},
 	{OptionID::Smoothing, "--smoothing", "-S", false, "Set Spectrum Smoothing Mode (default:peak)", {"moving average|peak|none"}},
+	{OptionID::Channel, "--channel", "-c", false, "select specific channels and set channel mode", {"{L[,R]]|[0|1|2|...][,1,2,...]|all [sum|difference|normal]"}},
 
 #ifdef FS_AVAILABLE
 	{OptionID::Recursive, "--recursive", "-r", false, "Recursive directory traversal", {}},
@@ -152,6 +161,7 @@ private:
 	bool showWindows{false}; // flag to provide a list of available window functions
 	bool spectrumMode{false};
 	SpectrumSmoothingMode spectrumSmoothingMode{Peak};
+	ChannelMode channelMode{Normal};
 
 #ifdef FS_AVAILABLE
 	bool recursiveDirectoryTraversal{false};
