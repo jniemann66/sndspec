@@ -161,6 +161,7 @@ private:
 	bool showWindows{false}; // flag to provide a list of available window functions
 	bool spectrumMode{false};
 	SpectrumSmoothingMode spectrumSmoothingMode{Peak};
+	std::vector<bool> selectedChannels;
 	ChannelMode channelMode{Normal};
 
 #ifdef FS_AVAILABLE
