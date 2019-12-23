@@ -166,6 +166,9 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 				++argsIt;
 				break;
 			}
+		case Channel:
+			++argsIt;
+			break;
 
 #ifdef FS_AVAILABLE
 		case Recursive:
