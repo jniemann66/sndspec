@@ -10,6 +10,7 @@
 #include <cmath>
 #include <sstream>
 #include <iterator>
+#include <regex>
 
 namespace Sndspec {
 
@@ -338,6 +339,18 @@ void Parameters::setFinish(double value)
 
 void Parameters::processChannelArgs(const std::vector<std::string>& args)
 {
+	std::string s;
+	for(const auto& arg : args) {
+		s.append(arg);
+	}
+	std::regex rx{"(\\d{1}|[lr]|all|sum|diff|norm)", std::regex::icase};
+	auto it_begin = std::sregex_iterator(s.begin(), s.end(), rx);
+	auto it_end = std::sregex_iterator();
+
+	for(std::regex_iterator it = it_begin; it != it_end; ++it){
+		std::smatch match = *it;
+		std::string match_str = match.str();
+	}
 
 }
 
