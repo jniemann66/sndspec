@@ -168,6 +168,7 @@ private:
 	bool recursiveDirectoryTraversal{false};
 #endif
 
+	void processChannelArgs(const std::vector<std::string> &args);
 };
 
 } // namespace Options

@@ -336,5 +336,10 @@ void Parameters::setFinish(double value)
 	finish = value;
 }
 
+void Parameters::processChannelArgs(const std::vector<std::string>& args)
+{
+
+}
+
 } // namespace Sndspec
 
