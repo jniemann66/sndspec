@@ -174,7 +174,7 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 				channelArgs.push_back(*argsIt);
 				argsIt++;
 			} while (argsIt != args.cend() && argsIt->compare(0, 1, "-") != 0);
-			// todo: parse channelArgs
+			processChannelArgs(channelArgs);
 		}
 			break;
 
