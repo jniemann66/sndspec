@@ -5,6 +5,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include <variant>
 
 namespace Sndspec {
@@ -161,7 +162,7 @@ private:
 	bool showWindows{false}; // flag to provide a list of available window functions
 	bool spectrumMode{false};
 	SpectrumSmoothingMode spectrumSmoothingMode{Peak};
-	std::vector<bool> selectedChannels;
+	std::set<int> selectedChannels;
 	ChannelMode channelMode{Normal};
 
 #ifdef FS_AVAILABLE

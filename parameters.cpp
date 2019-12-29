@@ -339,6 +339,9 @@ void Parameters::setFinish(double value)
 
 void Parameters::processChannelArgs(const std::vector<std::string>& args)
 {
+	selectedChannels.clear();
+	channelMode = Normal;
+
 	std::string s;
 	for(const auto& arg : args) {
 		s.append(arg);
@@ -350,6 +353,10 @@ void Parameters::processChannelArgs(const std::vector<std::string>& args)
 	for(std::regex_iterator it = it_begin; it != it_end; ++it){
 		std::smatch match = *it;
 		std::string match_str = match.str();
+		if(match_str.compare("l") == 0 || match_str.compare("L") == 0) {
+			selectedChannels.insert(0);
+		}
+
 	}
 
 }
