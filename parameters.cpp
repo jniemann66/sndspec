@@ -365,9 +365,17 @@ void Parameters::processChannelArgs(const std::vector<std::string>& args)
 			channelMode = Difference;
 		} else if(match_str.compare("norm") == 0) {
 			channelMode = Normal;
+		} else {
+			try {
+				selectedChannels.insert(std::stoi(match_str));
+			}
+			catch (...) {
+
+			}
 		}
 	}
 
+	std::cout << "x";
 }
 
 } // namespace Sndspec
