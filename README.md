@@ -57,6 +57,12 @@ the code for sndspec is entirely original.
 
 ### compiling
 ~~~
+#install dependencies
+sudo apt install libsndfile-dev
+sudo apt install libfftw3-dev
+sudo apt install libcairo-dev
+
+#build
 cd directory-of-your-choice
 cmake path-to-sndspec-source
 make
