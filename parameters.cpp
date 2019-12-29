@@ -346,6 +346,12 @@ void Parameters::processChannelArgs(const std::vector<std::string>& args)
 	for(const auto& arg : args) {
 		s.append(arg);
 	}
+
+	// convert s to lowercase
+	std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) -> unsigned char {
+		return std::tolower(c);
+	});
+
 	std::regex rx{"(\\d{1}|[lr]|all|sum|diff|norm)", std::regex::icase};
 	auto it_begin = std::sregex_iterator(s.begin(), s.end(), rx);
 	auto it_end = std::sregex_iterator();
