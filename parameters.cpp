@@ -380,8 +380,6 @@ void Parameters::processChannelArgs(const std::vector<std::string>& args)
 			}
 		}
 	}
-
-	std::cout << "x";
 }
 
 } // namespace Sndspec
