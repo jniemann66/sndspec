@@ -68,9 +68,11 @@ cmake path-to-sndspec-source
 make
 ~~~
 
-*note: this project requires C++17 or higher. (gcc &gt;= 8 / Clang &gt;= 7)* 
+#### notes
 
-on *nix systems, the libraries are usually placed in standard places, eg (on Ubuntu) : /usr/lib/x86_64-linux-gnu/libsndfile.so /usr/lib/x86_64-linux-gnu/libfftw3.so /usr/lib/x86_64-linux-gnu/libcairo.so
+this project requires C++17 or higher. (gcc &gt;= 8 / Clang &gt;= 7)
+
+on *nix systems, the libraries are usually placed in standard places, eg(on Ubuntu): /usr/lib/x86_64-linux-gnu/libsndfile.so /usr/lib/x86_64-linux-gnu/libfftw3.so /usr/lib/x86_64-linux-gnu/libcairo.so
 
 for Windows, the relevant dlls are placed in subdirectories of the project directory
 
