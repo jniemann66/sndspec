@@ -355,8 +355,17 @@ void Parameters::processChannelArgs(const std::vector<std::string>& args)
 		std::string match_str = match.str();
 		if(match_str.compare("l") == 0 || match_str.compare("L") == 0) {
 			selectedChannels.insert(0);
+		} else if(match_str.compare("r") == 0 || match_str.compare("R") == 0) {
+			selectedChannels.insert(1);
+		} else if(match_str.compare("all") == 0) {
+			// todo: how to specify "all"
+		} else if(match_str.compare("sum") == 0) {
+			channelMode = Sum;
+		} else if(match_str.compare("diff") == 0) {
+			channelMode = Difference;
+		} else if(match_str.compare("norm") == 0) {
+			channelMode = Normal;
 		}
-
 	}
 
 }
