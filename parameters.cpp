@@ -384,9 +384,7 @@ void Parameters::processChannelArgs(const std::vector<std::string>& args)
 			try {
 				selectedChannels.insert(std::stoi(match_str));
 			}
-			catch (...) {
-
-			}
+			catch (...) {}
 		}
 	}
 }
