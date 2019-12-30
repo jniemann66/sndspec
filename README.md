@@ -76,7 +76,7 @@ on *nix systems, the libraries are usually placed in standard places, eg(on Ubun
 
 for Windows, the relevant dlls are placed in subdirectories of the project directory
 
-For this project, I haven't bothered to do a MSVC build, preferring to just use mingw-w64. If anyone really wants an MSVC version then let me know, or better yet -  just add the relevant cmake code :-)
+Also for Windows, I haven't bothered to do a MSVC build, preferring to just use [mingw-w64](http://mingw-w64.org). If anyone really wants an MSVC version then let me know, or better yet -  just add the relevant cmake code :-)
 
 #### known compiling problems
 if you get an error like this (from the linker) on Linux:
