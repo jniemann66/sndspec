@@ -171,13 +171,12 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 		case Channel:
 		{
 			std::vector<std::string> channelArgs;
-			do {
+			while (++argsIt != args.cend() && argsIt->compare(0, 1, "-") != 0) {
 				channelArgs.push_back(*argsIt);
-				argsIt++;
-			} while (argsIt != args.cend() && argsIt->compare(0, 1, "-") != 0);
+			}
 			processChannelArgs(channelArgs);
-		}
 			break;
+		}
 
 #ifdef FS_AVAILABLE
 		case Recursive:
