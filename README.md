@@ -43,8 +43,8 @@ as the window might skew your results in an undesirable way.
 
 ### motivation and design goals
 
-I have used the [spectrogram tool](http://www.mega-nerd.com/libsndfile/tools/#spectrogram) from [sndfile-tools](http://www.mega-nerd.com/libsndfile/tools) for testing [ReSampler](https://github.com/jniemann66/ReSampler) for some time,
-but I wanted to improve upon the method of generating spectrograms (and spectrums) in the following ways:
+Having used the [spectrogram tool](http://www.mega-nerd.com/libsndfile/tools/#spectrogram) from [sndfile-tools](http://www.mega-nerd.com/libsndfile/tools) for testing [ReSampler](https://github.com/jniemann66/ReSampler) for some time,
+I wanted to improve upon the method of generating spectrograms (and spectrums) in the following ways:
 
 - **directory traversal** : allows processing a whole directory (and subdirectories, if desired) of sound files without having to rely on scripts
 - **speed** : by processing sound files in batches, the overhead of starting up the program and initializing resources can be done just once, thereby saving a lot of processing time
