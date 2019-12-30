@@ -38,6 +38,8 @@ Usage: sndspec filename [filename2 ...] [options]
 - when plotting a *spectrum*, a single FFT is performed, so the time range must be reasonable to prevent FFT being too large. (Therefore, don't forget to put in a sensible time range to ensure the FFT is not too large)
 - if you want to plot the frequency response of an impulse response, you might want to switch-off the default Kaiser Window, by using **-W rectangular**, particularly if your impulse response is asymmetrical,
 as the window might skew your results in an undesirable way.
+- when specifying channels with the **--channel** option, the left channel is 0 and the right. Channels always start at zero.
+- The default channel setting is all channels / normal mode
 
 ### motivation and design goals
 
