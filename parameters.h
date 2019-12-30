@@ -164,7 +164,7 @@ private:
 	bool showWindows{false}; // flag to provide a list of available window functions
 	bool spectrumMode{false};
 	SpectrumSmoothingMode spectrumSmoothingMode{Peak};
-	std::set<int> selectedChannels;
+	std::set<int> selectedChannels; // if the set is empty, it is interpreted as "all channels"
 	ChannelMode channelMode{Normal};
 
 #ifdef FS_AVAILABLE
