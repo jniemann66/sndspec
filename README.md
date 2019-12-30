@@ -24,6 +24,7 @@ Usage: sndspec filename [filename2 ...] [options]
 --show-windows                                    Show a list of available window functions
 --spectrum                                        Plot a Spectrum instead of Spectrogram
 -S, --smoothing <moving average|peak|none>        Set Spectrum Smoothing Mode (default:peak)
+-c, --channel <[all|[L|R|0|1|2|...]...] [sum|difference|normal]> select specific channels and set channel mode
 -r, --recursive                                   Recursive directory traversal
 --help                                            Help
 ~~~
