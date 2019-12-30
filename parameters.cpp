@@ -297,6 +297,16 @@ SpectrumSmoothingMode Parameters::getSpectrumSmoothingMode() const
 	return spectrumSmoothingMode;
 }
 
+std::set<int> Parameters::getSelectedChannels() const
+{
+	return selectedChannels;
+}
+
+void Parameters::setSelectedChannels(const std::set<int> &value)
+{
+	selectedChannels = value;
+}
+
 void Parameters::setSpectrumSmoothingMode(const SpectrumSmoothingMode &value)
 {
 	spectrumSmoothingMode = value;

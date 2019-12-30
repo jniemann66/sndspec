@@ -128,6 +128,7 @@ public:
 	void setShowWindows(bool value);
 	void setSpectrumMode(bool value);
 	void setSpectrumSmoothingMode(const SpectrumSmoothingMode &value);
+	void setSelectedChannels(const std::set<int> &value);
 
 	// getters
 	std::vector<std::string> getInputFiles() const;
@@ -145,6 +146,7 @@ public:
 	bool getShowWindowFunctionLabel() const;
 	bool getSpectrumMode() const;
 	SpectrumSmoothingMode getSpectrumSmoothingMode() const;
+	std::set<int> getSelectedChannels() const;
 
 private:
 	std::vector<std::string> inputFiles;

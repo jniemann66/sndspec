@@ -94,7 +94,10 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 
 	for(int c = 0; c < numChannels; c++) {
 
-		if(!channelsEnabled.at(c)) {
+		auto requestedChannels = parameters.getSelectedChannels();
+
+		// if channel is disabled, or user has explicitly requested channels other than this one, skip this channel
+		if(!channelsEnabled.at(c) || (!requestedChannels.empty() && requestedChannels.find(c) == requestedChannels.end()) ) {
 			continue;
 		}
 
