@@ -98,15 +98,15 @@ public:
 			const T* p = inputBuffer.data();
 			if(window.empty()) {
 				for(int64_t f = 0; f < framesRead; f++) {
-					channelBuffers[0][f] = 0.0;
 					for(int ch = 0; ch < nChannels; ch++) {
+						channelBuffers[ch][f] = 0.0; // clear
 						channelBuffers[0][f] += *p++; // sum
 					}
 				}
 			} else {
 				for(int64_t f = 0; f < framesRead; f++) {
-					channelBuffers[0][f] = 0.0;
 					for(int ch = 0; ch < nChannels; ch++) {
+						channelBuffers[ch][f] = 0.0; // clear
 						channelBuffers[0][f] += *p++; // sum
 					}
 					channelBuffers[0][f] *= window[f]; // apply window
