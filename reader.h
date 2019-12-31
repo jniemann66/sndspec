@@ -73,8 +73,8 @@ public:
 		interval = std::ceil((finishPos - startPos) / w);
 	}
 
-    void readSum()
-    {
+	void readSum()
+	{
 		if(!window.empty() && window.size() != blockSize) { // incorrect window size
 			return;
 		}
@@ -119,12 +119,12 @@ public:
 			// advance
 			startFrame += interval;
 		}
-    }
+	}
 
-    void readDifference()
-    {
-        // todo
-    }
+	void readDifference()
+	{
+		// todo
+	}
 
 	void readDeinterleaved()
 	{
