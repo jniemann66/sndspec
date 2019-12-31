@@ -93,7 +93,7 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 			r.readDeinterleaved();
 
 			// scale the data into dB
-			renderer.setChannelsEnabled(convertToDb(spectrogramData, /* magSquared = */ true));
+			renderer.setChannelsEnabled(convertToDb(spectrogramData, /* fromMagSquared = */ true));
 
 			// set render parameters
 			double startTime = static_cast<double>(r.getStartPos()) / r.getSamplerate();
