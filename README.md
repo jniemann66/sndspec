@@ -1,4 +1,5 @@
 # sndspec
+
 *soundfile-to-spectrogram / spectrum utility*
 
 ![spectrogram](./screenshots/sweep-0-to22050_44_1k32f_log.png)
@@ -98,7 +99,9 @@ Find where libfftw3.so is installed, and set the find_libary() hints in CMakeLis
 ### todo
 
 - info, metadata
-- channel sum / difference
+- channel sum - spectrum
+- difference - spectrogram
+- difference - spectrum
 - multichannel spectrograms
 - Quadmath
 - long double
@@ -107,6 +110,8 @@ Find where libfftw3.so is installed, and set the find_libary() hints in CMakeLis
 - log frequency scale
 
 #### completed
+
+~~channel sum : spectrogram~~
 
 ~~channel selection~~
 
