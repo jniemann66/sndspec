@@ -10,7 +10,6 @@
 #include "spectrogram.h"
 #include "spectrum.h"
 #include "parameters.h"
-
 #include "tests.h"
 
 #include <iostream>

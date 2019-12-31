@@ -8,12 +8,11 @@
 */
 
 #include "parameters.h"
+#include "window.h"
 
 #ifdef FS_AVAILABLE
 #include "directory.h"
 #endif
-
-#include "window.h"
 
 #include <iostream>
 #include <cmath>
