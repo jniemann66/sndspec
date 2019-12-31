@@ -40,6 +40,7 @@ Usage: sndspec filename [filename2 ...] [options]
 as the window might skew your results in an undesirable way.
 - when specifying channels with the **--channel** option, the left channel is 0 and the right is 1. Channels always start at zero.
 - The default channel setting is all channels / normal mode
+- For spectrograms, the first *enabled* channel is plotted. (use **--channel R** to get a spectrogram of the right channel)
 
 ### motivation and design goals
 
