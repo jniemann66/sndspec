@@ -80,7 +80,7 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 
 		// option search
 		for(const auto& option : options) {
-			if((argsIt->compare(option.longOption) == 0) || (!option.shortOption.empty() && (argsIt->compare(option.shortOption) == 0))) {
+			if((*argsIt == option.longOption) || (!option.shortOption.empty() && (*argsIt == option.shortOption))) {
 				optionID = option.optionID;
 				break;
 			}
@@ -376,17 +376,17 @@ void Parameters::processChannelArgs(const std::vector<std::string>& args)
 	for(std::regex_iterator it = it_begin; it != it_end; ++it){
 		std::smatch match = *it;
 		std::string match_str = match.str();
-		if(match_str.compare("l") == 0 || match_str.compare("L") == 0) {
+		if(match_str == "l" || match_str == "L") {
 			selectedChannels.insert(0);
-		} else if(match_str.compare("r") == 0 || match_str.compare("R") == 0) {
+		} else if(match_str == "r" || match_str == "R") {
 			selectedChannels.insert(1);
-		} else if(match_str.compare("all") == 0) {
+		} else if(match_str == "all") {
 			selectedChannels.clear();
-		} else if(match_str.compare("sum") == 0) {
+		} else if(match_str == "sum") {
 			channelMode = Sum;
-		} else if(match_str.compare("diff") == 0) {
+		} else if(match_str == "diff") {
 			channelMode = Difference;
-		} else if(match_str.compare("norm") == 0) {
+		} else if(match_str == "norm") {
 			channelMode = Normal;
 		} else {
 			try {
