@@ -75,7 +75,50 @@ public:
 
     void readSum()
     {
-        // todo
+		if(!window.empty() && window.size() != blockSize) { // incorrect window size
+			return;
+		}
+
+		std::vector<T> inputBuffer(nChannels * blockSize);
+
+		int64_t startFrame = startPos;
+		for(int x = 0; x < w; x++) {
+
+			sndFileHandle->seek(startFrame, SEEK_SET);
+			int64_t framesRead = sndFileHandle->readf(inputBuffer.data(), blockSize);
+
+			if (framesRead < blockSize) {
+				// pad with trailing zeroes
+				for(size_t i = static_cast<size_t>(framesRead); i < inputBuffer.size(); i++) {
+					inputBuffer[i] = 0.0;
+				}
+			}
+
+			// deinterleave
+			const T* p = inputBuffer.data();
+			if(window.empty()) {
+				for(int64_t f = 0; f < framesRead; f++) {
+					channelBuffers[0][f] = 0.0;
+					for(int ch = 0; ch < nChannels; ch++) {
+						channelBuffers[0][f] += *p++; // sum
+					}
+				}
+			} else {
+				for(int64_t f = 0; f < framesRead; f++) {
+					channelBuffers[0][f] = 0.0;
+					for(int ch = 0; ch < nChannels; ch++) {
+						channelBuffers[0][f] += *p++; // sum
+					}
+					channelBuffers[0][f] *= window[f]; // apply window
+				}
+			}
+
+			// call processing function
+			processingFunc(x, 0, channelBuffers.at(0));  // only one output buffer is used : channelBuffers[0]
+
+			// advance
+			startFrame += interval;
+		}
     }
 
     void readDifference()
