@@ -351,7 +351,7 @@ void Renderer::drawSpectrogramTickmarks()
 
 	cairo_set_font_size(cr, 13);
 
-	double yStep = plotHeight * freqStep / nyquist;
+    double yStep = plotHeight * static_cast<double>(freqStep) / nyquist;
 	double y = plotOriginY + plotHeight - 1 ;
 	int f = 0;
 
