@@ -214,8 +214,8 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 
 		// set a callback function to execute spectrum analysis for each block read
 		r.setProcessingFunc([&analyzers](int pos, int channel, const double* data) -> void {
-            (void)pos;
-            (void)data;
+			(void)pos;
+			(void)data;
 			analyzers.at(channel)->exec();
 		});
 
