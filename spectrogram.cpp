@@ -7,7 +7,6 @@
 
 #include <iostream>
 #include <iomanip>
-
 #include <cassert>
 
 void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &parameters)

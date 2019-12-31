@@ -150,6 +150,8 @@ private:
 		0x00000000
 	};
 
+	// todo: how to handle other palettes ?
+
 	// (experimental)
 //	std::vector<int32_t> heatMapPalette {
 //		0x00440154,
@@ -185,7 +187,6 @@ private:
 	};
 
 	void setMargins();
-
 
 };
 

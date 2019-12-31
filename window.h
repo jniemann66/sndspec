@@ -286,5 +286,4 @@ Salt Lake City, UT, USA, 2001, pp. 3081-3084 vol.5.
 doi: 10.1109/ICASSP.2001.940309
 */
 
-
 #endif // WINDOW_H
