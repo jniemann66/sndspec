@@ -68,7 +68,7 @@ void Renderer::renderSpectrogram(const Parameters &parameters, const Spectrogram
 			for(int y = 0; y < numBins; y++) {
 				int lineAddr = plotOriginX + (plotOriginY + h - y) * stride32;
 				for(int x = 0; x < numSpectrums; x++) {
-                    int colorindex = static_cast<int>(spectrogramData[c][x][y] * colorScale);
+					int colorindex = static_cast<int>(spectrogramData[c][x][y] * colorScale);
 					int32_t color = heatMapPalette[std::max(0, std::min(colorindex, lastColorIndex))];
 					pixelBuffer[x + lineAddr] = color;
 				}
@@ -351,7 +351,7 @@ void Renderer::drawSpectrogramTickmarks()
 
 	cairo_set_font_size(cr, 13);
 
-    double yStep = plotHeight * static_cast<double>(freqStep) / nyquist;
+	double yStep = plotHeight * static_cast<double>(freqStep) / nyquist;
 	double y = plotOriginY + plotHeight - 1 ;
 	int f = 0;
 
