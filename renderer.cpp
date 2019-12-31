@@ -11,7 +11,7 @@
 #include "raiitimer.h"
 #include "spectrum.h"
 
-#include <inttypes.h>
+#include <cinttypes>
 
 #include <cstdlib>
 #include <cstddef>
@@ -84,7 +84,7 @@ void Renderer::renderSpectrogram(const Parameters &parameters, const Spectrogram
 	drawSpectrogramHeatMap();
 }
 
-void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<std::vector<double>> spectrumData)
+void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<std::vector<double>>& spectrumData)
 {
 	int numChannels = spectrumData.size();
 	if(channelsEnabled.empty()) {
