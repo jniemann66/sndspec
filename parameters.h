@@ -138,6 +138,7 @@ public:
 	void setSpectrumMode(bool value);
 	void setSpectrumSmoothingMode(const SpectrumSmoothingMode &value);
 	void setSelectedChannels(const std::set<int> &value);
+	void setChannelMode(const ChannelMode &value);
 
 	// getters
 	std::vector<std::string> getInputFiles() const;
@@ -156,6 +157,8 @@ public:
 	bool getSpectrumMode() const;
 	SpectrumSmoothingMode getSpectrumSmoothingMode() const;
 	std::set<int> getSelectedChannels() const;
+	ChannelMode getChannelMode() const;
+
 
 private:
 	std::vector<std::string> inputFiles;

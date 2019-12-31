@@ -309,6 +309,16 @@ std::set<int> Parameters::getSelectedChannels() const
 	return selectedChannels;
 }
 
+ChannelMode Parameters::getChannelMode() const
+{
+	return channelMode;
+}
+
+void Parameters::setChannelMode(const ChannelMode &value)
+{
+	channelMode = value;
+}
+
 void Parameters::setSelectedChannels(const std::set<int> &value)
 {
 	selectedChannels = value;

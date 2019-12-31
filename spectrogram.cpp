@@ -90,7 +90,11 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 			});
 
 			// read (and analyze) the file
-			r.readDeinterleaved();
+			if(parameters.getChannelMode() == Sum) {
+				r.readSum();
+			} else {
+				r.readDeinterleaved();
+			}
 
 			// scale the data into dB
 			renderer.setChannelsEnabled(convertToDb(spectrogramData, /* fromMagSquared = */ true));
