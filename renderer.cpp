@@ -60,19 +60,20 @@ void Renderer::renderSpectrogram(const Parameters &parameters, const Spectrogram
 	windowFunctionLabel = "Window: " + parameters.getWindowFunctionDisplayName();
 	showWindowFunctionLabel = parameters.getShowWindowFunctionLabel();
 
-	for(int c = 0; c < 1 /*numChannels*/; c++) {
+	auto requestedChannels = parameters.getSelectedChannels();
 
-		if(!channelsEnabled.at(c)) {
-			continue;
-		}
-
-		for(int y = 0; y < numBins; y++) {
-			int lineAddr = plotOriginX + (plotOriginY + h - y) * stride32;
-			for(int x = 0; x < numSpectrums; x++) {
-				int colorindex = spectrogramData[c][x][y] * colorScale;
-				int32_t color = heatMapPalette[std::max(0, std::min(colorindex, lastColorIndex))];
-				pixelBuffer[x + lineAddr] = color;
+	for(int c = 0; c < numChannels; c++) {
+		if(channelsEnabled.at(c) && (requestedChannels.find(c) != requestedChannels.end() || requestedChannels.empty()) ) {
+			// plot just one, then break
+			for(int y = 0; y < numBins; y++) {
+				int lineAddr = plotOriginX + (plotOriginY + h - y) * stride32;
+				for(int x = 0; x < numSpectrums; x++) {
+					int colorindex = spectrogramData[c][x][y] * colorScale;
+					int32_t color = heatMapPalette[std::max(0, std::min(colorindex, lastColorIndex))];
+					pixelBuffer[x + lineAddr] = color;
+				}
 			}
+			break;
 		}
 	}
 
