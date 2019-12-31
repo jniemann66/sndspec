@@ -376,9 +376,9 @@ void Parameters::processChannelArgs(const std::vector<std::string>& args)
 	for(std::regex_iterator it = it_begin; it != it_end; ++it){
 		std::smatch match = *it;
 		std::string match_str = match.str();
-		if(match_str == "l" || match_str == "L") {
+        if(match_str == "l") {
 			selectedChannels.insert(0);
-		} else if(match_str == "r" || match_str == "R") {
+        } else if(match_str == "r") {
 			selectedChannels.insert(1);
 		} else if(match_str == "all") {
 			selectedChannels.clear();
