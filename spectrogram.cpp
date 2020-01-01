@@ -92,6 +92,8 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 			// read (and analyze) the file
 			if(parameters.getChannelMode() == Sum) {
 				r.readSum();
+			} else if(parameters.getChannelMode() == Difference) {
+				r.readDifference();
 			} else {
 				r.readDeinterleaved();
 			}

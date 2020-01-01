@@ -123,7 +123,52 @@ public:
 
 	void readDifference()
 	{
-		// todo
+		if(!window.empty() && window.size() != blockSize) { // incorrect window size
+			return;
+		}
+
+		std::vector<T> inputBuffer(nChannels * blockSize);
+
+		int64_t startFrame = startPos;
+		for(int x = 0; x < w; x++) {
+
+			sndFileHandle->seek(startFrame, SEEK_SET);
+			int64_t framesRead = sndFileHandle->readf(inputBuffer.data(), blockSize);
+
+			if (framesRead < blockSize) {
+				// pad with trailing zeroes
+				for(size_t i = static_cast<size_t>(framesRead); i < inputBuffer.size(); i++) {
+					inputBuffer[i] = 0.0;
+				}
+			}
+
+			// deinterleave
+			const T* p = inputBuffer.data();
+			if(window.empty()) {
+				for(int64_t f = 0; f < framesRead; f++) {
+					channelBuffers[0][f] = *p++;
+					for(int ch = 1; ch < nChannels; ch++) {
+						channelBuffers[ch][f] = 0.0; // clear
+						channelBuffers[0][f] -= *p++; // subtract
+					}
+				}
+			} else {
+				for(int64_t f = 0; f < framesRead; f++) {
+					channelBuffers[0][f] = *p++;
+					for(int ch = 1; ch < nChannels; ch++) {
+						channelBuffers[ch][f] = 0.0; // clear
+						channelBuffers[0][f] -= *p++; // subtract
+					}
+					channelBuffers[0][f] *= window[f]; // apply window
+				}
+			}
+
+			// call processing function
+			processingFunc(x, 0, channelBuffers.at(0));  // only one output buffer is used : channelBuffers[0]
+
+			// advance
+			startFrame += interval;
+		}
 	}
 
 	void readDeinterleaved()
