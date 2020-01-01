@@ -241,7 +241,7 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		// determine which channels to plot
 		if(parameters.getChannelMode() == Sum || parameters.getChannelMode() == Difference) {
 			std::vector<bool> enabled(nChannels, false);
-			enabled[0] = hasSignal;
+			enabled[0] = true; //hasSignal;
 			renderer.setChannelsEnabled(enabled);
 		} else {
 			renderer.setChannelsEnabled(std::vector<bool>(nChannels, hasSignal));
