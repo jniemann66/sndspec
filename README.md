@@ -100,7 +100,6 @@ Find where libfftw3.so is installed, and set the find_libary() hints in CMakeLis
 
 - info, metadata
 - channel sum - spectrum
-- difference - spectrogram
 - difference - spectrum
 - multichannel spectrograms
 - Quadmath
