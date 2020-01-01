@@ -42,9 +42,9 @@ as the window might skew your results in an undesirable way.
 - Smoothing option only applies to spectrums
 - when specifying channels with the **--channel** option, the left channel is 0 and the right is 1. Channels always start at zero.
 - The default channel setting is all channels / normal mode
-- For spectrograms, the first *enabled* channel is plotted. (use **--channel R** to get a spectrogram of the right channel)
-- sum mode currently only works on spectrograms, and it sums all channels regardless of requested channels (this will be fixed in a future release)
-- difference mode not implemented yet
+- For spectrograms in normal mode, the first *enabled* channel is plotted. (use **--channel R** to get a spectrogram of the right channel)
+- sum / difference modes currently only work on spectrograms
+- sum / difference modes operate on all channels regardless of requested channels (this may be fixed in a future release)
 - default dynamic range is 190 dB
 
 ### motivation and design goals
