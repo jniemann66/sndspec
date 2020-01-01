@@ -220,7 +220,13 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		});
 
 		// read (and analyze) the file
-		r.readDeinterleaved();
+		if(parameters.getChannelMode() == Sum) {
+			r.readSum();
+		} else if(parameters.getChannelMode() == Difference) {
+			r.readDifference();
+		} else {
+			r.readDeinterleaved();
+		}
 
 		// prepare and populate results buffers
 		std::vector<std::vector<double>> results;
@@ -230,12 +236,20 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		}
 
 		// scale to dB
-		bool hasSignal = Spectrum::convertToDb(results, true);
+		bool hasSignal = Spectrum::convertToDb(results, /* fromMagSquared = */ true);
+
+		// determine which channels to plot
+		if(parameters.getChannelMode() == Sum || parameters.getChannelMode() == Difference) {
+			std::vector<bool> enabled(nChannels, false);
+			enabled[0] = hasSignal;
+			renderer.setChannelsEnabled(enabled);
+		} else {
+			renderer.setChannelsEnabled(std::vector<bool>(nChannels, hasSignal));
+		}
 
 		// render
-		if(!hasSignal) { // no signal
-			renderer.setChannelsEnabled(std::vector(nChannels, false)); // don't plot anything
-		}
+		renderer.setChannelsEnabled(std::vector(nChannels, hasSignal)); // don't plot anything
+
 		renderer.setInputFilename(inputFilename);
 		renderer.setDynRange(parameters.getDynRange());
 		renderer.setTitle("Spectrum");
