@@ -98,9 +98,8 @@ Find where libfftw3.so is installed, and set the find_libary() hints in CMakeLis
 
 ### todo
 
+- bug: spectrum sometimes not plotting anything for sum or difference mode
 - info, metadata
-- channel sum - spectrum
-- difference - spectrum
 - multichannel spectrograms
 - Quadmath
 - long double
@@ -109,6 +108,10 @@ Find where libfftw3.so is installed, and set the find_libary() hints in CMakeLis
 - log frequency scale
 
 #### completed
+
+~~channel sum - spectrum~~
+
+~~difference - spectrum~~
 
 ~~channel sum : spectrogram~~
 
