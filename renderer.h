@@ -98,6 +98,7 @@ private:
 	double finishTime;
 	std::string title{"Spectrogram"};
 	std::string inputFilename;
+	std::string channelMode;
 	std::string horizAxisLabel{"Time (s)"};
 	std::string vertAxisLabel{"Frequency (Hz)"};
 	std::string windowFunctionLabel;

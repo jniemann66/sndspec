@@ -91,6 +91,19 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 		channelsEnabled.resize(numChannels, true);
 	}
 
+	switch(parameters.getChannelMode())
+	{
+	case Sum:
+		channelMode = "Sum";
+		break;
+	case Difference:
+		channelMode = "Difference";
+		break;
+	case Normal:
+		channelMode.clear();
+		break;
+	}
+
 	int numBins =  spectrumData.at(0).size();
 
 	const SpectrumSmoothingMode spectrumSmoothingMode = parameters.getSpectrumSmoothingMode();
@@ -102,9 +115,9 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 				static_cast<double>(plotHeight) / parameters.getDynRange() / L :
 				static_cast<double>(plotHeight) / parameters.getDynRange();
 
-	for(int c = 0; c < numChannels; c++) {
+	auto requestedChannels = parameters.getSelectedChannels();
 
-		auto requestedChannels = parameters.getSelectedChannels();
+	for(int c = 0; c < numChannels; c++) {
 
 		// if channel is disabled, or user has explicitly requested channels other than this one, skip this channel
 		if(!channelsEnabled.at(c) || (!requestedChannels.empty() && requestedChannels.find(c) == requestedChannels.end()) ) {
@@ -289,6 +302,14 @@ void Renderer::drawSpectrumText()
 	cairo_text_extents(cr, inputFilename.c_str(), &infoExtents);
 	cairo_move_to(cr, plotOriginX, plotOriginY - infoExtents.height);
 	cairo_show_text(cr, inputFilename.c_str());
+
+	// channel mode
+	if(!channelMode.empty()) {
+		cairo_text_extents_t chModeExtents;
+		cairo_text_extents(cr, channelMode.c_str(), &chModeExtents);
+		cairo_move_to(cr, plotOriginX + plotWidth - chModeExtents.x_advance, plotOriginY - infoExtents.height);
+		cairo_show_text(cr, channelMode.c_str());
+	}
 
 	// window function label
 	if(showWindowFunctionLabel) {

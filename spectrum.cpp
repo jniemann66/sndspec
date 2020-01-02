@@ -247,9 +247,6 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 			renderer.setChannelsEnabled(std::vector<bool>(nChannels, hasSignal));
 		}
 
-		// render
-		renderer.setChannelsEnabled(std::vector(nChannels, hasSignal)); // don't plot anything
-
 		renderer.setInputFilename(inputFilename);
 		renderer.setDynRange(parameters.getDynRange());
 		renderer.setTitle("Spectrum");
