@@ -117,6 +117,11 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 
 	auto requestedChannels = parameters.getSelectedChannels();
 
+
+	// clip the plotting region
+	cairo_rectangle(cr, plotOriginX, plotOriginY, plotWidth, plotHeight);
+	cairo_clip(cr);
+
 	for(int c = 0; c < numChannels; c++) {
 
 		// if channel is disabled, or user has explicitly requested channels other than this one, skip this channel
@@ -164,6 +169,8 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 		}
 		cairo_stroke(cr);
 	}
+
+	cairo_reset_clip(cr);
 
 	drawBorder();
 	drawSpectrumGrid();
