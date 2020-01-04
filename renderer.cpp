@@ -100,7 +100,7 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 		channelMode = "Difference";
 		break;
 	case Normal:
-		channelMode.clear();
+		channelMode = "Normal";
 		break;
 	}
 
@@ -311,12 +311,34 @@ void Renderer::drawSpectrumText()
 	cairo_show_text(cr, inputFilename.c_str());
 
 	// channel mode
-	if(!channelMode.empty()) {
+	if(channelMode == "Normal") {
+		int xpos = plotOriginX + plotWidth;
+		for(int ch = channelsEnabled.size() - 1; ch >=  0; ch--) {
+			Rgb chColor = spectrumChannelColors[std::min(static_cast<int>(spectrumChannelColors.size() - 1), ch)];
+			cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, 0.8);
+			if(channelsEnabled.at(ch)) {
+				cairo_text_extents_t extents;
+				std::string s;
+				if(channelsEnabled.size() == 2) {
+					s = (ch == 1) ? " R" : " L"; // stereo
+				} else {
+					s = " " + std::to_string(ch);
+				}
+				cairo_text_extents(cr, s.c_str(), &extents);
+				xpos -= extents.x_advance;
+				cairo_move_to(cr, xpos, plotOriginY - extents.height);
+				cairo_show_text(cr, s.c_str());
+			}
+		}
+	} else {
 		cairo_text_extents_t chModeExtents;
 		cairo_text_extents(cr, channelMode.c_str(), &chModeExtents);
 		cairo_move_to(cr, plotOriginX + plotWidth - chModeExtents.x_advance, plotOriginY - infoExtents.height);
 		cairo_show_text(cr, channelMode.c_str());
 	}
+
+	// resume white color
+	cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
 
 	// window function label
 	if(showWindowFunctionLabel) {
