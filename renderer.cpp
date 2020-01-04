@@ -104,6 +104,9 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 		break;
 	}
 
+	windowFunctionLabel = "Window: " + parameters.getWindowFunctionDisplayName();
+	showWindowFunctionLabel = parameters.getShowWindowFunctionLabel();
+
 	int numBins =  spectrumData.at(0).size();
 
 	const SpectrumSmoothingMode spectrumSmoothingMode = parameters.getSpectrumSmoothingMode();
@@ -326,14 +329,14 @@ void Renderer::drawSpectrumText()
 				}
 				cairo_text_extents(cr, s.c_str(), &extents);
 				xpos -= extents.x_advance;
-				cairo_move_to(cr, xpos, plotOriginY - extents.height);
+				cairo_move_to(cr, xpos, height - extents.height);
 				cairo_show_text(cr, s.c_str());
 			}
 		}
 	} else {
 		cairo_text_extents_t chModeExtents;
 		cairo_text_extents(cr, channelMode.c_str(), &chModeExtents);
-		cairo_move_to(cr, plotOriginX + plotWidth - chModeExtents.x_advance, plotOriginY - infoExtents.height);
+		cairo_move_to(cr, plotOriginX + plotWidth - chModeExtents.x_advance, height - infoExtents.height);
 		cairo_show_text(cr, channelMode.c_str());
 	}
 
