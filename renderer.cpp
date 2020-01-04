@@ -101,6 +101,12 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 		break;
 	case Normal:
 		channelMode = "Normal";
+		auto requestedChannels = parameters.getSelectedChannels();
+		if(!requestedChannels.empty()){
+			for(int ch = 0; ch < numChannels; ch++) {
+				channelsEnabled[ch] = channelsEnabled.at(ch) && (requestedChannels.find(ch) != requestedChannels.end());
+			}
+		}
 		break;
 	}
 
@@ -118,7 +124,6 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 				static_cast<double>(plotHeight) / parameters.getDynRange() / L :
 				static_cast<double>(plotHeight) / parameters.getDynRange();
 
-	auto requestedChannels = parameters.getSelectedChannels();
 
 
 	// clip the plotting region
@@ -127,8 +132,8 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 
 	for(int c = 0; c < numChannels; c++) {
 
-		// if channel is disabled, or user has explicitly requested channels other than this one, skip this channel
-		if(!channelsEnabled.at(c) || (!requestedChannels.empty() && requestedChannels.find(c) == requestedChannels.end()) ) {
+		// if channel is disabled, skip this channel
+		if(!channelsEnabled.at(c)) {
 			continue;
 		}
 
