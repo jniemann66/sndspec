@@ -95,9 +95,17 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 	{
 	case Sum:
 		channelMode = "Sum";
+		channelsEnabled[0] = true;
+		for(int ch = 1; ch < channelsEnabled.size(); ch++) {
+			channelsEnabled[ch] = false;
+		}
 		break;
 	case Difference:
 		channelMode = "Difference";
+		channelsEnabled[0] = true;
+		for(int ch = 1; ch < channelsEnabled.size(); ch++) {
+			channelsEnabled[ch] = false;
+		}
 		break;
 	case Normal:
 		channelMode = "Normal";
@@ -110,8 +118,8 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 		break;
 	}
 
-	windowFunctionLabel = "Window: " + parameters.getWindowFunctionDisplayName();
 	showWindowFunctionLabel = parameters.getShowWindowFunctionLabel();
+	windowFunctionLabel = "Window: " + parameters.getWindowFunctionDisplayName();
 
 	int numBins =  spectrumData.at(0).size();
 
@@ -123,8 +131,6 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 	double vScaling = (spectrumSmoothingMode == MovingAverage) ?
 				static_cast<double>(plotHeight) / parameters.getDynRange() / L :
 				static_cast<double>(plotHeight) / parameters.getDynRange();
-
-
 
 	// clip the plotting region
 	cairo_rectangle(cr, plotOriginX, plotOriginY, plotWidth, plotHeight);
@@ -339,6 +345,8 @@ void Renderer::drawSpectrumText()
 			}
 		}
 	} else {
+		Rgb chColor = spectrumChannelColors.at(0);
+		cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, 0.8);
 		cairo_text_extents_t chModeExtents;
 		cairo_text_extents(cr, channelMode.c_str(), &chModeExtents);
 		cairo_move_to(cr, plotOriginX + plotWidth - chModeExtents.x_advance, height - infoExtents.height);
