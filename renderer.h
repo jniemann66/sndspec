@@ -201,6 +201,8 @@ private:
 	// resolveEnabledChannels() : determines which channels should be enabled / disabled based on:
 	// channel mode, parameters, and existing enabled / disabled state of each channel
 	// sets Renderer::enabledChannels accordingly
+	// also sets the description string Renderer::channelMode
+
 	int resolveEnabledChannels(const Parameters &parameters, int numChannels);
 };
 

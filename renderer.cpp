@@ -44,9 +44,6 @@ Renderer::~Renderer()
 	cairo_surface_destroy(surface);
 }
 
-
-
-
 void Renderer::renderSpectrogram(const Parameters &parameters, const SpectrogramResults<double> &spectrogramData)
 {
 	int numChannels = spectrogramData.size();
@@ -497,6 +494,37 @@ void Renderer::drawSpectrogramText()
 	cairo_text_extents(cr, horizAxisLabel.c_str(), &horizAxisLabelExtents);
 	cairo_move_to(cr, plotOriginX + (plotWidth - horizAxisLabelExtents.x_advance) / 2.0, height - horizAxisLabelExtents.height);
 	cairo_show_text(cr, horizAxisLabel.c_str());
+
+	// channel mode
+	if(channelMode == "Normal") {
+		int xpos = plotOriginX + plotWidth;
+		for(int ch = channelsEnabled.size() - 1; ch >=  0; ch--) {
+			if(channelsEnabled.at(ch)) {
+				cairo_text_extents_t extents;
+				std::string s;
+				if(channelsEnabled.size() == 1) {
+					s = "Mono";
+				} else if(channelsEnabled.size() == 2) {
+					s = (ch == 1) ? " R" : " L"; // stereo
+				} else {
+					s = " " + std::to_string(ch);
+				}
+				cairo_text_extents(cr, s.c_str(), &extents);
+				xpos -= extents.x_advance;
+				cairo_move_to(cr, xpos, height - extents.height);
+				cairo_show_text(cr, s.c_str());
+				break;
+			}
+		}
+	} else {
+		cairo_text_extents_t chModeExtents;
+		cairo_text_extents(cr, channelMode.c_str(), &chModeExtents);
+		cairo_move_to(cr, plotOriginX + plotWidth - chModeExtents.x_advance, height - infoExtents.height);
+		cairo_show_text(cr, channelMode.c_str());
+	}
+
+
+
 
 	// vertAxis
 	cairo_text_extents_t vertAxisLabelExtents;
