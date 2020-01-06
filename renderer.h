@@ -198,6 +198,10 @@ private:
 
 	void setMargins();
 
+	// resolveEnabledChannels() : determines which channels should be enabled / disabled based on:
+	// channel mode, parameters, and existing enabled / disabled state of each channel
+	// sets Renderer::enabledChannels accordingly
+	int resolveEnabledChannels(const Parameters &parameters, int numChannels);
 };
 
 } // namespace Sndspec

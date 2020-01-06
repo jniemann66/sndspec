@@ -44,12 +44,13 @@ Renderer::~Renderer()
 	cairo_surface_destroy(surface);
 }
 
+
+
+
 void Renderer::renderSpectrogram(const Parameters &parameters, const SpectrogramResults<double> &spectrogramData)
 {
 	int numChannels = spectrogramData.size();
-	if(channelsEnabled.empty()) {
-		channelsEnabled.resize(numChannels, true);
-	}
+	resolveEnabledChannels(parameters, numChannels);
 
 	int numSpectrums = spectrogramData.at(0).size();
 	int numBins = spectrogramData.at(0).at(0).size();
@@ -60,10 +61,8 @@ void Renderer::renderSpectrogram(const Parameters &parameters, const Spectrogram
 	windowFunctionLabel = "Window: " + parameters.getWindowFunctionDisplayName();
 	showWindowFunctionLabel = parameters.getShowWindowFunctionLabel();
 
-	auto requestedChannels = parameters.getSelectedChannels();
-
 	for(int c = 0; c < numChannels; c++) {
-		if(channelsEnabled.at(c) && (requestedChannels.find(c) != requestedChannels.end() || requestedChannels.empty()) ) {
+		if(channelsEnabled.at(c)) {
 			// plot just one, then break
 			for(int y = 0; y < numBins; y++) {
 				int lineAddr = plotOriginX + (plotOriginY + h - y) * stride32;
@@ -87,36 +86,7 @@ void Renderer::renderSpectrogram(const Parameters &parameters, const Spectrogram
 void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<std::vector<double>>& spectrumData)
 {
 	int numChannels = spectrumData.size();
-	if(channelsEnabled.empty()) {
-		channelsEnabled.resize(numChannels, true);
-	}
-
-	switch(parameters.getChannelMode())
-	{
-	case Sum:
-		channelMode = "Sum";
-		channelsEnabled[0] = true;
-		for(int ch = 1; ch < channelsEnabled.size(); ch++) {
-			channelsEnabled[ch] = false;
-		}
-		break;
-	case Difference:
-		channelMode = "Difference";
-		channelsEnabled[0] = true;
-		for(int ch = 1; ch < channelsEnabled.size(); ch++) {
-			channelsEnabled[ch] = false;
-		}
-		break;
-	case Normal:
-		channelMode = "Normal";
-		auto requestedChannels = parameters.getSelectedChannels();
-		if(!requestedChannels.empty()){
-			for(int ch = 0; ch < numChannels; ch++) {
-				channelsEnabled[ch] = channelsEnabled.at(ch) && (requestedChannels.find(ch) != requestedChannels.end());
-			}
-		}
-		break;
-	}
+	resolveEnabledChannels(parameters, numChannels);
 
 	showWindowFunctionLabel = parameters.getShowWindowFunctionLabel();
 	windowFunctionLabel = "Window: " + parameters.getWindowFunctionDisplayName();
@@ -192,6 +162,46 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 	drawSpectrumText();
 
 }
+
+// note: in Normal mode, channels may be disabled due to the following:
+// 1. no signal present
+// 2. user requested that the channel be omitted
+// in Sum / Difference mode, channel zero is always enabled, and the others should be disabled
+
+int Renderer::resolveEnabledChannels(const Parameters &parameters, int numChannels)
+{
+	if(channelsEnabled.empty()) {
+		channelsEnabled.resize(numChannels, true);
+	}
+
+	switch(parameters.getChannelMode())
+	{
+	case Sum:
+		channelMode = "Sum";
+		channelsEnabled[0] = true;
+		for(int ch = 1; ch < channelsEnabled.size(); ch++) {
+			channelsEnabled[ch] = false;
+		}
+		break;
+	case Difference:
+		channelMode = "Difference";
+		channelsEnabled[0] = true;
+		for(int ch = 1; ch < channelsEnabled.size(); ch++) {
+			channelsEnabled[ch] = false;
+		}
+		break;
+	case Normal:
+		channelMode = "Normal";
+		auto requestedChannels = parameters.getSelectedChannels();
+		if(!requestedChannels.empty()) {
+			for(int ch = 0; ch < numChannels; ch++) {
+				channelsEnabled[ch] = channelsEnabled.at(ch) && (requestedChannels.find(ch) != requestedChannels.end());
+			}
+		}
+		break;
+	}
+}
+
 void Renderer::drawSpectrogramGrid()
 {
 	cairo_set_line_width (cr, 1.0);
