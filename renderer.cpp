@@ -340,7 +340,9 @@ void Renderer::drawSpectrumText()
 			if(channelsEnabled.at(ch)) {
 				cairo_text_extents_t extents;
 				std::string s;
-				if(channelsEnabled.size() == 2) {
+				if(channelsEnabled.size() == 1) {
+					s = "";
+				} else if(channelsEnabled.size() == 2) {
 					s = (ch == 1) ? " R" : " L"; // stereo
 				} else {
 					s = " " + std::to_string(ch);
@@ -503,7 +505,7 @@ void Renderer::drawSpectrogramText()
 				cairo_text_extents_t extents;
 				std::string s;
 				if(channelsEnabled.size() == 1) {
-					s = "Mono";
+					s = "";
 				} else if(channelsEnabled.size() == 2) {
 					s = (ch == 1) ? " R" : " L"; // stereo
 				} else {
