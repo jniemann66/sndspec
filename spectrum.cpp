@@ -15,6 +15,7 @@
 #include <vector>
 #include <cmath>
 #include <algorithm>
+#include <cassert>
 
 #include <iostream>
 
@@ -192,11 +193,15 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		}
 
 		// calculate blocksize
-		r.setStartPos(std::max(0, std::min(static_cast<int>(r.getSamplerate() * parameters.getStart()), r.getNFrames())));
-		int64_t finishPos = std::max(0, std::min(static_cast<int>(r.getSamplerate() * parameters.getFinish()), r.getNFrames()));
-		int interval = static_cast<int>(std::max(INT64_C(0), finishPos - r.getStartPos()));
+        int64_t startPos  = std::max(0, std::min(static_cast<int>(r.getSamplerate() * parameters.getStart()),  r.getNFrames()));
+        int64_t finishPos = (parameters.getFinish() == 0) ?
+                    r.getNFrames() :
+                    std::max(0, std::min(static_cast<int>(r.getSamplerate() * parameters.getFinish()), r.getNFrames()));
+        int interval = static_cast<int>(std::max(INT64_C(0), finishPos - startPos));
 		int blockSize = Spectrum::selectBestFFTSize(interval);
-		r.setFinishPos(r.getStartPos() + blockSize);
+        assert(blockSize <= interval);
+        r.setStartPos(startPos);
+        r.setFinishPos(startPos + blockSize);
 		r.setBlockSize(blockSize);
 
 		// create window
