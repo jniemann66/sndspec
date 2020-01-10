@@ -310,7 +310,6 @@ void Renderer::drawSpectrumTickmarks()
 	}
 
 	cairo_stroke (cr);
-
 }
 
 void Renderer::drawSpectrumText()
@@ -387,7 +386,6 @@ void Renderer::drawSpectrumText()
 	cairo_rotate(cr, M_PI_2);
 	cairo_show_text(cr, vertAxisLabel.c_str());
 	cairo_restore(cr);
-
 }
 
 std::vector<bool> Renderer::getChannelsEnabled() const
@@ -525,9 +523,6 @@ void Renderer::drawSpectrogramText()
 		cairo_show_text(cr, channelMode.c_str());
 	}
 
-
-
-
 	// vertAxis
 	cairo_text_extents_t vertAxisLabelExtents;
 	cairo_text_extents(cr, vertAxisLabel.c_str(), &vertAxisLabelExtents);
@@ -536,7 +531,6 @@ void Renderer::drawSpectrogramText()
 	cairo_rotate(cr, M_PI_2);
 	cairo_show_text(cr, vertAxisLabel.c_str());
 	cairo_restore(cr);
-
 }
 
 void Renderer::drawSpectrogramHeatMap()

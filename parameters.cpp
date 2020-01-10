@@ -408,4 +408,3 @@ void Parameters::processChannelArgs(const std::vector<std::string>& args)
 }
 
 } // namespace Sndspec
-
