@@ -203,7 +203,7 @@ private:
 	// sets Renderer::enabledChannels accordingly
 	// also sets the description string Renderer::channelMode
 
-	int resolveEnabledChannels(const Parameters &parameters, int numChannels);
+    void resolveEnabledChannels(const Parameters &parameters, int numChannels);
 };
 
 } // namespace Sndspec

@@ -165,7 +165,7 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 // 2. user requested that the channel be omitted
 // in Sum / Difference mode, channel zero is always enabled, and the others should be disabled
 
-int Renderer::resolveEnabledChannels(const Parameters &parameters, int numChannels)
+void Renderer::resolveEnabledChannels(const Parameters &parameters, int numChannels)
 {
 	if(channelsEnabled.empty()) {
 		channelsEnabled.resize(numChannels, true);
