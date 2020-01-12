@@ -91,11 +91,11 @@ private:
 	int height;
 
 	// properties required for labelling the chart
-	int nyquist;
-	int freqStep;
+	int nyquist{};
+	int freqStep{};
 	int numTimeDivs{5};
-	double startTime;
-	double finishTime;
+	double startTime{};
+	double finishTime{};
 	std::string title{"Spectrogram"};
 	std::string inputFilename;
 	std::string channelMode;
@@ -103,7 +103,7 @@ private:
 	std::string vertAxisLabel{"Frequency (Hz)"};
 	std::string windowFunctionLabel;
 	bool showWindowFunctionLabel{false};
-	double dynRange;
+	double dynRange{};
 
 	// font sizes
 	const double fontSizeNormal{13.0};
@@ -115,7 +115,7 @@ private:
 
 	// heatmap width
 	const int hmWidth{10};
-	int hmLabelWidth;
+	int hmLabelWidth{};
 
 	// plot origin
 	int plotOriginX;
@@ -129,10 +129,10 @@ private:
 	const double tickWidth{10.0};
 
 	// margins
-	double marginLeft;
-	double marginTop;
-	double marginRight;
-	double marginBottom;
+	double marginLeft{};
+	double marginTop{};
+	double marginRight{};
+	double marginBottom{};
 
 	std::vector<uint32_t> pixelBuffer;
 	int stride32;
