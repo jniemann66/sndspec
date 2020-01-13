@@ -157,7 +157,6 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 	drawSpectrumGrid();
 	drawSpectrumTickmarks();
 	drawSpectrumText();
-
 }
 
 // note: in Normal mode, channels may be disabled due to the following:
@@ -770,7 +769,6 @@ std::string Renderer::formatTimeRange(const double startSecs, const double finis
 	char buf[100];
 	sprintf(buf, "%02d:%02d:%07.4f - %02d:%02d:%07.4f", h0, m0, s0, h1, m1, s1);
 	return std::string{buf};
-
 }
 
 } // namespace Sndspec
