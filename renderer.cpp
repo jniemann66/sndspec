@@ -325,10 +325,11 @@ void Renderer::drawSpectrumText()
 	cairo_set_font_size(cr, 13);
 
 	// info
+	std::string infoString = inputFilename + " " + formatTimeRange(startTime, finishTime);
 	cairo_text_extents_t infoExtents;
-	cairo_text_extents(cr, inputFilename.c_str(), &infoExtents);
+	cairo_text_extents(cr, infoString.c_str(), &infoExtents);
 	cairo_move_to(cr, plotOriginX, plotOriginY - infoExtents.height);
-	cairo_show_text(cr, inputFilename.c_str());
+	cairo_show_text(cr, infoString.c_str());
 
 	// channel mode
 	if(channelMode == "Normal") {
@@ -754,6 +755,22 @@ void Renderer::setMargins()
 	cairo_text_extents_t horizAxisLabelTextExtents;
 	cairo_text_extents(cr, "Tims(s)", &horizAxisLabelTextExtents);
 	marginBottom = 2.5 * (timeLabelTextExtents.height + horizAxisLabelTextExtents.height);
+}
+
+std::string Renderer::formatTimeRange(const double startSecs, const double finishSecs)
+{
+	int h0 = startSecs / 3600;
+	int m0 = (startSecs - h0 * 3600) / 60;
+	double s0 = startSecs - h0 * 3600 - m0 * 60;
+
+	int h1 = finishSecs / 3600;
+	int m1 = (finishSecs - h1 * 3600) / 60;
+	double s1 = finishSecs - h1 * 3600 - m1 * 60;
+
+	char buf[100];
+	sprintf(buf, "%02d:%02d:%07.4f - %02d:%02d:%07.4f", h0, m0, s0, h1, m1, s1);
+	return std::string{buf};
+
 }
 
 } // namespace Sndspec
