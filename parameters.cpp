@@ -22,6 +22,9 @@
 
 namespace Sndspec {
 
+constexpr int minImgWidth = 160;
+constexpr int minImgHeight = 160;
+
 std::vector<std::string> Parameters::getInputFiles() const
 {
 	return inputFiles;
@@ -110,13 +113,13 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			break;
 		case Height:
 			if(++argsIt != args.cend()) {
-				imgHeight = std::max(160, std::stoi(*argsIt));
+                imgHeight = std::max(minImgHeight, std::stoi(*argsIt));
 				++argsIt;	
 			}
 			break;
 		case Width:
 			if(++argsIt != args.cend()) {
-				imgWidth = std::max(160, std::stoi(*argsIt));
+                imgWidth = std::max(minImgWidth, std::stoi(*argsIt));
 				++argsIt;	
 			}
 			break;
