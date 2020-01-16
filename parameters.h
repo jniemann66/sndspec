@@ -65,6 +65,7 @@ enum OptionID
 	Recursive,
 #endif
 
+	Version,
 	Help
 };
 
@@ -110,7 +111,12 @@ const std::vector<Option> options
 	{OptionID::Recursive, "--recursive", "-r", false, "Recursive directory traversal", {}},
 #endif
 
+#ifdef SNDSPEC_VERSION
+	{OptionID::Version, "--version", "", false, "Show program version", {}},
+#endif
+
 	{OptionID::Help, "--help", "", false, "Help", {}}
+
 };
 
 class Parameters

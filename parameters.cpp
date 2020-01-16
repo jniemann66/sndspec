@@ -14,6 +14,12 @@
 #include "directory.h"
 #endif
 
+#ifdef SNDSPEC_VERSION
+#define STRINGIFY_(s) #s
+#define STRINGIFY(s) STRINGIFY_(s)
+#define VERSION_STRING STRINGIFY(SNDSPEC_VERSION)
+#endif
+
 #include <iostream>
 #include <cmath>
 #include <sstream>
@@ -193,6 +199,11 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			break;
 #endif
 
+#ifdef SNDSPEC_VERSION
+		case Version:
+			++argsIt;
+			return std::string{VERSION_STRING};
+#endif
 		case Help:
 			++argsIt;
 			return showHelp();

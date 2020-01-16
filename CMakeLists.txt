@@ -1,8 +1,10 @@
 project(sndspec C CXX)
+set(sndspec_VERSION 0.9.04)
 cmake_minimum_required(VERSION 3.6)
 find_package(Threads REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+add_compile_definitions(SNDSPEC_VERSION=${sndspec_VERSION})
 
 if(NOT CMAKE_CONFIGURATION_TYPES)
     # single-config build (build type decided by CMAKE_BUILD_TYPE )
