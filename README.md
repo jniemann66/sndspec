@@ -20,13 +20,14 @@ Usage: sndspec filename [filename2 ...] [options]
 -h, --height <n>                                  Set Image Height in Pixels
 -w, --width <n>                                   Set Image Width in Pixels
 -t, --time-range <start-time> <finish-time>       Set Time Range in seconds
---white-background                                White Background (instead of black) with inverted colours 
+--white-background                                White Background (instead of black) with inverted colors
 -W, --window <name>                               Set the window function
 --show-windows                                    Show a list of available window functions
 --spectrum                                        Plot a Spectrum instead of Spectrogram
 -S, --smoothing <moving average|peak|none>        Set Spectrum Smoothing Mode (default:peak)
 -c, --channel <[all|[L|R|0|1|2|...]...] [sum|difference|normal]> select specific channels and set channel mode
 -r, --recursive                                   Recursive directory traversal
+--version                                         Show program version
 --help                                            Help
 ~~~
 
