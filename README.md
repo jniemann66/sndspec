@@ -107,7 +107,7 @@ Find where libfftw3.so is installed, and set the find_libary() hints in CMakeLis
 
 #### completed
 
-~~add versioning system (version number in CMakeLists.txt and --version option from command line)
+~~add versioning system (version number in CMakeLists.txt and **--version** option from command line)~~
 
 ~~bug: spectrum sometimes not plotting anything for sum or difference mode~~
 
