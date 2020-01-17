@@ -43,7 +43,6 @@ as the window might skew your results in an undesirable way.
 - when specifying channels with the **--channel** option, the left channel is 0 and the right is 1. Channels always start at zero.
 - The default channel setting is all channels / normal mode
 - For spectrograms in normal mode, the first *enabled* channel is plotted. (use **--channel R** to get a spectrogram of the right channel)
-- sum / difference modes currently only work on spectrograms
 - sum / difference modes operate on all channels regardless of requested channels (this may be fixed in a future release)
 - default dynamic range is 190 dB
 
@@ -107,6 +106,8 @@ Find where libfftw3.so is installed, and set the find_libary() hints in CMakeLis
 - log frequency scale
 
 #### completed
+
+~~add versioning system (version number in CMakeLists.txt and --version option from command line)
 
 ~~bug: spectrum sometimes not plotting anything for sum or difference mode~~
 
