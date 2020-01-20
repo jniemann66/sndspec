@@ -106,6 +106,7 @@ Find where libfftw3.so is installed, and set the find_libary() hints in CMakeLis
 - other color palettes
 - log frequency scale
 - CUDA version
+- selective sum / difference (eg sum channel 0 and 3 only)
 
 #### completed
 
