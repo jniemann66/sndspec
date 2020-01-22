@@ -18,7 +18,7 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
     endif()
 
     # Set the possible values of build type for cmake-gui
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo" "ReleaseQuadmath")
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo" "ReleaseQuadmath" "ReleaseCUDA")
     message(STATUS "build type: '${CMAKE_BUILD_TYPE}'")
 
 endif()
@@ -46,21 +46,24 @@ else()
         # (see https://stackoverflow.com/questions/54068035/linking-not-working-in-homebrews-cmake-since-mojave)
         link_directories(/usr/local/lib)
         include_directories(/usr/local/include /usr/local/include/cairo)
-	    else()
-			include_directories(/usr/local/include /usr/include /usr/include/cairo)
+    else()
+        include_directories(/usr/local/include /usr/include /usr/include/cairo)
     endif()
 
 	find_library(SNDFILE_LIBRARY NAMES sndfile)
 	# on my system, fftw library gets put in /usr/lib/x86_64-linux-gnu/ but ymmv. on other systems it may be lib64 etc
 	find_library(FFTW_LIBRARY NAMES fftw3 HINTS /usr/lib/x86_64-linux-gnu/)
 	#find_library(FFTW_LIBRARY NAMES fftw3)
-    find_library(CAIRO_LIBRARY NAMES cairo)
-
+        find_library(CAIRO_LIBRARY NAMES cairo)
 	add_library(sndspecLib SHARED ${SOURCE_FILES})
+
     if(CMAKE_BUILD_TYPE STREQUAL "ReleaseQuadmath")
         message(STATUS "Linking with Quadmath library")
         set(CMAKE_CXX_EXTENSIONS TRUE)  # -std=gnu++11 instead of -std=c++11
         target_link_libraries(sndspecLib sndfile fftw3 quadmath cairo ${CMAKE_THREAD_LIBS_INIT})
+    elseif(CMAKE_BUILD_TYPE STREQUAL "ReleaseCUDA")
+        message(STATUS "Linking with cufftw library")
+        target_link_libraries(sndspecLib sndfile cufftw cairo ${CMAKE_THREAD_LIBS_INIT})
     else()
         target_link_libraries(sndspecLib sndfile fftw3 cairo ${CMAKE_THREAD_LIBS_INIT} )
     endif()
