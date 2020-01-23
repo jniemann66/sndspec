@@ -11,7 +11,7 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
     # for single-config builds, add additional configurations
     #set (CMAKE_CXX_FLAGS_RELEASEAVX ${CMAKE_CXX_FLAGS_RELEASE_INIT} " -DUSE_AVX -mavx")
     set (CMAKE_CXX_FLAGS_RELEASEQUADMATH ${CMAKE_CXX_FLAGS_RELEASE_INIT} " -DUSE_QUADMATH")
-    set (CMAKE_CXX_FLAGS_RELEASECUDA ${CMAKE_CXX_FLAGS_RELEASE_INIT} " -DCUFFTW")
+  #  set (CMAKE_CXX_FLAGS_RELEASECUDA ${CMAKE_CXX_FLAGS_RELEASE_INIT} " -DCUFFTW")
 
     if(NOT CMAKE_BUILD_TYPE)
         message(STATUS "build type not specified - using default")
@@ -19,7 +19,7 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
 
     endif()
 
-    # set(CMAKE_BUILD_TYPE "ReleaseCUDA" CACHE STRING "Choose the build type" FORCE)
+   #  set(CMAKE_BUILD_TYPE "ReleaseCUDA" CACHE STRING "Choose the build type" FORCE)
 
     # Set the possible values of build type for cmake-gui
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo" "ReleaseQuadmath" "ReleaseCUDA")
