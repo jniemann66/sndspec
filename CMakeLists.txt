@@ -11,11 +11,15 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
     # for single-config builds, add additional configurations
     #set (CMAKE_CXX_FLAGS_RELEASEAVX ${CMAKE_CXX_FLAGS_RELEASE_INIT} " -DUSE_AVX -mavx")
     set (CMAKE_CXX_FLAGS_RELEASEQUADMATH ${CMAKE_CXX_FLAGS_RELEASE_INIT} " -DUSE_QUADMATH")
+    set (CMAKE_CXX_FLAGS_RELEASECUDA ${CMAKE_CXX_FLAGS_RELEASE_INIT} " -DCUFFTW")
 
     if(NOT CMAKE_BUILD_TYPE)
         message(STATUS "build type not specified - using default")
         set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the build type" FORCE)
+
     endif()
+
+    # set(CMAKE_BUILD_TYPE "ReleaseCUDA" CACHE STRING "Choose the build type" FORCE)
 
     # Set the possible values of build type for cmake-gui
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo" "ReleaseQuadmath" "ReleaseCUDA")
@@ -34,11 +38,20 @@ set(SOURCE_FILES
 if (WIN32)
     # sorry, 64-bit only at the moment ...
     find_library(SNDFILE_LIBRARY NAMES libsndfile-1 libsndfile HINTS ${PROJECT_SOURCE_DIR}/libsndfile/lib)
-    #find_library(FFTW_LIBRARY NAMES fftw3-3 PATH ${CMAKE_CURRENT_SOURCE_DIR}/fftw64 ) #todo: why is find_library() looking for this in places other than where I asked it to look ?
-    set(FFTW_LIBRARY ${PROJECT_SOURCE_DIR}/fftw64/libfftw3-3.lib)
+
+    if(CMAKE_BUILD_TYPE STREQUAL "ReleaseCUDA")
+        # put paths to NVIDIA GPU Computing toolkit in here ...
+        include_directories(libsndfile/include fftw64 cairo/include "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v10.1/include")
+        set(FFTW_LIBRARY "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v10.1/lib/x64/cufftw.lib")
+    else()
+        #find_library(FFTW_LIBRARY NAMES fftw3-3 PATH ${CMAKE_CURRENT_SOURCE_DIR}/fftw64 ) #todo: why is find_library() looking for this in places other than where I asked it to look ?
+        include_directories(libsndfile/include fftw64 cairo/include)
+        set(FFTW_LIBRARY ${PROJECT_SOURCE_DIR}/fftw64/libfftw3-3.lib)
+    endif()
+
     find_library(CAIRO_LIBRARY NAMES cairo HINTS ${PROJECT_SOURCE_DIR}/cairo/lib/x64)
-    include_directories(libsndfile/include fftw64 cairo/include)
     add_library(sndspecLib ${SOURCE_FILES})
+
 else()
     #Not Windows ...
     if(APPLE)
@@ -50,22 +63,20 @@ else()
         include_directories(/usr/local/include /usr/include /usr/include/cairo)
     endif()
 
-	find_library(SNDFILE_LIBRARY NAMES sndfile)
-	# on my system, fftw library gets put in /usr/lib/x86_64-linux-gnu/ but ymmv. on other systems it may be lib64 etc
-	find_library(FFTW_LIBRARY NAMES fftw3 HINTS /usr/lib/x86_64-linux-gnu/)
-        find_library(CAIRO_LIBRARY NAMES cairo)
-	add_library(sndspecLib SHARED ${SOURCE_FILES})
+    # find libsndfile
+    find_library(SNDFILE_LIBRARY NAMES sndfile)
 
-    if(CMAKE_BUILD_TYPE STREQUAL "ReleaseQuadmath")
-        message(STATUS "Linking with Quadmath library")
-        set(CMAKE_CXX_EXTENSIONS TRUE)  # -std=gnu++11 instead of -std=c++11
-        target_link_libraries(sndspecLib sndfile fftw3 quadmath cairo ${CMAKE_THREAD_LIBS_INIT})
-    elseif(CMAKE_BUILD_TYPE STREQUAL "ReleaseCUDA")
-        message(STATUS "Linking with cufftw library")
-        target_link_libraries(sndspecLib sndfile cufftw cairo ${CMAKE_THREAD_LIBS_INIT})
+    # find fftw or cufftw
+    if(CMAKE_BUILD_TYPE STREQUAL "ReleaseCUDA")
+        find_library(FFTW_LIBRARY NAMES cufftw)
     else()
-        target_link_libraries(sndspecLib sndfile fftw3 cairo ${CMAKE_THREAD_LIBS_INIT} )
+        # on my system, fftw library gets put in /usr/lib/x86_64-linux-gnu/ but ymmv. on other systems it may be lib64 etc
+        find_library(FFTW_LIBRARY NAMES fftw3 HINTS /usr/lib/x86_64-linux-gnu/)
     endif()
+
+    # find cairo
+    find_library(CAIRO_LIBRARY NAMES cairo)
+    add_library(sndspecLib SHARED ${SOURCE_FILES})
 
 endif()
 
@@ -75,10 +86,17 @@ message(STATUS "fftw library location: " ${FFTW_LIBRARY})
 message(STATUS "cairo library location: "  ${CAIRO_LIBRARY})
 add_executable(sndspec main.cpp)
 
+# link all the relevant libraries
 if(APPLE)
     target_link_libraries(sndspec sndspecLib ${SNDFILE_LIBRARY} ${FFTW_LIBRARY} ${CAIRO_LIBRARY} )
 else()
-    target_link_libraries(sndspec sndspecLib ${SNDFILE_LIBRARY} ${FFTW_LIBRARY} ${CAIRO_LIBRARY} stdc++fs)
+    if(CMAKE_BUILD_TYPE STREQUAL "ReleaseQuadmath")
+        message(STATUS "Linking with Quadmath library")
+        set(CMAKE_CXX_EXTENSIONS TRUE)  # -std=gnu++11 instead of -std=c++11
+        target_link_libraries(sndspec sndspecLib ${SNDFILE_LIBRARY} ${FFTW_LIBRARY} ${CAIRO_LIBRARY} stdc++fs quadmath)
+    else()
+        target_link_libraries(sndspec sndspecLib ${SNDFILE_LIBRARY} ${FFTW_LIBRARY} ${CAIRO_LIBRARY} stdc++fs)
+    endif()
 endif()
 
 target_compile_features(sndspecLib PRIVATE cxx_std_17)
