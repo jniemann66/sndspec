@@ -19,7 +19,7 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
 
     endif()
 
-   #  set(CMAKE_BUILD_TYPE "ReleaseCUDA" CACHE STRING "Choose the build type" FORCE)
+  #  set(CMAKE_BUILD_TYPE "ReleaseCUDA" CACHE STRING "Choose the build type" FORCE)
 
     # Set the possible values of build type for cmake-gui
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo" "ReleaseQuadmath" "ReleaseCUDA")

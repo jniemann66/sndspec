@@ -31,6 +31,18 @@ Usage: sndspec filename [filename2 ...] [options]
 --help                                            Help
 ~~~
 
+### examples (Windows)
+
+#### 1. generate a spectrogram for the first 10 seconds of the left channel only of each sound file in the folder e:\songs and put the output images in the folder e:\spectrograms
+~~~
+sndspec "E:\songs" --width 1024 --height 768  --dyn-range 190 -o e:\spectrograms -t 0 10  --smoothing peak --channel left
+~~~
+
+#### 2. create a spectrum analysis for the file "2khz_square_wave.wav" using a blackman-harris window for the time range 00:00:00.5 - 00:00:01.0
+~~~
+sndspec "E:\samples\2khz_square_wave.wav" --width 1920 --height 1080 -o e:\spectrums -t 0.5 1.0 -W blackmanharris
+~~~
+
 ### notes
 
 - input filenames can be either directories or files. If they are directories, all suitable files within them are processed. Combinations of files and directories are ok. 
