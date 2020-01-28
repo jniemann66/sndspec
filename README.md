@@ -33,6 +33,8 @@ Usage: sndspec filename [filename2 ...] [options]
 
 ### examples (Windows)
 
+#### ... on Windows:
+
 1. generate a *spectrogram* for the first 10 seconds of the left channel only of each sound file in the folder e:\songs and put the output images in the folder e:\spectrograms
 ~~~
 sndspec "E:\songs" --width 1024 --height 768  --dyn-range 190 -o e:\spectrograms -t 0 10  --smoothing peak --channel left
@@ -43,7 +45,7 @@ sndspec "E:\songs" --width 1024 --height 768  --dyn-range 190 -o e:\spectrograms
 sndspec "E:\samples\2khz_square_wave.wav" --width 1920 --height 1080 -o e:\spectrums -t 0.5 1.0 -W blackmanharris
 ~~~
 
-### examples (Linux)
+#### ... on Linux:
 
 3. generate a *spectrogram* of the *sum of all channels* in each file in the directory ~/soundfiles AND its subdirectories, and place the output spectrograms in the folder /tmp/spectrograms
 ~~~
