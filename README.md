@@ -31,7 +31,7 @@ Usage: sndspec filename [filename2 ...] [options]
 --help                                            Help
 ~~~
 
-### examples (Windows)
+### examples
 
 #### ... on Windows:
 
