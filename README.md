@@ -43,6 +43,18 @@ sndspec "E:\songs" --width 1024 --height 768  --dyn-range 190 -o e:\spectrograms
 sndspec "E:\samples\2khz_square_wave.wav" --width 1920 --height 1080 -o e:\spectrums -t 0.5 1.0 -W blackmanharris
 ~~~
 
+### examples (Linux)
+
+3. generate a *spectrogram* of the *sum of all channels* in each file in the directory ~/soundfiles AND its subdirectories, and place the output spectrograms in the folder /tmp/spectrograms
+~~~
+sndspec ~/soundfiles -r --channel sum -o /tmp/spectrograms
+~~~
+
+4. generate a *spectrum analysis* of the difference of the channels (ie L - R) in the file ~/soundfiles/guitar.flac, and place the output in the same directory as the source
+~~~
+sndspec --spectrum ~/soundfiles/guitar.flac --channel difference
+~~~
+
 ### notes
 
 - input filenames can be either directories or files. If they are directories, all suitable files within them are processed. Combinations of files and directories are ok. 
@@ -58,6 +70,7 @@ as the window might skew your results in an undesirable way.
 - For spectrograms in normal mode, the first *enabled* channel is plotted. (use **--channel R** to get a spectrogram of the right channel)
 - sum / difference modes operate on all channels regardless of requested channels (this may be fixed in a future release)
 - default dynamic range is 190 dB
+- command line options can be placed in any order
 
 ### motivation and design goals
 
