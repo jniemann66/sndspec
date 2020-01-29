@@ -26,11 +26,11 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 set(SOURCE_FILES
-	spectrum.cpp
-	spectrogram.cpp
-	parameters.cpp
-	tests.cpp
-        renderer.cpp
+    spectrum.cpp
+    spectrogram.cpp
+    parameters.cpp
+    tests.cpp
+    renderer.cpp
   )
 
 if (WIN32)
