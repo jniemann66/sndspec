@@ -125,7 +125,6 @@ Find where libfftw3.so is installed, and set the find_libary() hints in CMakeLis
 
 ### todo
 
-- info, metadata
 - multichannel spectrograms
 - Quadmath
 - long double
