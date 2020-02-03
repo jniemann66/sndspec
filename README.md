@@ -61,7 +61,7 @@ sndspec --spectrum ~/soundfiles/guitar.flac --channel difference
 
 - input filenames can be either directories or files. If they are directories, all suitable files within them are processed. Combinations of files and directories are ok. 
 - if recursive directory traversal is enabled, directories within directories will also be processed
-- case and punctuation of window names is ignored. Kaiser window is the default, and it is tuned to the requested dynamic-range
+- case and punctuation of [window names](./window-functions.md) is ignored. Kaiser window is the default, and it is tuned to the requested dynamic-range
 - output filename is input filename with .png extension
 - when plotting a *spectrum*, a single FFT is performed, so the time range must be reasonable to prevent FFT being too large. (Therefore, don't forget to put in a sensible time range to ensure the FFT is not too large)
 - if you want to plot the frequency response of an impulse response, you might want to switch-off the default Kaiser Window, by using **-W rectangular**, particularly if your impulse response is asymmetrical,
