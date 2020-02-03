@@ -1,4 +1,4 @@
-#### List of availble window functions in sndspec
+#### List of availble window functions in [sndspec](./README.md)
 
 list available by invoking sndspec with **--show-windows** option
 
