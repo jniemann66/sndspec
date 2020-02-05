@@ -24,7 +24,7 @@ Blackman-Harris
 
 Flat top
 
-5-term **(1)**
+5-term <sup>1</sup>
 
 6-term
 
