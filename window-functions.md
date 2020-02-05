@@ -42,8 +42,8 @@ Flat top
 
 ---
 
-(1) H. H. Albrecht, "A family of cosine-sum windows for high-resolution measurements,"
+[(1) H. H. Albrecht, "A family of cosine-sum windows for high-resolution measurements,"
 2001 IEEE International Conference on Acoustics, Speech, and Signal Processing. Proceedings (Cat. No.01CH37221),
 Salt Lake City, UT, USA, 2001, pp. 3081-3084 vol.5.
-doi: 10.1109/ICASSP.2001.940309
+doi: 10.1109/ICASSP.2001.940309](https://ieeexplore.ieee.org/document/940309%20/authors)
 
