@@ -27,18 +27,17 @@ class Spectrum
 public:
 	Spectrum(int fft_size);
 	~Spectrum();
+	void exec();
 
 	double* getTdBuf() const;
 	const fftw_complex *getFdBuf() const;
-	static void makeSpectrumFromFile(const Sndspec::Parameters &parameters);
 	void getMag(std::vector<double>& buf);
 	void getMagSquared(std::vector<double> &buf);
 	void getPhase(std::vector<double>& buf);
-	void exec();
-
 	int getFFTSize() const;
 	int getSpectrumSize() const;
 
+	static void makeSpectrumFromFile(const Sndspec::Parameters &parameters);
 	static int convertSpectrumSizeToFFTSize(int spectrum_size);
 	static int convertFFTSizeToSpectrumSize(int fft_size);
 	static int selectBestFFTSizeFromSpectrumSize(int spectrum_size);
@@ -58,9 +57,7 @@ private:
 
 std::string replaceFileExt(const std::string& filename, const std::string &newExt)
 {
-
 	auto lastDot = filename.rfind('.', filename.length());
-
 	if(lastDot != std::string::npos) {
 		std::string _fn{filename};
 		_fn.replace(lastDot + 1, std::string::npos, newExt);
@@ -98,7 +95,6 @@ std::string getFilenameOnly(const std::string& path)
 
 std::string enforceTrailingSeparator(const std::string& directory)
 {
-
 	static const char universalPathSeparator{'/'};
 	auto lastSep = directory.rfind(universalPathSeparator, directory.length());
 
