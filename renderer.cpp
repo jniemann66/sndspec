@@ -574,7 +574,6 @@ void Renderer::drawSpectrogramHeatMap()
 		cairo_show_text(cr, dbBuf);
 		dB += 10.0;
 	}
-
 	cairo_stroke(cr);
 }
 

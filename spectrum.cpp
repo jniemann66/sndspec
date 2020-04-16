@@ -91,7 +91,6 @@ int Spectrum::convertFFTSizeToSpectrumSize(int fft_size)
 	return static_cast<int>(fft_size / 2.0) + 1;
 }
 
-
 double* Spectrum::getTdBuf() const
 {
 	return tdBuf;
