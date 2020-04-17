@@ -200,8 +200,9 @@ void Renderer::resolveEnabledChannels(const Parameters &parameters, int numChann
 
 void Renderer::drawSpectrogramGrid()
 {
-	cairo_set_line_width (cr, 1.0);
-	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
+    const double opacity = 0.5;
+    cairo_set_line_width (cr, 1.0);
+    cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, opacity);
 
 	double yStep = plotHeight * freqStep / nyquist;
 	double y = plotOriginY + plotHeight - 1 ;
