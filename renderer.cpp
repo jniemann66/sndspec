@@ -102,6 +102,7 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 	// clip the plotting region
 	cairo_rectangle(cr, plotOriginX, plotOriginY, plotWidth, plotHeight);
 	cairo_clip(cr);
+	const double opacity = 0.8;
 
 	for(int c = 0; c < numChannels; c++) {
 
@@ -112,7 +113,7 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 
 		cairo_set_line_width (cr, 1.0);
 		Rgb chColor = spectrumChannelColors[std::min(static_cast<int>(spectrumChannelColors.size() - 1), c)];
-		cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, 0.8);
+		cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, opacity);
 		cairo_move_to(cr, plotOriginX, plotOriginY - vScaling * spectrumData.at(c).at(0));
 
 		if(spectrumSmoothingMode == None) {
@@ -228,6 +229,7 @@ void Renderer::drawSpectrogramGrid()
 
 void Renderer::drawSpectrumGrid()
 {
+	const double opacity = 0.5;
 	double yScale = plotHeight / dynRange;
 	double yStep = yScale * 10;
 	double y = plotOriginY + plotHeight - 1 ;
@@ -236,7 +238,7 @@ void Renderer::drawSpectrumGrid()
 
 	// draw horizontal gridlines
 	cairo_set_line_width (cr, 1.0);
-	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
+	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, opacity);
 	while(y > plotOriginY) {
 		cairo_move_to(cr, plotOriginX, y);
 		cairo_line_to(cr, plotOriginX + plotWidth - 1, y);
@@ -251,7 +253,7 @@ void Renderer::drawSpectrumGrid()
 
 	// draw vertical gridlines
 	cairo_set_line_width (cr, 1.0);
-	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
+	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, opacity);
 	while(x < xf) {
 		cairo_move_to(cr, x, plotOriginY);
 		cairo_line_to(cr, x, plotOriginY + plotHeight - 1);
@@ -314,6 +316,7 @@ void Renderer::drawSpectrumTickmarks()
 
 void Renderer::drawSpectrumText()
 {
+	const double opacity = 0.8;
 	double s = 20.0;
 
 	// heading
@@ -336,7 +339,7 @@ void Renderer::drawSpectrumText()
 		int xpos = plotOriginX + plotWidth;
 		for(int ch = channelsEnabled.size() - 1; ch >=  0; ch--) {
 			Rgb chColor = spectrumChannelColors[std::min(static_cast<int>(spectrumChannelColors.size() - 1), ch)];
-			cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, 0.8);
+			cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, opacity);
 			if(channelsEnabled.at(ch)) {
 				cairo_text_extents_t extents;
 				std::string s;
@@ -355,7 +358,7 @@ void Renderer::drawSpectrumText()
 		}
 	} else {
 		Rgb chColor = spectrumChannelColors.at(0);
-		cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, 0.8);
+		cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, opacity);
 		cairo_text_extents_t chModeExtents;
 		cairo_text_extents(cr, channelMode.c_str(), &chModeExtents);
 		cairo_move_to(cr, plotOriginX + plotWidth - chModeExtents.x_advance, height - infoExtents.height);
