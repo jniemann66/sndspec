@@ -295,7 +295,6 @@ void Renderer::drawSpectrumTickmarks()
 	double xStep = fWidth * freqStep / nyquist;
 	double x = plotOriginX;
 	double f = 0.0;
-	const int tx = -15;
 	constexpr int ty = s + 15;
 
 	char fLabelBuf[20];
