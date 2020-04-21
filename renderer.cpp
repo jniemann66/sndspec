@@ -83,13 +83,11 @@ void Renderer::renderSpectrogram(const Parameters &parameters, const Spectrogram
 void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<std::vector<double>>& spectrumData)
 {
 	int numChannels = spectrumData.size();
-	resolveEnabledChannels(parameters, numChannels);
-
-	showWindowFunctionLabel = parameters.getShowWindowFunctionLabel();
-	windowFunctionLabel = "Window: " + parameters.getWindowFunctionDisplayName();
-
 	int numBins =  spectrumData.at(0).size();
 
+	resolveEnabledChannels(parameters, numChannels);
+	showWindowFunctionLabel = parameters.getShowWindowFunctionLabel();
+	windowFunctionLabel = "Window: " + parameters.getWindowFunctionDisplayName();
 	const SpectrumSmoothingMode spectrumSmoothingMode = parameters.getSpectrumSmoothingMode();
 
 	int L = std::max(1, numBins / plotWidth); // size of smoothing filter
