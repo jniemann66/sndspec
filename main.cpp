@@ -12,9 +12,9 @@
 #include "parameters.h"
 #include "tests.h"
 
-#include <iostream>
-
 #include <sndfile.hh>
+
+#include <iostream>
 
 int main(int argc, char** argv)
 {
