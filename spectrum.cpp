@@ -178,6 +178,7 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		Sndspec::Reader<double> r(inputFilename, 0, 1);
 		if(r.getSndFileHandle() == nullptr || r.getSndFileHandle()->error() != SF_ERR_NO_ERROR) {
 			std::cout << "couldn't open file !" << std::endl;
+			return;
 		} else {
 			std::cout << "ok" << std::endl;
 			nChannels = r.getNChannels();
