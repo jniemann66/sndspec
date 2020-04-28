@@ -190,8 +190,8 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		// calculate blocksize
         int64_t startPos  = std::max(0, std::min(static_cast<int>(r.getSamplerate() * parameters.getStart()),  r.getNFrames()));
         int64_t finishPos = (parameters.getFinish() == 0) ?
-                    r.getNFrames() :
-                    std::max(0, std::min(static_cast<int>(r.getSamplerate() * parameters.getFinish()), r.getNFrames()));
+			r.getNFrames() :
+			std::max(0, std::min(static_cast<int>(r.getSamplerate() * parameters.getFinish()), r.getNFrames()));
         int interval = static_cast<int>(std::max(INT64_C(0), finishPos - startPos));
 		int blockSize = Spectrum::selectBestFFTSize(interval);
         assert(blockSize <= interval);
