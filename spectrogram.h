@@ -22,7 +22,7 @@ class Spectrogram {
 public:
 	static void makeSpectrogramFromFile(const Parameters& parameters);
 	static std::vector<bool> convertToDb(SpectrogramResults<double>& s, bool fromMagSquared = true); // return value indicates whether each channel has a signal (ie not silent)
-
+	static std::vector<bool> convertToLinear(SpectrogramResults<double> &s, bool fromMagSquared = false);
 private:
 
 };

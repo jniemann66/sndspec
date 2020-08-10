@@ -98,8 +98,13 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 				r.readDeinterleaved();
 			}
 
-			// scale the data into dB
-			renderer.setChannelsEnabled(convertToDb(spectrogramData, /* fromMagSquared = */ true));
+			if(parameters.getLinearMag()) {
+				// scale the magnitude as percentage
+				renderer.setChannelsEnabled(convertToLinear(spectrogramData, /* fromMagSquared = */ true));
+			} else {
+				// scale the data into dB
+				renderer.setChannelsEnabled(convertToDb(spectrogramData, /* fromMagSquared = */ true));
+			}
 
 			// set render parameters
 			double startTime = static_cast<double>(r.getStartPos()) / r.getSamplerate();
@@ -181,6 +186,65 @@ std::vector<bool> Sndspec::Spectrogram::convertToDb(SpectrogramResults<double> &
 			// scale the data
 			for(int x = 0; x < numSpectrums; x++) {
 				std::transform (s[c][x].begin(), s[c][x].end(), s[c][x].begin(), scaleFunc);
+			}
+		}
+	}
+
+	return hasSignal;
+}
+
+std::vector<bool> Sndspec::Spectrogram::convertToLinear(SpectrogramResults<double> &s, bool fromMagSquared)
+{
+	int numChannels = s.size();
+	int numSpectrums = s.at(0).size();
+	int numBins = s.at(0).at(0).size();
+	std::vector<bool> hasSignal(numChannels, false);
+
+	for(int c = 0; c < numChannels; c++) {
+
+		// find peak
+		double peak{0.0};
+		if(fromMagSquared) {
+			for(int x = 0; x < numSpectrums; x++) {
+				for(int b = 0; b < numBins; b++) {
+					peak = std::max(peak, std::sqrt (s[c][x][b]));
+				}
+			}
+		} else {
+			for(int x = 0; x < numSpectrums; x++) {
+				for(int b = 0; b < numBins; b++) {
+					peak = std::max(peak, s[c][x][b]);
+				}
+			}
+		}
+
+		std::cout << "peak " << peak << std::endl;
+
+		if(std::fpclassify(peak) != FP_ZERO) {
+
+			hasSignal[c] = true;
+
+			const double scale = 100.0 / peak;
+
+			// function to convert to percentage of fullScale
+			if(fromMagSquared) {
+				auto scaleFunc = [scale] (double v) -> double {
+					return scale * std::sqrt(v) - 100.0;
+				};
+
+				// scale the data
+				for(int x = 0; x < numSpectrums; x++) {
+					std::transform (s[c][x].begin(), s[c][x].end(), s[c][x].begin(), scaleFunc);
+				}
+			} else {
+				auto scaleFunc = [scale] (double v) -> double {
+					return scale * v - 100.0;
+				};
+
+				// scale the data
+				for(int x = 0; x < numSpectrums; x++) {
+					std::transform (s[c][x].begin(), s[c][x].end(), s[c][x].begin(), scaleFunc);
+				}
 			}
 		}
 	}

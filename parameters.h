@@ -60,6 +60,7 @@ enum OptionID
 	SpectrumMode,
 	Smoothing,
 	Channel,
+	LinearMag,
 
 #ifdef FS_AVAILABLE
 	Recursive,
@@ -106,6 +107,7 @@ const std::vector<Option> options
 	{OptionID::SpectrumMode, "--spectrum", "", false, "Plot a Spectrum instead of Spectrogram", {}},
 	{OptionID::Smoothing, "--smoothing", "-S", false, "Set Spectrum Smoothing Mode (default:peak)", {"moving average|peak|none"}},
 	{OptionID::Channel, "--channel", "-c", false, "select specific channels and set channel mode", {"[all|[L|R|0|1|2|...]...] [sum|difference|normal]"}},
+	{OptionID::LinearMag, "--linear-mag", "-c", false, "Set magnitude scale to be linear", {}},
 
 #ifdef FS_AVAILABLE
 	{OptionID::Recursive, "--recursive", "-r", false, "Recursive directory traversal", {}},
@@ -145,6 +147,7 @@ public:
 	void setSpectrumSmoothingMode(const SpectrumSmoothingMode &value);
 	void setSelectedChannels(const std::set<int> &value);
 	void setChannelMode(const ChannelMode &value);
+	void setLinearMag(bool value);
 
 	// getters
 	std::vector<std::string> getInputFiles() const;
@@ -164,7 +167,7 @@ public:
 	SpectrumSmoothingMode getSpectrumSmoothingMode() const;
 	std::set<int> getSelectedChannels() const;
 	ChannelMode getChannelMode() const;
-
+	bool getLinearMag() const;
 
 private:
 	std::vector<std::string> inputFiles;
@@ -184,6 +187,7 @@ private:
 	SpectrumSmoothingMode spectrumSmoothingMode{Peak};
 	std::set<int> selectedChannels; // if the set is empty, it is interpreted as "all channels"
 	ChannelMode channelMode{Normal};
+	bool linearMag{false};
 
 #ifdef FS_AVAILABLE
 	bool recursiveDirectoryTraversal{false};

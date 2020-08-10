@@ -194,6 +194,10 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			processChannelArgs(channelArgs);
 			break;
 		}
+		case LinearMag:
+			linearMag = true;
+			++argsIt;
+			break;
 
 #ifdef FS_AVAILABLE
 		case Recursive:
@@ -326,6 +330,16 @@ std::set<int> Parameters::getSelectedChannels() const
 ChannelMode Parameters::getChannelMode() const
 {
 	return channelMode;
+}
+
+bool Parameters::getLinearMag() const
+{
+	return linearMag;
+}
+
+void Parameters::setLinearMag(bool value)
+{
+	linearMag = value;
 }
 
 void Parameters::setChannelMode(const ChannelMode &value)
