@@ -42,8 +42,8 @@ public:
 	static int convertFFTSizeToSpectrumSize(int fft_size);
 	static int selectBestFFTSizeFromSpectrumSize(int spectrum_size);
 	static int selectBestFFTSize(int requested_size); // pick a good FFT size for FFTW (of the form 2^a * 3^b * 5^c * 7^d * [1|11|13] )
-	static bool convertToDb(std::vector<std::vector<double> > &s, bool fromMagSquared);
-
+	static bool convertToDb(std::vector<std::vector<double>> &s, bool fromMagSquared);
+	static bool convertToLinear(std::vector<std::vector<double>> &s, bool fromMagSquared);
 
 private:
 	fftw_plan plan;
@@ -53,6 +53,7 @@ private:
 	// C facing:
 	double* tdBuf;	// time-domain buffer
 	fftw_complex* fdBuf; // frequency-domain buffer
+
 };
 
 std::string replaceFileExt(const std::string& filename, const std::string &newExt)

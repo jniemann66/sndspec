@@ -163,6 +163,51 @@ bool Spectrum::convertToDb(std::vector<std::vector<double>> &s, bool fromMagSqua
 	return hasSignal;
 }
 
+bool Spectrum::convertToLinear(std::vector<std::vector<double>> &s, bool fromMagSquared)
+{
+	int numChannels = s.size();
+	bool hasSignal{false};
+	int numBins = s.at(0).size();
+
+	for(int c = 0; c < numChannels; c++) {
+		// find peak
+		double peak{0.0};
+		if(fromMagSquared) {
+			for(int b = 0; b < numBins; b++) {
+				peak = std::max(peak, std::sqrt (s[c][b]));
+			}
+		} else {
+			for(int b = 0; b < numBins; b++) {
+				peak = std::max(peak, s[c][b]);
+			}
+		}
+
+		if(std::fpclassify(peak) != FP_ZERO) {
+			hasSignal = true;
+			const double scale = 100.0 / peak;
+
+			// function to convert to percentage of fullScale
+			if(fromMagSquared) {
+				auto scaleFunc = [scale] (double v) -> double {
+					return scale * std::sqrt(v) - 100.0;
+				};
+
+				// scale the data
+				std::transform (s[c].begin(), s[c].end(), s[c].begin(), scaleFunc);
+
+			} else {
+				auto scaleFunc = [scale] (double v) -> double {
+					return scale * v - 100.0;
+				};
+
+				// scale the data
+				std::transform (s[c].begin(), s[c].end(), s[c].begin(), scaleFunc);
+			}
+		}
+	}
+	return hasSignal;
+}
+
 void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 {
 	// prepare a renderer
@@ -235,8 +280,13 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 			analyzers.at(ch)->getMagSquared(results.at(ch));
 		}
 
-		// scale to dB
-		bool hasSignal = Spectrum::convertToDb(results, /* fromMagSquared = */ true);
+		bool hasSignal = false;
+		if(parameters.getLinearMag()) {
+			hasSignal = Spectrum::convertToLinear(results, /* fromMagSquared = */ true);
+		} else {
+			// scale to dB
+			hasSignal = Spectrum::convertToDb(results, /* fromMagSquared = */ true);
+		}
 
 		// determine which channels to plot
 		if(parameters.getChannelMode() == Sum || parameters.getChannelMode() == Difference) {
