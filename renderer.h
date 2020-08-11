@@ -77,10 +77,10 @@ private:
 	void drawSpectrogramGrid();
 	void drawSpectrogramTickmarks();
 	void drawSpectrogramText();
-	void drawSpectrogramHeatMap();
+	void drawSpectrogramHeatMap(bool linearMag = false);
 
 	void drawSpectrumGrid();
-	void drawSpectrumTickmarks();
+	void drawSpectrumTickmarks(bool linearMag = false);
 	void drawSpectrumText();
 
 	// vector indicating which channels to plot or not plot

@@ -196,6 +196,7 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 		}
 		case LinearMag:
 			linearMag = true;
+			dynRange = 100.0;
 			++argsIt;
 			break;
 

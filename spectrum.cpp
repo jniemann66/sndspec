@@ -301,7 +301,13 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		renderer.setDynRange(parameters.getDynRange());
 		renderer.setTitle("Spectrum");
 		renderer.setHorizAxisLabel("Frequency (Hz)");
-		renderer.setVertAxisLabel("Relative Magnitude (dB)");
+
+		if(parameters.getLinearMag()) {
+			renderer.setVertAxisLabel("Relative Magnitude (%)");
+		} else {
+			renderer.setVertAxisLabel("Relative Magnitude (dB)");
+		}
+
 		double startTime = static_cast<double>(r.getStartPos()) / r.getSamplerate();
 		double finishTime = static_cast<double>(r.getFinishPos()) / r.getSamplerate();
 		renderer.setStartTime(startTime);

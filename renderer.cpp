@@ -77,7 +77,7 @@ void Renderer::renderSpectrogram(const Parameters &parameters, const Spectrogram
 	drawBorder();
 	drawSpectrogramTickmarks();
 	drawSpectrogramText();
-	drawSpectrogramHeatMap();
+	drawSpectrogramHeatMap(parameters.getLinearMag());
 }
 
 void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<std::vector<double>>& spectrumData)
@@ -154,7 +154,7 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 
 	drawBorder();
 	drawSpectrumGrid();
-	drawSpectrumTickmarks();
+	drawSpectrumTickmarks(parameters.getLinearMag());
 	drawSpectrumText();
 }
 
@@ -262,7 +262,7 @@ void Renderer::drawSpectrumGrid()
 	cairo_set_dash(cr, dashpattern, 0, 0.0);
 }
 
-void Renderer::drawSpectrumTickmarks()
+void Renderer::drawSpectrumTickmarks(bool linearMag)
 {
 	const int s = 10;
 	constexpr int fx = s + 5;
@@ -279,7 +279,11 @@ void Renderer::drawSpectrumTickmarks()
 	char dbLabelBuf[20];
 	double dB = dynRange;
 	while(y > plotOriginY) {
-		sprintf(dbLabelBuf, "%d", static_cast<int>(-dB));
+		if(linearMag) {
+			sprintf(dbLabelBuf, "%d", static_cast<int>(100.0-dB));
+		} else {
+			sprintf(dbLabelBuf, "%d", static_cast<int>(-dB));
+		}
 		cairo_move_to(cr, plotOriginX + plotWidth, y);
 		cairo_line_to(cr, plotOriginX + s + plotWidth - 1, y);
 		cairo_move_to(cr, plotOriginX + fx + plotWidth - 1, y + fy);
@@ -534,7 +538,7 @@ void Renderer::drawSpectrogramText()
 	cairo_restore(cr);
 }
 
-void Renderer::drawSpectrogramHeatMap()
+void Renderer::drawSpectrogramHeatMap(bool linearMag)
 {
 	double sc = static_cast<double>(heatMapPalette.size()) / plotHeight;
 
@@ -554,11 +558,17 @@ void Renderer::drawSpectrogramHeatMap()
 	cairo_rectangle(cr, hmOriginX-s, plotOriginY - s, hmWidth + 2 * s, plotHeight + 2 * s);
 	cairo_stroke(cr);
 
-	// draw the 'dB' heading
+	// draw the units heading
 	cairo_text_extents_t dBExtents;
-	cairo_text_extents(cr, "dB", &dBExtents);
-	cairo_move_to(cr, hmOriginX, plotOriginY - dBExtents.height);
-	cairo_show_text(cr, "dB");
+	if(linearMag) {
+		cairo_text_extents(cr, "%", &dBExtents);
+		cairo_move_to(cr, hmOriginX, plotOriginY - dBExtents.height);
+		cairo_show_text(cr, "%");
+	} else {
+		cairo_text_extents(cr, "dB", &dBExtents);
+		cairo_move_to(cr, hmOriginX, plotOriginY - dBExtents.height);
+		cairo_show_text(cr, "dB");
+	}
 
 	// draw the dB tickmarks and labels
 	double dB = 0.0;
@@ -567,7 +577,11 @@ void Renderer::drawSpectrogramHeatMap()
 	double xb = xa + tickWidth;
 	char dbBuf[20];
 	while (dB < dynRange) {
-		sprintf(dbBuf, "%3.0f", -dB);
+		if(linearMag) {
+			sprintf(dbBuf, "%3.0f", 100.0 - dB);
+		} else {
+			sprintf(dbBuf, "%3.0f", -dB);
+		}
 		double y = plotOriginY + dBsc * dB - s;
 		cairo_move_to(cr, xa, y);
 		cairo_line_to(cr, xb, y);
