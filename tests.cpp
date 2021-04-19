@@ -18,4 +18,5 @@ bool tests::testWindow()
 	{
 		std::cout << v << std::endl;
 	}
+    return true;
 }
