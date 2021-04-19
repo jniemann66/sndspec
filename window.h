@@ -247,15 +247,15 @@ public:
 
 	static FloatType kaiserBetaFromDecibels(FloatType dB)
 	{
+        FloatType kaiserBeta{0.0};
 		if(dB < 21.0) {
-			return 0;
-		}
-		if ((dB >= 21.0) && (dB <= 50.0)) {
-			return 0.5842 * pow((dB - 21), 0.4) + 0.07886 * (dB - 21);
-		}
-
-        // if(dB > 50)
-        return 0.1102 * (dB - 8.7);
+            kaiserBeta = 0.0;
+        } else if ((dB >= 21.0) && (dB <= 50.0)) {
+            kaiserBeta = 0.5842 * pow((dB - 21), 0.4) + 0.07886 * (dB - 21);
+        } else {
+            kaiserBeta = 0.1102 * (dB - 8.7);
+        }
+        return kaiserBeta;
 	}
 
 
