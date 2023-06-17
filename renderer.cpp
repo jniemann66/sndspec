@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2019 - 2021 Judd Niemann - All Rights Reserved.
+* Copyright (C) 2019 - 2023 Judd Niemann - All Rights Reserved.
 * You may use, distribute and modify this code under the
 * terms of the GNU Lesser General Public License, version 2.1
 *
@@ -174,14 +174,14 @@ void Renderer::resolveEnabledChannels(const Parameters &parameters, int numChann
 	case Sum:
 		channelMode = "Sum";
 		channelsEnabled[0] = true;
-		for(int ch = 1; ch < channelsEnabled.size(); ch++) {
+        for(int ch = 1; ch < static_cast<int>(channelsEnabled.size()); ch++) {
 			channelsEnabled[ch] = false;
 		}
 		break;
 	case Difference:
 		channelMode = "Difference";
 		channelsEnabled[0] = true;
-		for(int ch = 1; ch < channelsEnabled.size(); ch++) {
+        for(int ch = 1; ch < static_cast<int>(channelsEnabled.size()); ch++) {
 			channelsEnabled[ch] = false;
 		}
 		break;
