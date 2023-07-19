@@ -26,6 +26,11 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 set(SOURCE_FILES
+    spectrum.h
+    spectrogram.h
+    parameters.h
+    tests.h
+    renderer.h
     spectrum.cpp
     spectrogram.cpp
     parameters.cpp
