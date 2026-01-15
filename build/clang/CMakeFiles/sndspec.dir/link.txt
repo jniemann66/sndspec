@@ -1,1 +1,0 @@
-/usr/bin/clang++ -O3 -DNDEBUG -Xlinker --dependency-file=CMakeFiles/sndspec.dir/link.d CMakeFiles/sndspec.dir/main.cpp.o -o sndspec  -Wl,-rpath,/home/juddn/sndspec/build/clang libsndspecLib.so /usr/lib64/libsndfile.so /usr/lib64/libfftw3.so /usr/lib64/libcairo.so -lstdc++fs

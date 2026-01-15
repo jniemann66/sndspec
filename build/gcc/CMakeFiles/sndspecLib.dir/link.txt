@@ -1,1 +1,0 @@
-/usr/bin/g++ -fPIC -O3 -DNDEBUG -Wl,--dependency-file=CMakeFiles/sndspecLib.dir/link.d -shared -Wl,-soname,libsndspecLib.so -o libsndspecLib.so CMakeFiles/sndspecLib.dir/spectrum.cpp.o CMakeFiles/sndspecLib.dir/spectrogram.cpp.o CMakeFiles/sndspecLib.dir/parameters.cpp.o CMakeFiles/sndspecLib.dir/tests.cpp.o CMakeFiles/sndspecLib.dir/renderer.cpp.o
