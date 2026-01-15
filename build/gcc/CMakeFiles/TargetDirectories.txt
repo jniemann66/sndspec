@@ -1,0 +1,4 @@
+/home/juddn/sndspec/build/gcc/CMakeFiles/sndspecLib.dir
+/home/juddn/sndspec/build/gcc/CMakeFiles/sndspec.dir
+/home/juddn/sndspec/build/gcc/CMakeFiles/edit_cache.dir
+/home/juddn/sndspec/build/gcc/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/juddn/sndspec/build/clang/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
