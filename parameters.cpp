@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2019 - 2023 Judd Niemann - All Rights Reserved.
+* Copyright (C) 2019 - 2026 Judd Niemann - All Rights Reserved.
 * You may use, distribute and modify this code under the
 * terms of the GNU Lesser General Public License, version 2.1
 *
@@ -84,19 +84,19 @@ void Parameters::setDynRange(double value)
 std::string Parameters::fromArgs(const std::vector<std::string> &args)
 {
 	auto argsIt = args.cbegin();
-	while(argsIt != args.cend()) {
+	while (argsIt != args.cend()) {
 		OptionID optionID = OptionID::Filenames; // unrecognized options to be treated as filenames
 
 		// option search
-		for(const auto& option : options) {
-			if((*argsIt == option.longOption) || (!option.shortOption.empty() && (*argsIt == option.shortOption))) {
+		for (const auto& option : options) {
+			if ((*argsIt == option.longOption) || (!option.shortOption.empty() && (*argsIt == option.shortOption))) {
 				optionID = option.optionID;
 				break;
 			}
 		}
 
 		// process option
-		switch(optionID) {
+		switch (optionID) {
 		case Filenames:
 			// keep reading filenames until end reached, or another option detected
 			do {
@@ -106,48 +106,54 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			break;
 
 		case DynRange:
-			if(++argsIt != args.cend()) {
+			if (++argsIt != args.cend()) {
 				dynRange = std::abs(std::stod(*argsIt));
 				++argsIt;
 			}
 			break;
+
 		case OutputDir:
-			if(++argsIt != args.cend()) {
+			if (++argsIt != args.cend()) {
 				outputPath = *argsIt;
-				++argsIt;	
+				++argsIt;
 			}
 			break;
+
 		case Height:
-			if(++argsIt != args.cend()) {
-                imgHeight = std::max(minImgHeight, std::stoi(*argsIt));
-				++argsIt;	
+			if (++argsIt != args.cend()) {
+				imgHeight = std::max(minImgHeight, std::stoi(*argsIt));
+				++argsIt;
 			}
 			break;
+
 		case Width:
-			if(++argsIt != args.cend()) {
-                imgWidth = std::max(minImgWidth, std::stoi(*argsIt));
-				++argsIt;	
+			if (++argsIt != args.cend()) {
+				imgWidth = std::max(minImgWidth, std::stoi(*argsIt));
+				++argsIt;
 			}
 			break;
+
 		case TimeRange:
-			if(++argsIt != args.cend()) {
+			if (++argsIt != args.cend()) {
 				timeRange = true;
 				start = std::max(0.0, std::stod(*argsIt));
-				if(++argsIt != args.cend()) {
+				if (++argsIt != args.cend()) {
 					finish = std::max(0.0, std::stod(*argsIt));
 				}
-				++argsIt;	
+				++argsIt;
 			}
 			break;
+
 		case WhiteBackground:
 			whiteBackground = true;
 			++argsIt;
 			break;
+
 		case WindowFunction:
-			if(++argsIt != args.cend()) {
+			if (++argsIt != args.cend()) {
 				showWindowFunctionLabel = true;
 				auto wp = Window<double>::findWindow(*argsIt);
-				if(wp.windowType == Unknown) {
+				if (wp.windowType == Unknown) {
 					windowFunction = "kaiser";
 					windowFunctionDisplayName = "Kaiser";
 				} else {
@@ -157,16 +163,19 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 				++argsIt;
 			}
 			break;
+
 		case ShowWindows:
 			showWindows = true;
 			++argsIt;
 			return showWindowList();
+
 		case SpectrumMode:
 			spectrumMode = true;
 			++argsIt;
 			break;
+
 		case Smoothing:
-			if(++argsIt != args.cend()) {
+			if (++argsIt != args.cend()) {
 				std::string s{*argsIt};
 
 				// convert name to lowercase
@@ -174,17 +183,18 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 					return std::tolower(c);
 				});
 
-				if(s.compare(0, 6, "moving") == 0) {
+				if (s.compare(0, 6, "moving") == 0) {
 					spectrumSmoothingMode = MovingAverage;
-				} else if(s.compare(0, 4, "peak") == 0) {
+				} else if (s.compare(0, 4, "peak") == 0) {
 					spectrumSmoothingMode = Peak;
-				} else if(s.compare(0, 4, "none") == 0 ) {
+				} else if (s.compare(0, 4, "none") == 0 ) {
 					spectrumSmoothingMode = None;
 				}
 				++argsIt;
 				break;
 			}
 			break;
+
 		case Channel:
 		{
 			std::vector<std::string> channelArgs;
@@ -194,6 +204,7 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			processChannelArgs(channelArgs);
 			break;
 		}
+
 		case LinearMag:
 			linearMag = true;
 			dynRange = 100.0;
@@ -220,7 +231,7 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 
 #ifdef FS_AVAILABLE
 	std::vector<std::string> expandedFileList;
-	for(const auto& path : inputFiles) {
+	for (const auto& path : inputFiles) {
 		auto list = expand(path, fileTypes, recursiveDirectoryTraversal);
 		expandedFileList.insert(expandedFileList.end(), list.begin(), list.end());
 	}
@@ -234,15 +245,15 @@ std::string Parameters::showHelp()
 {
 	static const int col0width = 50;
 	std::string helpString{"Usage: sndspec filename [filename2 ...] [options]\n\n"};
-	for(const auto& option : options) {
+	for (const auto& option : options) {
 		std::string line;
-		if(!option.shortOption.empty()) {
+		if (!option.shortOption.empty()) {
 			line.append(option.shortOption);
 			line.append(", ");
 		}
 
 		line.append(option.longOption).append(" ");
-		for(const auto& arg : option.args) {
+		for (const auto& arg : option.args) {
 			line.append("<").append(arg).append("> ");
 		}
 		line.append(std::max(0, col0width - static_cast<int>(line.length())), ' ');
@@ -399,7 +410,7 @@ void Parameters::processChannelArgs(const std::vector<std::string>& args)
 	channelMode = Normal;
 
 	std::string s;
-	for(const auto& arg : args) {
+	for (const auto& arg : args) {
 		s.append(arg);
 	}
 
@@ -412,20 +423,20 @@ void Parameters::processChannelArgs(const std::vector<std::string>& args)
 	auto it_begin = std::sregex_iterator(s.begin(), s.end(), rx);
 	auto it_end = std::sregex_iterator();
 
-	for(std::regex_iterator it = it_begin; it != it_end; ++it){
+	for (std::regex_iterator it = it_begin; it != it_end; ++it){
 		std::smatch match = *it;
 		std::string match_str = match.str();
-		if(match_str == "l") {
+		if (match_str == "l") {
 			selectedChannels.insert(0);
-		} else if(match_str == "r") {
+		} else if (match_str == "r") {
 			selectedChannels.insert(1);
-		} else if(match_str == "all") {
+		} else if (match_str == "all") {
 			selectedChannels.clear();
-		} else if(match_str == "sum") {
+		} else if (match_str == "sum") {
 			channelMode = Sum;
-		} else if(match_str == "diff") {
+		} else if (match_str == "diff") {
 			channelMode = Difference;
-		} else if(match_str == "norm") {
+		} else if (match_str == "norm") {
 			channelMode = Normal;
 		} else {
 			try {

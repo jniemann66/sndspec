@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2019 - 2023 Judd Niemann - All Rights Reserved.
+* Copyright (C) 2019 - 2026 Judd Niemann - All Rights Reserved.
 * You may use, distribute and modify this code under the
 * terms of the GNU Lesser General Public License, version 2.1
 *
@@ -58,12 +58,12 @@ void Renderer::renderSpectrogram(const Parameters &parameters, const Spectrogram
 	windowFunctionLabel = "Window: " + parameters.getWindowFunctionDisplayName();
 	showWindowFunctionLabel = parameters.getShowWindowFunctionLabel();
 
-	for(int c = 0; c < numChannels; c++) {
-		if(channelsEnabled.at(c)) {
+	for (int c = 0; c < numChannels; c++) {
+		if (channelsEnabled.at(c)) {
 			// plot just one, then break
-			for(int y = 0; y < numBins; y++) {
+			for (int y = 0; y < numBins; y++) {
 				int lineAddr = plotOriginX + (plotOriginY + h - y) * stride32;
-				for(int x = 0; x < numSpectrums; x++) {
+				for (int x = 0; x < numSpectrums; x++) {
 					int colorindex = static_cast<int>(spectrogramData[c][x][y] * colorScale);
 					int32_t color = heatMapPalette[std::max(0, std::min(colorindex, lastColorIndex))];
 					pixelBuffer[x + lineAddr] = color;
@@ -102,10 +102,10 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 	cairo_clip(cr);
 	const double opacity = 0.8;
 
-	for(int c = 0; c < numChannels; c++) {
+	for (int c = 0; c < numChannels; c++) {
 
 		// if channel is disabled, skip this channel
-		if(!channelsEnabled.at(c)) {
+		if (!channelsEnabled.at(c)) {
 			continue;
 		}
 
@@ -114,34 +114,34 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 		cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, opacity);
 		cairo_move_to(cr, plotOriginX, plotOriginY - vScaling * spectrumData.at(c).at(0));
 
-		if(spectrumSmoothingMode == None) {
-			for(int x = 0; x < numBins; x++) {
+		if (spectrumSmoothingMode == None) {
+			for (int x = 0; x < numBins; x++) {
 				cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * spectrumData.at(c).at(x));
 			}
-		} else if(spectrumSmoothingMode == MovingAverage) {
+		} else if (spectrumSmoothingMode == MovingAverage) {
 			double acc = 0.0;
-			for(int x = 0; x < L; x++) {
+			for (int x = 0; x < L; x++) {
 				acc += spectrumData.at(c).at(x);
 			}
 
-			for(int x = L; x < numBins; x++) {
+			for (int x = L; x < numBins; x++) {
 				acc += spectrumData.at(c).at(x);
 				acc -= spectrumData.at(c).at(x - L);
 				cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * acc);
 			}
-		} else if(spectrumSmoothingMode == Peak) {
-			for(int x = 0; x < L; x++) {
+		} else if (spectrumSmoothingMode == Peak) {
+			for (int x = 0; x < L; x++) {
 				double maxDB(-300);
 				for (int a = 0; a <= x; a++) {
-					maxDB = std::max(maxDB, spectrumData.at(c).at(a));	
+					maxDB = std::max(maxDB, spectrumData.at(c).at(a));
 				}
 				cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * maxDB);
 			}
 
-			for(int x = L; x < numBins; x++) {
+			for (int x = L; x < numBins; x++) {
 				double maxDB(-300);
 				for (int a = x - L + 1; a <= x; a++) {
-					maxDB = std::max(maxDB, spectrumData.at(c).at(a));	
+					maxDB = std::max(maxDB, spectrumData.at(c).at(a));
 				}
 				cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * maxDB);
 			}
@@ -165,31 +165,31 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 
 void Renderer::resolveEnabledChannels(const Parameters &parameters, int numChannels)
 {
-	if(channelsEnabled.empty()) {
+	if (channelsEnabled.empty()) {
 		channelsEnabled.resize(numChannels, true);
 	}
 
-	switch(parameters.getChannelMode())
+	switch (parameters.getChannelMode())
 	{
 	case Sum:
 		channelMode = "Sum";
 		channelsEnabled[0] = true;
-        for(int ch = 1; ch < static_cast<int>(channelsEnabled.size()); ch++) {
+		for (int ch = 1; ch < static_cast<int>(channelsEnabled.size()); ch++) {
 			channelsEnabled[ch] = false;
 		}
 		break;
 	case Difference:
 		channelMode = "Difference";
 		channelsEnabled[0] = true;
-        for(int ch = 1; ch < static_cast<int>(channelsEnabled.size()); ch++) {
+		for (int ch = 1; ch < static_cast<int>(channelsEnabled.size()); ch++) {
 			channelsEnabled[ch] = false;
 		}
 		break;
 	case Normal:
 		channelMode = "Normal";
 		auto requestedChannels = parameters.getSelectedChannels();
-		if(!requestedChannels.empty()) {
-			for(int ch = 0; ch < numChannels; ch++) {
+		if (!requestedChannels.empty()) {
+			for (int ch = 0; ch < numChannels; ch++) {
 				channelsEnabled[ch] = channelsEnabled.at(ch) && (requestedChannels.find(ch) != requestedChannels.end());
 			}
 		}
@@ -199,14 +199,14 @@ void Renderer::resolveEnabledChannels(const Parameters &parameters, int numChann
 
 void Renderer::drawSpectrogramGrid()
 {
-    const double opacity = 0.5;
-    cairo_set_line_width (cr, 1.0);
-    cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, opacity);
+	const double opacity = 0.5;
+	cairo_set_line_width (cr, 1.0);
+	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, opacity);
 
 	double yStep = plotHeight * freqStep / nyquist;
 	double y = plotOriginY + plotHeight - 1 ;
 
-	while(y > plotOriginY) {
+	while (y > plotOriginY) {
 		cairo_move_to(cr, plotOriginX, y);
 		cairo_line_to(cr, plotOriginX + plotWidth - 1, y);
 		y -= yStep;
@@ -216,7 +216,7 @@ void Renderer::drawSpectrogramGrid()
 	double xStep = fWidth / numTimeDivs;
 	double x = plotOriginX;
 
-	while(x < fWidth) {
+	while (x < fWidth) {
 		cairo_move_to(cr, x, plotOriginY);
 		cairo_line_to(cr, x, plotOriginY + plotHeight - 1);
 		x += xStep;
@@ -237,7 +237,7 @@ void Renderer::drawSpectrumGrid()
 	// draw horizontal gridlines
 	cairo_set_line_width (cr, 1.0);
 	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, opacity);
-	while(y > plotOriginY) {
+	while (y > plotOriginY) {
 		cairo_move_to(cr, plotOriginX, y);
 		cairo_line_to(cr, plotOriginX + plotWidth - 1, y);
 		y -= yStep;
@@ -252,7 +252,7 @@ void Renderer::drawSpectrumGrid()
 	// draw vertical gridlines
 	cairo_set_line_width (cr, 1.0);
 	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, opacity);
-	while(x < xf) {
+	while (x < xf) {
 		cairo_move_to(cr, x, plotOriginY);
 		cairo_line_to(cr, x, plotOriginY + plotHeight - 1);
 		x += xStep;
@@ -278,8 +278,8 @@ void Renderer::drawSpectrumTickmarks(bool linearMag)
 	y = plotOriginY + plotHeight - 1 ;
 	char dbLabelBuf[20];
 	double dB = dynRange;
-	while(y > plotOriginY) {
-		if(linearMag) {
+	while (y > plotOriginY) {
+		if (linearMag) {
 			sprintf(dbLabelBuf, "%d", static_cast<int>(100.0-dB));
 		} else {
 			sprintf(dbLabelBuf, "%d", static_cast<int>(-dB));
@@ -300,7 +300,7 @@ void Renderer::drawSpectrumTickmarks(bool linearMag)
 	constexpr int ty = s + 15;
 
 	char fLabelBuf[20];
-	while(x < (fWidth + plotOriginX) ) {
+	while (x < (fWidth + plotOriginX) ) {
 		sprintf(fLabelBuf, "%6.0f", f);
 		cairo_text_extents_t freqLabelTextExtents;
 		cairo_text_extents(cr, fLabelBuf, &freqLabelTextExtents);
@@ -336,17 +336,17 @@ void Renderer::drawSpectrumText()
 	cairo_show_text(cr, infoString.c_str());
 
 	// channel mode
-	if(channelMode == "Normal") {
+	if (channelMode == "Normal") {
 		int xpos = plotOriginX + plotWidth;
-		for(int ch = channelsEnabled.size() - 1; ch >=  0; ch--) {
+		for (int ch = channelsEnabled.size() - 1; ch >=  0; ch--) {
 			Rgb chColor = spectrumChannelColors[std::min(static_cast<int>(spectrumChannelColors.size() - 1), ch)];
 			cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, opacity);
-			if(channelsEnabled.at(ch)) {
+			if (channelsEnabled.at(ch)) {
 				cairo_text_extents_t extents;
 				std::string s;
-				if(channelsEnabled.size() == 1) {
+				if (channelsEnabled.size() == 1) {
 					s = "";
-				} else if(channelsEnabled.size() == 2) {
+				} else if (channelsEnabled.size() == 2) {
 					s = (ch == 1) ? " R" : " L"; // stereo
 				} else {
 					s = " " + std::to_string(ch);
@@ -370,7 +370,7 @@ void Renderer::drawSpectrumText()
 	cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
 
 	// window function label
-	if(showWindowFunctionLabel) {
+	if (showWindowFunctionLabel) {
 		cairo_text_extents_t windowFuncExtents;
 		cairo_text_extents(cr, windowFunctionLabel.c_str(), &windowFuncExtents);
 		cairo_move_to(cr, plotOriginX + plotWidth - windowFuncExtents.x_advance, plotOriginY - infoExtents.height);
@@ -435,7 +435,7 @@ void Renderer::drawSpectrogramTickmarks()
 
 	char fLabelBuf[20];
 
-	while(y > plotOriginY) {
+	while (y > plotOriginY) {
 		sprintf(fLabelBuf, "%d", static_cast<int>(f));
 		cairo_move_to(cr, plotOriginX + plotWidth, y);
 		cairo_line_to(cr, plotOriginX + s + plotWidth - 1, y);
@@ -455,7 +455,7 @@ void Renderer::drawSpectrogramTickmarks()
 	const int tx = -5;
 	constexpr int ty = s + 15;
 
-	while(x < fWidth) {
+	while (x < fWidth) {
 		sprintf(tLabelBuf, "%6.3f", t);
 		cairo_move_to(cr, x, plotOriginY + plotHeight);
 		cairo_line_to(cr, x, plotOriginY + plotHeight + s -1);
@@ -487,7 +487,7 @@ void Renderer::drawSpectrogramText()
 	cairo_show_text(cr, inputFilename.c_str());
 
 	// window function label
-	if(showWindowFunctionLabel) {
+	if (showWindowFunctionLabel) {
 		cairo_text_extents_t windowFuncExtents;
 		cairo_text_extents(cr, windowFunctionLabel.c_str(), &windowFuncExtents);
 		cairo_move_to(cr, plotOriginX + plotWidth - windowFuncExtents.x_advance, plotOriginY - infoExtents.height);
@@ -501,15 +501,15 @@ void Renderer::drawSpectrogramText()
 	cairo_show_text(cr, horizAxisLabel.c_str());
 
 	// channel mode
-	if(channelMode == "Normal") {
+	if (channelMode == "Normal") {
 		int xpos = plotOriginX + plotWidth;
-		for(int ch = channelsEnabled.size() - 1; ch >=  0; ch--) {
-			if(channelsEnabled.at(ch)) {
+		for (int ch = channelsEnabled.size() - 1; ch >=  0; ch--) {
+			if (channelsEnabled.at(ch)) {
 				cairo_text_extents_t extents;
 				std::string s;
-				if(channelsEnabled.size() == 1) {
+				if (channelsEnabled.size() == 1) {
 					s = "";
-				} else if(channelsEnabled.size() == 2) {
+				} else if (channelsEnabled.size() == 2) {
 					s = (ch == 1) ? " R" : " L"; // stereo
 				} else {
 					s = " " + std::to_string(ch);
@@ -543,7 +543,7 @@ void Renderer::drawSpectrogramHeatMap(bool linearMag)
 	double sc = static_cast<double>(heatMapPalette.size()) / plotHeight;
 
 	// draw the heatmap colours
-	for(int y = 0; y < plotHeight; y++) {
+	for (int y = 0; y < plotHeight; y++) {
 		int lineAddr = hmOriginX + (plotOriginY + y) * stride32;
 		int32_t color = heatMapPalette.at(static_cast<int>(sc * y));
 		for (int x = 0; x < hmWidth; x++) {
@@ -560,7 +560,7 @@ void Renderer::drawSpectrogramHeatMap(bool linearMag)
 
 	// draw the units heading
 	cairo_text_extents_t dBExtents;
-	if(linearMag) {
+	if (linearMag) {
 		cairo_text_extents(cr, "%", &dBExtents);
 		cairo_move_to(cr, hmOriginX, plotOriginY - dBExtents.height);
 		cairo_show_text(cr, "%");
@@ -577,7 +577,7 @@ void Renderer::drawSpectrogramHeatMap(bool linearMag)
 	double xb = xa + tickWidth;
 	char dbBuf[20];
 	while (dB < dynRange) {
-		if(linearMag) {
+		if (linearMag) {
 			sprintf(dbBuf, "%3.0f", 100.0 - dB);
 		} else {
 			sprintf(dbBuf, "%3.0f", -dB);

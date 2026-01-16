@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2019 - 2023 Judd Niemann - All Rights Reserved.
+* Copyright (C) 2019 - 2026 Judd Niemann - All Rights Reserved.
 * You may use, distribute and modify this code under the
 * terms of the GNU Lesser General Public License, version 2.1
 *
@@ -59,7 +59,7 @@ private:
 std::string replaceFileExt(const std::string& filename, const std::string &newExt)
 {
 	auto lastDot = filename.rfind('.', filename.length());
-	if(lastDot != std::string::npos) {
+	if (lastDot != std::string::npos) {
 		std::string _fn{filename};
 		_fn.replace(lastDot + 1, std::string::npos, newExt);
 		return _fn;
@@ -76,8 +76,8 @@ std::string getFilenameOnly(const std::string& path)
 #ifdef _WIN32
 	static const char nativePathSeparator{'\\'};
 	auto lastNSep = path.rfind(nativePathSeparator, path.length());
-	if(lastNSep != std::string::npos) {
-		if(lastSep == std::string::npos) {
+	if (lastNSep != std::string::npos) {
+		if (lastSep == std::string::npos) {
 			lastSep = lastNSep;
 		} else {
 			lastSep = std::max(lastSep, lastNSep);
@@ -85,9 +85,9 @@ std::string getFilenameOnly(const std::string& path)
 	}
 #endif
 
-	if(lastSep == path.length() - 1) { // ends in separator; cannot be a file
+	if (lastSep == path.length() - 1) { // ends in separator; cannot be a file
 		return {};
-	} else if(lastSep == std::string::npos) { // no separator; path is already just a filename
+	} else if (lastSep == std::string::npos) { // no separator; path is already just a filename
 		return path;
 	}
 
@@ -102,8 +102,8 @@ std::string enforceTrailingSeparator(const std::string& directory)
 #ifdef _WIN32
 	static const char nativePathSeparator{'\\'};
 	auto lastNSep = directory.rfind(nativePathSeparator, directory.length());
-	if(lastNSep != std::string::npos) {
-		if(lastSep == std::string::npos) {
+	if (lastNSep != std::string::npos) {
+		if (lastSep == std::string::npos) {
 			lastSep = lastNSep;
 		} else {
 			lastSep = std::max(lastSep, lastNSep);
@@ -113,12 +113,12 @@ std::string enforceTrailingSeparator(const std::string& directory)
 	static const char nativePathSeparator{'/'};
 #endif
 
-	if(lastSep == directory.length() - 1) { // ends in separator; good to go ...
+	if (lastSep == directory.length() - 1) { // ends in separator; good to go ...
 		return directory;
 	}
 
 	// need to append a separator, but what kind ?
-	if(nativePathSeparator != universalPathSeparator && directory.find(universalPathSeparator, directory.length()) != std::string::npos) {
+	if (nativePathSeparator != universalPathSeparator && directory.find(universalPathSeparator, directory.length()) != std::string::npos) {
 		return directory + universalPathSeparator;
 	}
 

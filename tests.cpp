@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2019 - 2023 Judd Niemann - All Rights Reserved.
+* Copyright (C) 2019 - 2026 Judd Niemann - All Rights Reserved.
 * You may use, distribute and modify this code under the
 * terms of the GNU Lesser General Public License, version 2.1
 *
@@ -14,7 +14,7 @@ bool tests::testWindow()
 {
 	Sndspec::Window<double> w;
 	w.generate("triangular", 9, 20);
-	for(double v : w.getData())
+	for (double v : w.getData())
 	{
 		std::cout << v << std::endl;
 	}

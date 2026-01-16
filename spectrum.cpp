@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2019 - 2023 Judd Niemann - All Rights Reserved.
+* Copyright (C) 2019 - 2026 Judd Niemann - All Rights Reserved.
 * You may use, distribute and modify this code under the
 * terms of the GNU Lesser General Public License, version 2.1
 *
@@ -62,13 +62,13 @@ int Spectrum::selectBestFFTSize(int requested_size)
 {
 	int s = 1;
 
-	for(int ef : {1, 11, 13}) {
-		for(int d = 1; d <= requested_size; d *= 7) {
-			for(int c = 1; c <= requested_size; c *= 5) {
-				for(int b = 1; b <= requested_size; b *= 3) {
-					for(int a = 1; a <= requested_size; a *= 2) {
+	for (int ef : {1, 11, 13}) {
+		for (int d = 1; d <= requested_size; d *= 7) {
+			for (int c = 1; c <= requested_size; c *= 5) {
+				for (int b = 1; b <= requested_size; b *= 3) {
+					for (int a = 1; a <= requested_size; a *= 2) {
 						int t = a * b * c * d * ef;
-						if(t > requested_size) {
+						if (t > requested_size) {
 							break;
 						}
 						s = std::max(s, t);
@@ -103,7 +103,7 @@ const fftw_complex *Spectrum::getFdBuf() const
 
 void Spectrum::getMag(std::vector<double>& buf)
 {
-	for(int b = 0; b < spectrumSize; b++) {
+	for (int b = 0; b < spectrumSize; b++) {
 		double re = fdBuf[b][0];
 		double im = fdBuf[b][1];
 		buf[static_cast<std::vector<double>::size_type>(b)] = std::sqrt(re * re + im * im);
@@ -112,7 +112,7 @@ void Spectrum::getMag(std::vector<double>& buf)
 
 void Spectrum::getMagSquared(std::vector<double>& buf)
 {
-	for(int b = 0; b < spectrumSize; b++) {
+	for (int b = 0; b < spectrumSize; b++) {
 		double re = fdBuf[b][0];
 		double im = fdBuf[b][1];
 		buf[static_cast<std::vector<double>::size_type>(b)] = re * re + im * im;
@@ -121,7 +121,7 @@ void Spectrum::getMagSquared(std::vector<double>& buf)
 
 void Spectrum::getPhase(std::vector<double>& buf)
 {
-	for(int b = 0; b < spectrumSize; b++) {
+	for (int b = 0; b < spectrumSize; b++) {
 		double re = fdBuf[b][0];
 		double im = fdBuf[b][1];
 		buf[static_cast<std::vector<double>::size_type>(b)] = std::atan2(im, re);
@@ -136,13 +136,13 @@ bool Spectrum::convertToDb(std::vector<std::vector<double>> &s, bool fromMagSqua
 
 	// find peak
 	double peak{0.0};
-	for(int c = 0; c < numChannels; c++) {
-		for(int b = 0; b < numBins; b++) {
+	for (int c = 0; c < numChannels; c++) {
+		for (int b = 0; b < numBins; b++) {
 			peak = std::max(peak, s[c][b]);
 		}
 	}
 
-	if(std::fpclassify(peak) != FP_ZERO) { // scale the data
+	if (std::fpclassify(peak) != FP_ZERO) { // scale the data
 
 		hasSignal = true;
 		double dBMult = fromMagSquared ? 10.0 : 20.0;
@@ -155,7 +155,7 @@ bool Spectrum::convertToDb(std::vector<std::vector<double>> &s, bool fromMagSqua
 			return dBMult * std::log10(std::max(scale * v, floor));
 		};
 
-		for(int c = 0; c < numChannels; c++) {
+		for (int c = 0; c < numChannels; c++) {
 			std::transform (s[c].begin(), s[c].end(), s[c].begin(), scaleFunc);
 		}
 	}
@@ -169,25 +169,25 @@ bool Spectrum::convertToLinear(std::vector<std::vector<double>> &s, bool fromMag
 	bool hasSignal{false};
 	int numBins = s.at(0).size();
 
-	for(int c = 0; c < numChannels; c++) {
+	for (int c = 0; c < numChannels; c++) {
 		// find peak
 		double peak{0.0};
-		if(fromMagSquared) {
-			for(int b = 0; b < numBins; b++) {
+		if (fromMagSquared) {
+			for (int b = 0; b < numBins; b++) {
 				peak = std::max(peak, std::sqrt (s[c][b]));
 			}
 		} else {
-			for(int b = 0; b < numBins; b++) {
+			for (int b = 0; b < numBins; b++) {
 				peak = std::max(peak, s[c][b]);
 			}
 		}
 
-		if(std::fpclassify(peak) != FP_ZERO) {
+		if (std::fpclassify(peak) != FP_ZERO) {
 			hasSignal = true;
 			const double scale = 100.0 / peak;
 
 			// function to convert to percentage of fullScale
-			if(fromMagSquared) {
+			if (fromMagSquared) {
 				auto scaleFunc = [scale] (double v) -> double {
 					return scale * std::sqrt(v) - 100.0;
 				};
@@ -214,14 +214,14 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 	Renderer renderer(parameters.getImgWidth(), parameters.getImgHeight());
 
 	// loop over the files
-	for(const std::string& inputFilename : parameters.getInputFiles()) {
+	for (const std::string& inputFilename : parameters.getInputFiles()) {
 		int nChannels;
 		int sampleRate;
 
 		// open file
 		std::cout << "Opening input file: " << inputFilename << " ... ";
 		Sndspec::Reader<double> r(inputFilename, 0, 1);
-		if(r.getSndFileHandle() == nullptr || r.getSndFileHandle()->error() != SF_ERR_NO_ERROR) {
+		if (r.getSndFileHandle() == nullptr || r.getSndFileHandle()->error() != SF_ERR_NO_ERROR) {
 			std::cout << "couldn't open file !" << std::endl;
 			return;
 		} else {
@@ -251,7 +251,7 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 
 		// prepare the spectrum analyzers
 		std::vector<std::unique_ptr<Spectrum>> analyzers;
-		for(int ch = 0; ch < nChannels; ch ++) {
+		for (int ch = 0; ch < nChannels; ch ++) {
 			// create a spectrum analyzer for each channel if not already existing
 			analyzers.emplace_back(new Spectrum(blockSize));
 			r.setChannelBuffer(ch, analyzers.at(ch)->getTdBuf()); // give the reader direct write-access to the analyzer input buffer
@@ -265,9 +265,9 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		});
 
 		// read (and analyze) the file
-		if(parameters.getChannelMode() == Sum) {
+		if (parameters.getChannelMode() == Sum) {
 			r.readSum();
-		} else if(parameters.getChannelMode() == Difference) {
+		} else if (parameters.getChannelMode() == Difference) {
 			r.readDifference();
 		} else {
 			r.readDeinterleaved();
@@ -275,13 +275,13 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 
 		// prepare and populate results buffers
 		std::vector<std::vector<double>> results;
-		for(int ch = 0; ch < nChannels; ch ++) {
+		for (int ch = 0; ch < nChannels; ch ++) {
 			results.emplace_back(analyzers.at(ch)->getSpectrumSize(), 0.0);
 			analyzers.at(ch)->getMagSquared(results.at(ch));
 		}
 
 		bool hasSignal = false;
-		if(parameters.getLinearMag()) {
+		if (parameters.getLinearMag()) {
 			hasSignal = Spectrum::convertToLinear(results, /* fromMagSquared = */ true);
 		} else {
 			// scale to dB
@@ -289,7 +289,7 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		}
 
 		// determine which channels to plot
-		if(parameters.getChannelMode() == Sum || parameters.getChannelMode() == Difference) {
+		if (parameters.getChannelMode() == Sum || parameters.getChannelMode() == Difference) {
 			std::vector<bool> enabled(nChannels, false);
 			enabled[0] = true; //hasSignal;
 			renderer.setChannelsEnabled(enabled);
@@ -302,7 +302,7 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		renderer.setTitle("Spectrum");
 		renderer.setHorizAxisLabel("Frequency (Hz)");
 
-		if(parameters.getLinearMag()) {
+		if (parameters.getLinearMag()) {
 			renderer.setVertAxisLabel("Relative Magnitude (%)");
 		} else {
 			renderer.setVertAxisLabel("Relative Magnitude (dB)");
@@ -314,21 +314,21 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		renderer.setFinishTime(finishTime);
 		renderer.renderSpectrum(parameters, results);
 
-		if(parameters.hasWhiteBackground()) {
+		if (parameters.hasWhiteBackground()) {
 			renderer.makeNegativeImage();
 		}
 
 		// determine output filename
 		std::string outputFilename;
-		if(parameters.getOutputPath().empty()) {
+		if (parameters.getOutputPath().empty()) {
 			outputFilename = replaceFileExt(inputFilename, "png");
 		} else {
 			outputFilename = enforceTrailingSeparator(parameters.getOutputPath()) + getFilenameOnly(replaceFileExt(inputFilename, "png"));
 		}
 
-		if(!outputFilename.empty()) {
+		if (!outputFilename.empty()) {
 			std::cout << "Saving to " << outputFilename << std::flush;
-			if(renderer.writeToFile(outputFilename)) {
+			if (renderer.writeToFile(outputFilename)) {
 				std::cout << " ... OK" << std::endl;
 			} else {
 				std::cout << " ... ERROR" << std::endl;

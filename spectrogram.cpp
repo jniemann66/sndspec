@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2019 - 2023 Judd Niemann - All Rights Reserved.
+* Copyright (C) 2019 - 2026 Judd Niemann - All Rights Reserved.
 * You may use, distribute and modify this code under the
 * terms of the GNU Lesser General Public License, version 2.1
 *
@@ -20,7 +20,7 @@
 
 void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &parameters)
 {
-	if(parameters.getInputFiles().empty()) {
+	if (parameters.getInputFiles().empty()) {
 		std::cout << "No input files specified. Nothing to do." << std::endl;
 	}
 
@@ -45,11 +45,11 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 	std::vector<std::unique_ptr<Spectrum>> analyzers;
 	analyzers.reserve(reservedChannels);
 
-	for(const std::string& inputFilename : parameters.getInputFiles()) {
+	for (const std::string& inputFilename : parameters.getInputFiles()) {
 		std::cout << "Opening input file: " << inputFilename << " ... ";
 		Sndspec::Reader<double> r(inputFilename, fftSize, plotWidth);
 
-		if(r.getSndFileHandle() == nullptr || r.getSndFileHandle()->error() != SF_ERR_NO_ERROR) {
+		if (r.getSndFileHandle() == nullptr || r.getSndFileHandle()->error() != SF_ERR_NO_ERROR) {
 			std::cout << "couldn't open file !" << std::endl;
 		} else {
 
@@ -65,15 +65,15 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 			spectrogramData.resize(nChannels, std::vector<std::vector<double>>(plotWidth, std::vector<double>(spectrumSize, 0.0)));
 
 			// set specific time range
-			if(parameters.hasTimeRange()) {
+			if (parameters.hasTimeRange()) {
 				r.setStartPos(std::max(0, std::min(static_cast<int>(r.getSamplerate() * parameters.getStart()), r.getNFrames())));
 				r.setFinishPos(std::max(0, std::min(static_cast<int>(r.getSamplerate() * parameters.getFinish()), r.getNFrames())));
 			}
 
-			for(int ch = 0; ch < nChannels; ch ++) {
+			for (int ch = 0; ch < nChannels; ch ++) {
 
 				// create a spectrum analyzer for each channel if not already existing
-				if(ch + 1 > analyzers.size()) {
+				if (ch + 1 > analyzers.size()) {
 					analyzers.emplace_back(new Spectrum(fftSize));
 				}
 
@@ -90,15 +90,15 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 			});
 
 			// read (and analyze) the file
-			if(parameters.getChannelMode() == Sum) {
+			if (parameters.getChannelMode() == Sum) {
 				r.readSum();
-			} else if(parameters.getChannelMode() == Difference) {
+			} else if (parameters.getChannelMode() == Difference) {
 				r.readDifference();
 			} else {
 				r.readDeinterleaved();
 			}
 
-			if(parameters.getLinearMag()) {
+			if (parameters.getLinearMag()) {
 				// scale the magnitude as percentage
 				renderer.setChannelsEnabled(convertToLinear(spectrogramData, /* fromMagSquared = */ true));
 			} else {
@@ -121,7 +121,7 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 			// main plot area
 			renderer.renderSpectrogram(parameters, spectrogramData);
 
-			if(parameters.hasWhiteBackground()) {
+			if (parameters.hasWhiteBackground()) {
 				renderer.makeNegativeImage();
 			}
 
@@ -129,15 +129,15 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 
 			// determine output filename
 			std::string outputFilename;
-			if(parameters.getOutputPath().empty()) {
+			if (parameters.getOutputPath().empty()) {
 				outputFilename = replaceFileExt(inputFilename, "png");
 			} else {
 				outputFilename = enforceTrailingSeparator(parameters.getOutputPath()) + getFilenameOnly(replaceFileExt(inputFilename, "png"));
 			}
 
-			if(!outputFilename.empty()) {
+			if (!outputFilename.empty()) {
 				std::cout << "Saving to " << outputFilename << std::flush;
-				if(renderer.writeToFile(outputFilename)) {
+				if (renderer.writeToFile(outputFilename)) {
 					std::cout << " ... OK" << std::endl;
 				} else {
 					std::cout << " ... ERROR" << std::endl;
@@ -159,17 +159,17 @@ std::vector<bool> Sndspec::Spectrogram::convertToDb(SpectrogramResults<double> &
 	int numBins = s.at(0).at(0).size();
 	std::vector<bool> hasSignal(numChannels, false);
 
-	for(int c = 0; c < numChannels; c++) {
+	for (int c = 0; c < numChannels; c++) {
 
 		// find peak
 		double peak{0.0};
-		for(int x = 0; x < numSpectrums; x++) {
-			for(int b = 0; b < numBins; b++) {
+		for (int x = 0; x < numSpectrums; x++) {
+			for (int b = 0; b < numBins; b++) {
 				peak = std::max(peak, s[c][x][b]);
 			}
 		}
 
-		if(std::fpclassify(peak) != FP_ZERO) {
+		if (std::fpclassify(peak) != FP_ZERO) {
 
 			hasSignal[c] = true;
 			double dBMult = fromMagSquared ? 10.0 : 20.0;
@@ -184,7 +184,7 @@ std::vector<bool> Sndspec::Spectrogram::convertToDb(SpectrogramResults<double> &
 			};
 
 			// scale the data
-			for(int x = 0; x < numSpectrums; x++) {
+			for (int x = 0; x < numSpectrums; x++) {
 				std::transform (s[c][x].begin(), s[c][x].end(), s[c][x].begin(), scaleFunc);
 			}
 		}
@@ -200,19 +200,19 @@ std::vector<bool> Sndspec::Spectrogram::convertToLinear(SpectrogramResults<doubl
 	int numBins = s.at(0).at(0).size();
 	std::vector<bool> hasSignal(numChannels, false);
 
-	for(int c = 0; c < numChannels; c++) {
+	for (int c = 0; c < numChannels; c++) {
 
 		// find peak
 		double peak{0.0};
-		if(fromMagSquared) {
-			for(int x = 0; x < numSpectrums; x++) {
-				for(int b = 0; b < numBins; b++) {
+		if (fromMagSquared) {
+			for (int x = 0; x < numSpectrums; x++) {
+				for (int b = 0; b < numBins; b++) {
 					peak = std::max(peak, std::sqrt (s[c][x][b]));
 				}
 			}
 		} else {
-			for(int x = 0; x < numSpectrums; x++) {
-				for(int b = 0; b < numBins; b++) {
+			for (int x = 0; x < numSpectrums; x++) {
+				for (int b = 0; b < numBins; b++) {
 					peak = std::max(peak, s[c][x][b]);
 				}
 			}
@@ -220,20 +220,20 @@ std::vector<bool> Sndspec::Spectrogram::convertToLinear(SpectrogramResults<doubl
 
 		std::cout << "peak " << peak << std::endl;
 
-		if(std::fpclassify(peak) != FP_ZERO) {
+		if (std::fpclassify(peak) != FP_ZERO) {
 
 			hasSignal[c] = true;
 
 			const double scale = 100.0 / peak;
 
 			// function to convert to percentage of fullScale
-			if(fromMagSquared) {
+			if (fromMagSquared) {
 				auto scaleFunc = [scale] (double v) -> double {
 					return scale * std::sqrt(v) - 100.0;
 				};
 
 				// scale the data
-				for(int x = 0; x < numSpectrums; x++) {
+				for (int x = 0; x < numSpectrums; x++) {
 					std::transform (s[c][x].begin(), s[c][x].end(), s[c][x].begin(), scaleFunc);
 				}
 			} else {
@@ -242,7 +242,7 @@ std::vector<bool> Sndspec::Spectrogram::convertToLinear(SpectrogramResults<doubl
 				};
 
 				// scale the data
-				for(int x = 0; x < numSpectrums; x++) {
+				for (int x = 0; x < numSpectrums; x++) {
 					std::transform (s[c][x].begin(), s[c][x].end(), s[c][x].begin(), scaleFunc);
 				}
 			}
