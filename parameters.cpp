@@ -211,6 +211,13 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			++argsIt;
 			break;
 
+		case FrequencyStep:
+			if (++argsIt != args.cend()) {
+				frequencyStep = std::max(minImgWidth, std::stoi(*argsIt));
+				++argsIt;
+			}
+			break;
+
 #ifdef FS_AVAILABLE
 		case Recursive:
 			recursiveDirectoryTraversal = true;
@@ -347,6 +354,16 @@ ChannelMode Parameters::getChannelMode() const
 bool Parameters::getLinearMag() const
 {
 	return linearMag;
+}
+
+int Parameters::getFrequencyStep() const
+{
+	return frequencyStep;
+}
+
+void Parameters::setFrequencyStep(int value)
+{
+	frequencyStep = value;
 }
 
 void Parameters::setLinearMag(bool value)

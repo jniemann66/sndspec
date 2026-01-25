@@ -229,7 +229,7 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 			nChannels = r.getNChannels();
 			sampleRate = r.getSamplerate();
 			renderer.setNyquist(sampleRate / 2);
-			renderer.setFreqStep(5000);
+			renderer.setFreqStep(parameters.getFrequencyStep());
 		}
 
 		// calculate blocksize

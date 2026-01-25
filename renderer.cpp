@@ -20,7 +20,8 @@
 
 namespace Sndspec {
 
-Renderer::Renderer(int width, int height) : width(width), height(height), pixelBuffer(static_cast<size_t>(width * height), 0)
+Renderer::Renderer(int width, int height)
+	: width(width), height(height), pixelBuffer(static_cast<size_t>(width * height), 0)
 {
 	// set up cairo surface
 	const cairo_format_t cairoFormat =  CAIRO_FORMAT_RGB24;
