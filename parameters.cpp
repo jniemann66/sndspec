@@ -213,7 +213,7 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 
 		case FrequencyStep:
 			if (++argsIt != args.cend()) {
-				frequencyStep = std::max(minImgWidth, std::stoi(*argsIt));
+				frequencyStep = std::max(1, std::stoi(*argsIt));
 				++argsIt;
 			}
 			break;
