@@ -8,10 +8,6 @@
 */
 
 #include "renderer.h"
-#include "raiitimer.h"
-#include "spectrum.h"
-
-#include <cinttypes>
 
 #include <cstdlib>
 #include <cstddef>
@@ -269,14 +265,13 @@ void Renderer::drawSpectrumTickmarks(bool linearMag)
 	constexpr int fx = s + 5;
 	const int fy = 4;
 
-	double yScale = plotHeight / dynRange;
-	double yStep = yScale * 10;
-	double y = plotOriginY + plotHeight - 1 ;
+	const double yScale = plotHeight / dynRange;
+	const double yStep = yScale * 10;
+	double y = plotOriginY + plotHeight - 1;
 
 	// draw dB tickmarks and labels
 	cairo_set_line_width (cr, 2);
 	cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
-	y = plotOriginY + plotHeight - 1 ;
 	char dbLabelBuf[20];
 	double dB = dynRange;
 	while (y > plotOriginY) {

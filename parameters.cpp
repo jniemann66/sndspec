@@ -20,7 +20,6 @@
 #define VERSION_STRING STRINGIFY(SNDSPEC_VERSION)
 #endif
 
-#include <iostream>
 #include <cmath>
 #include <sstream>
 #include <iterator>
