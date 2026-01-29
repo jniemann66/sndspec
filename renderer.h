@@ -15,6 +15,8 @@
 
 #include <cairo.h>
 
+#include <map>
+
 extern "C" {
 #include <cairo.h>
 }
@@ -82,6 +84,7 @@ private:
 	void drawSpectrumGrid();
 	void drawSpectrumTickmarks(bool linearMag = false);
 	void drawSpectrumText();
+	void drawSpectrumTopNFrequencies(const std::map<double, size_t, std::greater<double>>& topFrequencies, size_t n);
 
 	// vector indicating which channels to plot or not plot
 	std::vector<bool> channelsEnabled;

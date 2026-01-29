@@ -389,6 +389,18 @@ void Renderer::drawSpectrumText()
 	cairo_restore(cr);
 }
 
+void Renderer::drawSpectrumTopNFrequencies(const std::map<double, size_t, std::greater<double>>& topFrequencies, size_t n)
+{
+	size_t i = 0;
+	for (const auto& [mag, freq] : topFrequencies) {
+		if (++i > n) {
+			break;
+		}
+		// todo: plot and label mag, freq
+		// todo: get note freq and offset in cents etc ...
+	}
+}
+
 std::vector<bool> Renderer::getChannelsEnabled() const
 {
 	return channelsEnabled;
