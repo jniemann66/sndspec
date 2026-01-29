@@ -12,12 +12,13 @@
 #include "reader.h"
 #include "window.h"
 
-#include <vector>
-#include <cmath>
 #include <algorithm>
 #include <cassert>
-
+#include <cmath>
+#include <functional>
 #include <iostream>
+#include <map>
+#include <vector>
 
 namespace Sndspec {
 
@@ -339,6 +340,22 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 
 		renderer.clear();
 	}
+}
+
+std::map<double, size_t, std::greater<double>> Spectrum::getRankedLocalMaxima(const std::vector<double>& data)
+{
+	std::map<double, size_t, std::greater<double>> results; // retval
+	if (data.size() >= 3) { // need at least 3 elements
+		// Iterate over all elements except first and last
+		for (size_t i = 1; i < data.size() - 1; ++i) {
+			if (data[i] > data[i - 1] && data[i] > data[i + 1]) {
+				// Found a local maximum
+				results[data[i]] = i;
+			}
+		}
+	}
+
+	return results;
 }
 
 } // namespace Sndspec

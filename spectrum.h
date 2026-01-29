@@ -13,6 +13,7 @@
 #include <fftw3.h>
 
 #include <vector>
+#include <map>
 
 #include "parameters.h"
 
@@ -44,6 +45,10 @@ public:
 	static int selectBestFFTSize(int requested_size); // pick a good FFT size for FFTW (of the form 2^a * 3^b * 5^c * 7^d * [1|11|13] )
 	static bool convertToDb(std::vector<std::vector<double>> &s, bool fromMagSquared);
 	static bool convertToLinear(std::vector<std::vector<double>> &s, bool fromMagSquared);
+
+	// getRankedLocalMaxima() : finds all local peaks in input data. Returns a map of <peak, index>,
+	// with peaks sorted from highest to lowest (due to std::greater<double>)
+	static std::map<double, size_t, std::greater<double> > getRankedLocalMaxima(const std::vector<double> &data);
 
 private:
 	fftw_plan plan;
