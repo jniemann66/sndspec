@@ -30,6 +30,25 @@ struct Rgb
 	double blue;
 };
 
+struct Marker
+{
+	size_t index{0};
+	double freq{0.0};
+	double mag{0.0};
+	double x{0.0};
+	double y{0.0};
+	double Fs{0.0};
+	Rgb color;
+	bool visible{true};
+
+	std::string displayText() const
+	{
+		std::ostringstream oss;
+		oss << (freq * Fs) << " Hz";
+		return oss.str();
+	}
+};
+
 class Renderer
 {
 public:

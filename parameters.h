@@ -12,6 +12,7 @@
 
 #include "fsdetect.h"
 
+#include <optional>
 #include <string>
 #include <vector>
 #include <set>
@@ -192,6 +193,7 @@ private:
 	ChannelMode channelMode{Normal};
 	bool linearMag{false};
 	int frequencyStep{5000};
+	std::optional<int> topN;
 
 #ifdef FS_AVAILABLE
 	bool recursiveDirectoryTraversal{false};
