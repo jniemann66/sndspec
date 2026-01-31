@@ -37,14 +37,13 @@ struct Marker
 	double mag{0.0};
 	double x{0.0};
 	double y{0.0};
-	double Fs{0.0};
 	Rgb color;
 	bool visible{true};
 
 	std::string displayText() const
 	{
 		std::ostringstream oss;
-		oss << (freq * Fs) << " Hz";
+		oss << freq << " Hz";
 		return oss.str();
 	}
 };
@@ -55,8 +54,14 @@ public:
 	Renderer(int width, int height);
 	~Renderer();
 
+	// spectrogram
 	void renderSpectrogram(const Parameters& parameters, const SpectrogramResults<double>& spectrogramData);
-	void renderSpectrum(const Parameters& parameters, const std::vector<std::vector<double> >& spectrumData);
+
+	// spectrum
+	void renderSpectrum(const Parameters& parameters, const std::vector<std::vector<double>>& spectrumData);
+	std::vector<Marker> getTopNFrequencyMarkers(const Parameters& parameters, const std::vector<double>& spectrumData, size_t n, int channel);
+	void drawMarkers(const std::vector<Marker>& markers);
+
 	void makeNegativeImage();
 	bool writeToFile(const std::string &filename);
 	void clear();
@@ -103,7 +108,7 @@ private:
 	void drawSpectrumGrid();
 	void drawSpectrumTickmarks(bool linearMag = false);
 	void drawSpectrumText();
-	void drawSpectrumTopNFrequencies(const std::map<double, size_t, std::greater<double>>& topFrequencies, size_t n);
+	std::map<double, size_t, std::greater<double>> getRankedLocalMaxima(const std::vector<double>& data);
 
 	// vector indicating which channels to plot or not plot
 	std::vector<bool> channelsEnabled;
@@ -202,7 +207,7 @@ private:
 //		0x003CBB75,
 //		0x0055C667,
 //		0x0073D055,
-//		0x0095D840,
+//		0x0095D840,	size_t i = 0;
 //		0x00B8DE29,
 //		0x00DCE319,
 //		0x00FDE725

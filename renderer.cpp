@@ -88,9 +88,9 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 	const SpectrumSmoothingMode spectrumSmoothingMode = parameters.getSpectrumSmoothingMode();
 
 	int L = std::max(1, numBins / plotWidth); // size of smoothing filter
-	double hScaling = static_cast<double>(plotWidth) / numBins;
+	const double hScaling = static_cast<double>(plotWidth) / numBins;
 
-	double vScaling = (spectrumSmoothingMode == MovingAverage) ?
+	const double vScaling = (spectrumSmoothingMode == MovingAverage) ?
 				static_cast<double>(plotHeight) / parameters.getDynRange() / L :
 				static_cast<double>(plotHeight) / parameters.getDynRange();
 
@@ -301,14 +301,77 @@ void Renderer::drawSpectrumTickmarks(bool linearMag)
 		cairo_text_extents_t freqLabelTextExtents;
 		cairo_text_extents(cr, fLabelBuf, &freqLabelTextExtents);
 		cairo_move_to(cr, x, plotOriginY + plotHeight);
-		cairo_line_to(cr, x, plotOriginY + plotHeight + s -1);
-		cairo_move_to(cr, x - freqLabelTextExtents.x_advance * 0.5, plotOriginY + plotHeight + ty -1);
+		cairo_line_to(cr, x, plotOriginY + plotHeight + s - 1);
+		cairo_move_to(cr, x - freqLabelTextExtents.x_advance * 0.5, plotOriginY + plotHeight + ty - 1);
 		cairo_show_text(cr, fLabelBuf);
 		x += xStep;
 		f += freqStep;
 	}
 
 	cairo_stroke (cr);
+}
+
+void Renderer::drawMarkers(const std::vector<Marker>& markers)
+{
+	// draw the markers
+	cairo_set_font_size(cr, 13);
+	for (const Marker& m : markers) {
+		cairo_text_extents_t markerExtents;
+		const std::string txt = m.displayText();
+		cairo_text_extents(cr, txt.c_str(), &markerExtents);
+		cairo_move_to(cr, m.x, m.y);
+		cairo_show_text(cr, txt.c_str());
+	}
+}
+
+std::map<double, size_t, std::greater<double>> Renderer::getRankedLocalMaxima(const std::vector<double>& data)
+{
+	std::map<double, size_t, std::greater<double>> results; // retval
+	if (data.size() >= 3) { // need at least 3 elements
+		// Iterate over all elements except first and last
+		for (size_t i = 1; i < data.size() - 1; ++i) {
+			if (data[i] > data[i - 1] && data[i] > data[i + 1]) {
+				// Found a local maximum
+				results[data[i]] = i;
+			}
+		}
+	}
+
+	return results;
+}
+
+std::vector<Marker> Renderer::getTopNFrequencyMarkers(const Parameters& parameters, const std::vector<double>& data, size_t n, int channel)
+{
+	const auto rankedFrequencies = getRankedLocalMaxima(data);
+
+	const size_t numBins = data.size();
+	const SpectrumSmoothingMode spectrumSmoothingMode = parameters.getSpectrumSmoothingMode();
+	const double hScaling = static_cast<double>(plotWidth) / numBins;
+	const int L = std::max<int>(1, numBins / plotWidth); // size of smoothing filter
+	const double vScaling = (spectrumSmoothingMode == MovingAverage) ?
+				static_cast<double>(plotHeight) / parameters.getDynRange() / L :
+				static_cast<double>(plotHeight) / parameters.getDynRange();
+
+	std::vector<Marker> markers; // retval
+
+	size_t i = 0;
+	for (const auto& [mag, freqIndex] : rankedFrequencies) {
+		if (++i > n) {
+			break;
+		}
+
+		Marker m;
+		m.index = 0;
+		m.freq = nyquist * static_cast<double>(freqIndex) /  (numBins - 1);
+		m.mag = mag;
+		m.visible = true;
+		m.color = spectrumChannelColors[std::min(static_cast<int>(spectrumChannelColors.size() - 1), channel)];
+		m.x = plotOriginX + hScaling * freqIndex;
+		m.y = plotOriginY - vScaling * mag;
+		markers.push_back(m);
+	}
+
+	return markers;
 }
 
 void Renderer::drawSpectrumText()
@@ -387,18 +450,6 @@ void Renderer::drawSpectrumText()
 	cairo_rotate(cr, M_PI_2);
 	cairo_show_text(cr, vertAxisLabel.c_str());
 	cairo_restore(cr);
-}
-
-void Renderer::drawSpectrumTopNFrequencies(const std::map<double, size_t, std::greater<double>>& topFrequencies, size_t n)
-{
-	size_t i = 0;
-	for (const auto& [mag, freq] : topFrequencies) {
-		if (++i > n) {
-			break;
-		}
-		// todo: plot and label mag, freq
-		// todo: get note freq and offset in cents etc ...
-	}
 }
 
 std::vector<bool> Renderer::getChannelsEnabled() const

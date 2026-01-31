@@ -154,6 +154,7 @@ public:
 	void setChannelMode(const ChannelMode &value);
 	void setLinearMag(bool value);
 	void setFrequencyStep(int value);
+	void setTopN(std::optional<int> value);
 
 	// getters
 	std::vector<std::string> getInputFiles() const;
@@ -175,6 +176,7 @@ public:
 	ChannelMode getChannelMode() const;
 	bool getLinearMag() const;
 	int getFrequencyStep() const;
+	std::optional<int> getTopN() const;
 
 private:
 	std::vector<std::string> inputFiles;

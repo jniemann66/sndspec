@@ -319,6 +319,15 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 			renderer.makeNegativeImage();
 		}
 
+		if (parameters.getTopN().has_value()) {
+			const size_t n = parameters.getTopN().value();
+			for (int ch = 0; ch < nChannels; ch++) {
+				const auto markers = renderer.getTopNFrequencyMarkers(parameters, results.at(ch), n, ch);
+				// todo: if desired, do something else with markers (summarize in table, send to stdout etc ...)
+				renderer.drawMarkers(markers);
+			}
+		}
+
 		// determine output filename
 		std::string outputFilename;
 		if (parameters.getOutputPath().empty()) {

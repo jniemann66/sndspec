@@ -367,6 +367,16 @@ int Parameters::getFrequencyStep() const
 	return frequencyStep;
 }
 
+std::optional<int> Parameters::getTopN() const
+{
+	return topN;
+}
+
+void Parameters::setTopN(std::optional<int> value)
+{
+	topN = value;
+}
+
 void Parameters::setFrequencyStep(int value)
 {
 	frequencyStep = value;
