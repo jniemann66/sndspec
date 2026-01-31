@@ -313,15 +313,22 @@ void Renderer::drawSpectrumTickmarks(bool linearMag)
 
 void Renderer::drawMarkers(const std::vector<Marker>& markers)
 {
-	// draw the markers
+	constexpr int s = 10; // marker tick height
+	cairo_set_line_width (cr, 2);
 	cairo_set_font_size(cr, 13);
+
 	for (const Marker& m : markers) {
+		cairo_set_source_rgb(cr, m.color.red, m.color.green, m.color.blue);
 		cairo_text_extents_t markerExtents;
 		const std::string txt = m.displayText();
 		cairo_text_extents(cr, txt.c_str(), &markerExtents);
-		cairo_move_to(cr, m.x, m.y);
+		cairo_move_to(cr, m.x, m.y - 2);
+		cairo_line_to(cr, m.x, m.y - s);
+		cairo_move_to(cr, m.x - markerExtents.x_advance / 2.0, m.y - s - 2);
 		cairo_show_text(cr, txt.c_str());
 	}
+
+	cairo_stroke(cr);
 }
 
 std::map<double, size_t, std::greater<double>> Renderer::getRankedLocalMaxima(const std::vector<double>& data)
