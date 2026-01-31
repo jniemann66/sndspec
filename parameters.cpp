@@ -217,6 +217,13 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			}
 			break;
 
+		case PeakSelection:
+			if (++argsIt != args.cend()) {
+				topN = std::max(1, std::stoi(*argsIt));
+				++argsIt;
+			}
+			break;
+
 #ifdef FS_AVAILABLE
 		case Recursive:
 			recursiveDirectoryTraversal = true;

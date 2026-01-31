@@ -62,6 +62,7 @@ enum OptionID
 	Channel,
 	LinearMag,
 	FrequencyStep,
+	PeakSelection,
 
 #ifdef FS_AVAILABLE
 	Recursive,
@@ -110,6 +111,8 @@ const std::vector<Option> options
 	{OptionID::Channel, "--channel", "-c", false, "select specific channels and set channel mode", {"[all|[L|R|0|1|2|...]...] [sum|difference|normal]"}},
 	{OptionID::LinearMag, "--linear-mag", "-l", false, "Set magnitude scale to be linear", {}},
 	{OptionID::FrequencyStep, "--frequency-step", "-f", false, "Set interval of frequency tick marks in Hz", {"n"}},
+	{OptionID::PeakSelection, "--peak-selection", "-p", false, "Annotate the top n local peaks in the resuls", {"n"}},
+
 
 #ifdef FS_AVAILABLE
 	{OptionID::Recursive, "--recursive", "-r", false, "Recursive directory traversal", {}},
