@@ -57,9 +57,10 @@ public:
 	// spectrogram
 	void renderSpectrogram(const Parameters& parameters, const SpectrogramResults<double>& spectrogramData);
 
-	// spectrum
-	void renderSpectrum(const Parameters& parameters, const std::vector<std::vector<double>>& spectrumData);
-	std::vector<Marker> getTopNFrequencyMarkers(const Parameters& parameters, const std::vector<double>& spectrumData, size_t n, int channel);
+	// renderSpectrum() : returns <final plotted values, vertical scaling factor used>
+	std::pair<std::vector<std::vector<double>>, double> renderSpectrum(const Parameters& parameters, const std::vector<std::vector<double>>& spectrumData);
+
+	std::vector<Marker> getTopNFrequencyMarkers(const Parameters& parameters, const std::vector<double>& spectrumData, double vScaling, size_t n, int channel);
 	void drawMarkers(const std::vector<Marker>& markers);
 
 	void makeNegativeImage();
@@ -108,7 +109,10 @@ private:
 	void drawSpectrumGrid();
 	void drawSpectrumTickmarks(bool linearMag = false);
 	void drawSpectrumText();
-	std::map<double, size_t, std::greater<double>> getRankedLocalMaxima(const std::vector<double>& data);
+
+	// typedef for map of <magnitude, index> with largest peak-value first
+	using LocalPeakData_t = std::map<double, size_t, std::greater<double>>;
+	LocalPeakData_t getRankedLocalMaxima(const std::vector<double>& data);
 
 	// vector indicating which channels to plot or not plot
 	std::vector<bool> channelsEnabled;

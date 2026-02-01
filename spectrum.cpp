@@ -313,19 +313,22 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		double finishTime = static_cast<double>(r.getFinishPos()) / r.getSamplerate();
 		renderer.setStartTime(startTime);
 		renderer.setFinishTime(finishTime);
-		renderer.renderSpectrum(parameters, results);
-
-		if (parameters.hasWhiteBackground()) {
-			renderer.makeNegativeImage();
-		}
+		const auto& [magnitudes, vScaling] = renderer.renderSpectrum(parameters, results);
 
 		if (parameters.getTopN().has_value()) {
 			const size_t n = parameters.getTopN().value();
+			const std::vector<bool> enabled = renderer.getChannelsEnabled();
 			for (int ch = 0; ch < nChannels; ch++) {
-				const auto markers = renderer.getTopNFrequencyMarkers(parameters, results.at(ch), n, ch);
-				// todo: if desired, do something else with markers (summarize in table, send to stdout etc ...)
-				renderer.drawMarkers(markers);
+				if (enabled[ch]) {
+					const auto markers = renderer.getTopNFrequencyMarkers(parameters, magnitudes.at(ch), vScaling, n, ch);
+					// todo: if desired, do something else with markers (summarize in table, send to stdout etc ...)
+					renderer.drawMarkers(markers);
+				}
 			}
+		}
+
+		if (parameters.hasWhiteBackground()) {
+			renderer.makeNegativeImage();
 		}
 
 		// determine output filename

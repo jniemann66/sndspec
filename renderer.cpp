@@ -14,6 +14,8 @@
 #include <cstdint>
 #include <cmath>
 
+#include <iostream>
+
 namespace Sndspec {
 
 Renderer::Renderer(int width, int height)
@@ -77,10 +79,10 @@ void Renderer::renderSpectrogram(const Parameters &parameters, const Spectrogram
 	drawSpectrogramHeatMap(parameters.getLinearMag());
 }
 
-void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<std::vector<double>>& spectrumData)
+std::pair <std::vector<std::vector<double>>, double> Renderer::renderSpectrum(const Parameters &parameters, const std::vector<std::vector<double>>& spectrumData)
 {
-	int numChannels = spectrumData.size();
-	int numBins =  spectrumData.at(0).size();
+	const int numChannels = spectrumData.size();
+	const int numBins =  spectrumData.at(0).size();
 
 	resolveEnabledChannels(parameters, numChannels);
 	showWindowFunctionLabel = parameters.getShowWindowFunctionLabel();
@@ -99,6 +101,9 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 	cairo_clip(cr);
 	const double opacity = 0.8;
 
+	// retval : buffer to contain final plotted y-coordinates
+	std::vector<std::vector<double>> results{spectrumData.size(), std::vector<double>(numBins, 0.0)};
+
 	for (int c = 0; c < numChannels; c++) {
 
 		// if channel is disabled, skip this channel
@@ -112,35 +117,44 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 		cairo_move_to(cr, plotOriginX, plotOriginY - vScaling * spectrumData.at(c).at(0));
 
 		if (spectrumSmoothingMode == None) {
-			for (int x = 0; x < numBins; x++) {
-				cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * spectrumData.at(c).at(x));
+			for (int i = 0; i < numBins; i++) {
+				const double mag = spectrumData.at(c).at(i);
+				const double y = plotOriginY - vScaling * mag;
+				results[c][i] = mag;
+				cairo_line_to(cr, plotOriginX + hScaling * i, y);
 			}
 		} else if (spectrumSmoothingMode == MovingAverage) {
 			double acc = 0.0;
-			for (int x = 0; x < L; x++) {
-				acc += spectrumData.at(c).at(x);
+			for (int i = 0; i < L; i++) {
+				acc += spectrumData.at(c).at(i);
 			}
 
-			for (int x = L; x < numBins; x++) {
-				acc += spectrumData.at(c).at(x);
-				acc -= spectrumData.at(c).at(x - L);
-				cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * acc);
+			for (int i = L; i < numBins; i++) {
+				acc += spectrumData.at(c).at(i);
+				acc -= spectrumData.at(c).at(i - L);
+				const double y = plotOriginY - vScaling * acc;
+				results[c][i] = acc;
+				cairo_line_to(cr, plotOriginX + hScaling * i, y);
 			}
 		} else if (spectrumSmoothingMode == Peak) {
-			for (int x = 0; x < L; x++) {
+			for (int i = 0; i < L; i++) {
 				double maxDB(-300);
-				for (int a = 0; a <= x; a++) {
+				for (int a = 0; a <= i; a++) {
 					maxDB = std::max(maxDB, spectrumData.at(c).at(a));
 				}
-				cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * maxDB);
+				const double y = plotOriginY - vScaling * maxDB;
+				results[c][i] = maxDB;
+				cairo_line_to(cr, plotOriginX + hScaling * i, y);
 			}
 
-			for (int x = L; x < numBins; x++) {
+			for (int i = L; i < numBins; i++) {
 				double maxDB(-300);
-				for (int a = x - L + 1; a <= x; a++) {
+				for (int a = i - L + 1; a <= i; a++) {
 					maxDB = std::max(maxDB, spectrumData.at(c).at(a));
 				}
-				cairo_line_to(cr, plotOriginX + hScaling * x, plotOriginY - vScaling * maxDB);
+				const double y = plotOriginY - vScaling * maxDB;
+				results[c][i] = maxDB;
+				cairo_line_to(cr, plotOriginX + hScaling * i, y);
 			}
 
 		}
@@ -153,6 +167,8 @@ void Renderer::renderSpectrum(const Parameters &parameters, const std::vector<st
 	drawSpectrumGrid();
 	drawSpectrumTickmarks(parameters.getLinearMag());
 	drawSpectrumText();
+
+	return {results, vScaling};
 }
 
 // note: in Normal mode, channels may be disabled due to the following:
@@ -311,88 +327,6 @@ void Renderer::drawSpectrumTickmarks(bool linearMag)
 	cairo_stroke (cr);
 }
 
-void Renderer::drawMarkers(const std::vector<Marker>& markers)
-{
-	constexpr double marker_width = 5.0; // maker base width
-	constexpr double marker_voffset = 2.0; // vertical distance of marker tip from actual point of interest
-	constexpr double marker_height = 10.0; // marker tick height (including voffset)
-	constexpr double label_voffset = 3.0; // vertical distance between marker base and bottom of text
-	constexpr double marker_halfwidth = marker_width / 2;
-
-	cairo_set_line_width (cr, 1.5);
-	cairo_set_font_size(cr, 13);
-
-	for (const Marker& m : markers) {
-		// set colour
-		cairo_set_source_rgb(cr, m.color.red, m.color.green, m.color.blue);
-
-		// draw triangle marker shape
-		cairo_move_to(cr, m.x, m.y - marker_voffset);
-		cairo_line_to(cr, m.x - marker_halfwidth, m.y - marker_height);
-		cairo_line_to(cr, m.x + marker_halfwidth, m.y - marker_height);
-		cairo_line_to(cr, m.x, m.y - marker_voffset);
-
-		// draw label
-		const std::string txt = m.displayText();
-		cairo_text_extents_t markerExtents;
-		cairo_text_extents(cr, txt.c_str(), &markerExtents);
-		cairo_move_to(cr, m.x - markerExtents.x_advance / 2.0, m.y - marker_height - label_voffset);
-		cairo_show_text(cr, txt.c_str());
-	}
-
-	cairo_stroke(cr);
-}
-
-std::map<double, size_t, std::greater<double>> Renderer::getRankedLocalMaxima(const std::vector<double>& data)
-{
-	std::map<double, size_t, std::greater<double>> results; // retval
-	if (data.size() >= 3) { // need at least 3 elements
-		// Iterate over all elements except first and last
-		for (size_t i = 1; i < data.size() - 1; ++i) {
-			if (data[i] > data[i - 1] && data[i] > data[i + 1]) {
-				// Found a local maximum
-				results[data[i]] = i;
-			}
-		}
-	}
-
-	return results;
-}
-
-std::vector<Marker> Renderer::getTopNFrequencyMarkers(const Parameters& parameters, const std::vector<double>& data, size_t n, int channel)
-{
-	const auto rankedFrequencies = getRankedLocalMaxima(data);
-
-	const size_t numBins = data.size();
-	const SpectrumSmoothingMode spectrumSmoothingMode = parameters.getSpectrumSmoothingMode();
-	const double hScaling = static_cast<double>(plotWidth) / numBins;
-	const int L = std::max<int>(1, numBins / plotWidth); // size of smoothing filter
-	const double vScaling = (spectrumSmoothingMode == MovingAverage) ?
-				static_cast<double>(plotHeight) / parameters.getDynRange() / L :
-				static_cast<double>(plotHeight) / parameters.getDynRange();
-
-	std::vector<Marker> markers; // retval
-
-	size_t i = 0;
-	for (const auto& [mag, freqIndex] : rankedFrequencies) {
-		if (++i > n) {
-			break;
-		}
-
-		Marker m;
-		m.index = 0;
-		m.freq = nyquist * static_cast<double>(freqIndex) /  (numBins - 1);
-		m.mag = mag;
-		m.visible = true;
-		m.color = spectrumChannelColors[std::min(static_cast<int>(spectrumChannelColors.size() - 1), channel)];
-		m.x = plotOriginX + hScaling * freqIndex;
-		m.y = plotOriginY - vScaling * mag;
-		markers.push_back(m);
-	}
-
-	return markers;
-}
-
 void Renderer::drawSpectrumText()
 {
 	const double opacity = 0.8;
@@ -469,6 +403,108 @@ void Renderer::drawSpectrumText()
 	cairo_rotate(cr, M_PI_2);
 	cairo_show_text(cr, vertAxisLabel.c_str());
 	cairo_restore(cr);
+}
+
+Renderer::LocalPeakData_t Renderer::getRankedLocalMaxima(const std::vector<double>& data)
+{
+	const size_t thresh = 10;
+
+	Renderer::LocalPeakData_t results; // retval
+	if (data.size() >= 3) { // need at least 3 elements
+		// Iterate over all elements except first and last
+		for (size_t i = 1; i < data.size() - 1; ++i) {
+			if (data[i] > data[i - 1] && data[i] > data[i + 1]) {
+				// Found a local maximum
+				results[data[i]] = i;
+			}
+		}
+	}
+
+	return results;
+}
+
+std::vector<Marker> Renderer::getTopNFrequencyMarkers(const Parameters& parameters, const std::vector<double>& data, double vScaling, size_t n, int channel)
+{
+	const auto rankedFrequencies = getRankedLocalMaxima(data);
+
+	const size_t numBins = data.size();
+	const double hScaling = static_cast<double>(plotWidth) / numBins;
+
+	std::vector<Marker> markers; // retval
+
+	double thresh_Hz = 10.0;
+	size_t thresh = std::ceil(thresh_Hz / (static_cast<double>(nyquist) / numBins));
+
+	std::cout << "bins=" << numBins << " Hz/bin= " << nyquist / numBins << " thresh(bins)= " << thresh << std::endl;
+	size_t i = 0;
+
+	std::set<size_t> used_indexes;
+
+	for (const auto& [mag, freqIndex] : rankedFrequencies) {
+		if ((i + 1) > n) {
+			break;
+		}
+
+		Marker m;
+		m.index = i;
+		m.freq = nyquist * static_cast<double>(freqIndex) /  (numBins - 1);
+		m.visible = true;
+		m.color = spectrumChannelColors[std::min(static_cast<int>(spectrumChannelColors.size() - 1), channel)];
+		m.mag = mag;
+		m.x = plotOriginX + hScaling * freqIndex;
+		m.y = plotOriginY - vScaling * mag;
+
+		bool verbose = false;
+
+		// skip if peak is too close to another
+		if (auto it = used_indexes.lower_bound(freqIndex - thresh); it != used_indexes.end() && *it <= freqIndex + thresh) {
+			if (verbose) {
+				std::cout << "peak frequency " << m.freq << "Hz (mag=" << m.mag << ") is too close to previous peak at "
+						  << nyquist * static_cast<double>(*it) / numBins << std::endl;
+			}
+			continue; // too close to another peak
+		}
+
+		std::cout << "index=" << i << " Peak: frequency=" << m.freq <<" mag=" << m.mag << std::endl;
+		used_indexes.insert(freqIndex);
+		markers.push_back(m);
+		++i;
+	}
+
+	return markers;
+}
+
+void Renderer::drawMarkers(const std::vector<Marker>& markers)
+{
+	constexpr double marker_width = 5.0; // maker base width
+	constexpr double marker_voffset = 2.0; // vertical distance of marker tip from actual point of interest
+	constexpr double marker_height = 10.0; // marker tick height (including voffset)
+	constexpr double label_voffset = 3.0; // vertical distance between marker base and bottom of text
+	constexpr double marker_halfwidth = marker_width / 2;
+
+	cairo_set_line_width (cr, 1.5);
+	cairo_set_font_size(cr, 13);
+
+	for (const Marker& m : markers) {
+
+		// set colour
+		cairo_set_source_rgb(cr, m.color.red, m.color.green, m.color.blue);
+
+		// draw triangle marker shape
+		cairo_move_to(cr, m.x, m.y - marker_voffset);
+		cairo_line_to(cr, m.x - marker_halfwidth, m.y - marker_height);
+		cairo_line_to(cr, m.x + marker_halfwidth, m.y - marker_height);
+		cairo_line_to(cr, m.x, m.y - marker_voffset);
+
+		// draw label
+		const std::string txt = m.displayText();
+		cairo_text_extents_t markerExtents;
+		cairo_text_extents(cr, txt.c_str(), &markerExtents);
+		cairo_move_to(cr, m.x - markerExtents.x_advance / 2.0, m.y - marker_height - label_voffset);
+		cairo_show_text(cr, txt.c_str());
+	}
+
+	cairo_stroke(cr);
 }
 
 std::vector<bool> Renderer::getChannelsEnabled() const
