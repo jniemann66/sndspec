@@ -88,13 +88,11 @@ std::pair <std::vector<std::vector<double>>, double> Renderer::renderSpectrum(co
 	showWindowFunctionLabel = parameters.getShowWindowFunctionLabel();
 	windowFunctionLabel = "Window: " + parameters.getWindowFunctionDisplayName();
 	const SpectrumSmoothingMode spectrumSmoothingMode = parameters.getSpectrumSmoothingMode();
-
-	int L = std::max(1, numBins / plotWidth); // size of smoothing filter
+	const int N = std::max(1, numBins / plotWidth); // size of smoothing filter
+	const double gd = (N - 1) / 2.0; // spatial domain (freq bins) compensation due to group delay from smoothing filter
 	const double hScaling = static_cast<double>(plotWidth) / numBins;
-
-	const double vScaling = (spectrumSmoothingMode == MovingAverage) ?
-				static_cast<double>(plotHeight) / parameters.getDynRange() / L :
-				static_cast<double>(plotHeight) / parameters.getDynRange();
+	const double vScaling = static_cast<double>(plotHeight) / parameters.getDynRange();
+	const double magScaling = 1.0 / N;
 
 	// clip the plotting region
 	cairo_rectangle(cr, plotOriginX, plotOriginY, plotWidth, plotHeight);
@@ -124,36 +122,40 @@ std::pair <std::vector<std::vector<double>>, double> Renderer::renderSpectrum(co
 				cairo_line_to(cr, plotOriginX + hScaling * i, y);
 			}
 		} else if (spectrumSmoothingMode == MovingAverage) {
+			const int d = std::ceil(gd);
 			double acc = 0.0;
-			for (int i = 0; i < L; i++) {
+			for (int i = 0; i < N; i++) {
 				acc += spectrumData.at(c).at(i);
 			}
 
-			for (int i = L; i < numBins; i++) {
+			for (int i = N; i < numBins; i++) {
 				acc += spectrumData.at(c).at(i);
-				acc -= spectrumData.at(c).at(i - L);
-				const double y = plotOriginY - vScaling * acc;
-				results[c][i] = acc;
-				cairo_line_to(cr, plotOriginX + hScaling * i, y);
+				acc -= spectrumData.at(c).at(i - N);
+				const double mag = magScaling * acc;
+				const double y = plotOriginY - vScaling * mag;
+				results[c][i - d] = mag;
+				cairo_line_to(cr, plotOriginX + hScaling * (i - gd), y);
 			}
 		} else if (spectrumSmoothingMode == Peak) {
-			for (int i = 0; i < L; i++) {
+			for (int i = 0; i < N; i++) {
 				double maxDB(-300);
+				const double mag = spectrumData.at(c).at(i);
 				for (int a = 0; a <= i; a++) {
 					maxDB = std::max(maxDB, spectrumData.at(c).at(a));
 				}
 				const double y = plotOriginY - vScaling * maxDB;
-				results[c][i] = maxDB;
+				results[c][i] = mag;
 				cairo_line_to(cr, plotOriginX + hScaling * i, y);
 			}
 
-			for (int i = L; i < numBins; i++) {
+			for (int i = N; i < numBins; i++) {
+				const double mag = spectrumData.at(c).at(i);
 				double maxDB(-300);
-				for (int a = i - L + 1; a <= i; a++) {
+				for (int a = i - N + 1; a <= i; a++) {
 					maxDB = std::max(maxDB, spectrumData.at(c).at(a));
 				}
 				const double y = plotOriginY - vScaling * maxDB;
-				results[c][i] = maxDB;
+				results[c][i] = mag;
 				cairo_line_to(cr, plotOriginX + hScaling * i, y);
 			}
 
@@ -434,8 +436,12 @@ std::vector<Marker> Renderer::getTopNFrequencyMarkers(const Parameters& paramete
 
 	double thresh_Hz = 10.0;
 	size_t thresh = std::ceil(thresh_Hz / (static_cast<double>(nyquist) / numBins));
+	constexpr bool verbose = false;
 
-	std::cout << "bins=" << numBins << " Hz/bin= " << nyquist / numBins << " thresh(bins)= " << thresh << std::endl;
+	if constexpr (verbose) {
+		std::cout << "bins=" << numBins << " Hz/bin= " << nyquist / numBins << " thresh(bins)= " << thresh << std::endl;
+	}
+
 	size_t i = 0;
 
 	std::set<size_t> used_indexes;
@@ -454,8 +460,6 @@ std::vector<Marker> Renderer::getTopNFrequencyMarkers(const Parameters& paramete
 		m.x = plotOriginX + hScaling * freqIndex;
 		m.y = plotOriginY - vScaling * mag;
 
-		bool verbose = false;
-
 		// skip if peak is too close to another
 		if (auto it = used_indexes.lower_bound(freqIndex - thresh); it != used_indexes.end() && *it <= freqIndex + thresh) {
 			if (verbose) {
@@ -465,7 +469,10 @@ std::vector<Marker> Renderer::getTopNFrequencyMarkers(const Parameters& paramete
 			continue; // too close to another peak
 		}
 
-		std::cout << "index=" << i << " Peak: frequency=" << m.freq <<" mag=" << m.mag << std::endl;
+		if constexpr (verbose) {
+			std::cout << "index=" << i << " Peak: frequency=" << m.freq <<" mag=" << m.mag << std::endl;
+		}
+
 		used_indexes.insert(freqIndex);
 		markers.push_back(m);
 		++i;
