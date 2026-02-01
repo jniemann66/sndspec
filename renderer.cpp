@@ -313,18 +313,30 @@ void Renderer::drawSpectrumTickmarks(bool linearMag)
 
 void Renderer::drawMarkers(const std::vector<Marker>& markers)
 {
-	constexpr int s = 10; // marker tick height
-	cairo_set_line_width (cr, 2);
+	constexpr double marker_width = 5.0; // maker base width
+	constexpr double marker_voffset = 2.0; // vertical distance of marker tip from actual point of interest
+	constexpr double marker_height = 10.0; // marker tick height (including voffset)
+	constexpr double label_voffset = 3.0; // vertical distance between marker base and bottom of text
+	constexpr double marker_halfwidth = marker_width / 2;
+
+	cairo_set_line_width (cr, 1.5);
 	cairo_set_font_size(cr, 13);
 
 	for (const Marker& m : markers) {
+		// set colour
 		cairo_set_source_rgb(cr, m.color.red, m.color.green, m.color.blue);
-		cairo_text_extents_t markerExtents;
+
+		// draw triangle marker shape
+		cairo_move_to(cr, m.x, m.y - marker_voffset);
+		cairo_line_to(cr, m.x - marker_halfwidth, m.y - marker_height);
+		cairo_line_to(cr, m.x + marker_halfwidth, m.y - marker_height);
+		cairo_line_to(cr, m.x, m.y - marker_voffset);
+
+		// draw label
 		const std::string txt = m.displayText();
+		cairo_text_extents_t markerExtents;
 		cairo_text_extents(cr, txt.c_str(), &markerExtents);
-		cairo_move_to(cr, m.x, m.y - 2);
-		cairo_line_to(cr, m.x, m.y - s);
-		cairo_move_to(cr, m.x - markerExtents.x_advance / 2.0, m.y - s - 2);
+		cairo_move_to(cr, m.x - markerExtents.x_advance / 2.0, m.y - marker_height - label_voffset);
 		cairo_show_text(cr, txt.c_str());
 	}
 
