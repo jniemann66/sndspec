@@ -43,7 +43,7 @@ struct Marker
 	std::string displayText() const
 	{
 		std::ostringstream oss;
-		oss << freq << " Hz";
+		oss << freq /*<< " Hz"*/;
 		return oss.str();
 	}
 };
