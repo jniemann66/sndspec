@@ -87,16 +87,20 @@ std::pair <std::vector<std::vector<double>>, double> Renderer::renderSpectrum(co
 	resolveEnabledChannels(parameters, numChannels);
 	showWindowFunctionLabel = parameters.getShowWindowFunctionLabel();
 	windowFunctionLabel = "Window: " + parameters.getWindowFunctionDisplayName();
-	const SpectrumSmoothingMode spectrumSmoothingMode = parameters.getSpectrumSmoothingMode();
-	const int N = std::max(1, numBins / plotWidth); // size of smoothing filter
-	const double gd = (N - 1) / 2.0; // spatial domain (freq bins) compensation due to group delay from smoothing filter
 
+	// todo: move smoothing out of here and into it's own dedicated function - also try other filters like savitsky-golay etc
+	const SpectrumSmoothingMode spectrumSmoothingMode = parameters.getSpectrumSmoothingMode();
+
+	// these next 3 are only used for moving average
+	const int N = std::max(1, numBins / plotWidth); // size of smoothing filter (not used for "peak" or "none")
+	const double gd = (N - 1) / 2.0; // spatial domain (freq bins) compensation due to group delay from smoothing filter
+	const double magScaling = 1.0 / N;
+
+	// positioning and scaling constants
 	constexpr double hTrim = -0.5; // horizontal centering tweak to position plot nicely on top of gridlines
 	const double plotOriginX_ = plotOriginX + hTrim;
-
 	const double hScaling = static_cast<double>(plotWidth) / numBins;
 	const double vScaling = static_cast<double>(plotHeight) / parameters.getDynRange();
-	const double magScaling = 1.0 / N;
 
 	// clip the plotting region
 	cairo_rectangle(cr, plotOriginX_, plotOriginY, plotWidth, plotHeight);
@@ -502,16 +506,40 @@ void Renderer::drawMarkers(const std::vector<Marker>& markers)
 		cairo_set_source_rgb(cr, m.color.red, m.color.green, m.color.blue);
 
 		// draw triangle marker shape
-		cairo_move_to(cr, m.x, m.y - marker_voffset);
-		cairo_line_to(cr, m.x - marker_halfwidth, m.y - marker_height);
-		cairo_line_to(cr, m.x + marker_halfwidth, m.y - marker_height);
-		cairo_line_to(cr, m.x, m.y - marker_voffset);
+		const double& tip_x = m.x;
+		const double tip_y = m.y - marker_voffset;
+		cairo_move_to(cr, tip_x, tip_y);
+		cairo_line_to(cr, tip_x - marker_halfwidth, m.y - marker_height);
+		cairo_line_to(cr, tip_x + marker_halfwidth, m.y - marker_height);
+		cairo_line_to(cr, tip_x, tip_y);
 
-		// draw label
+		// fill marker, if that floats your boat
+		constexpr bool fillMarkers = false;
+		if constexpr (fillMarkers) {
+			cairo_fill(cr);
+		}
+
+		// prepare label measurements
 		const std::string txt = m.displayText();
 		cairo_text_extents_t markerExtents;
 		cairo_text_extents(cr, txt.c_str(), &markerExtents);
-		cairo_move_to(cr, m.x - markerExtents.x_advance / 2.0, m.y - marker_height - label_voffset);
+		const double txt_x = m.x - markerExtents.x_advance / 2.0;
+		const double txt_y = m.y - marker_height - label_voffset;
+
+		// check if label will clash with other stuff at the top of the plot
+		if (tip_y - marker_height - markerExtents.height < plotOriginY) {
+			cairo_stroke(cr);
+			// Clear rectangle underneath
+			cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+			constexpr double margin = 1.5;
+			cairo_rectangle(cr, txt_x - margin, txt_y + margin, markerExtents.width + 2 * margin, -markerExtents.height - 2 * margin);
+			cairo_fill(cr);
+			cairo_stroke(cr);
+			cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
+		}
+
+		// draw the text
+		cairo_move_to(cr, txt_x, txt_y);
 		cairo_show_text(cr, txt.c_str());
 	}
 
