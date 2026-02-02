@@ -90,12 +90,16 @@ std::pair <std::vector<std::vector<double>>, double> Renderer::renderSpectrum(co
 	const SpectrumSmoothingMode spectrumSmoothingMode = parameters.getSpectrumSmoothingMode();
 	const int N = std::max(1, numBins / plotWidth); // size of smoothing filter
 	const double gd = (N - 1) / 2.0; // spatial domain (freq bins) compensation due to group delay from smoothing filter
+
+	constexpr double hTrim = -0.5; // horizontal centering tweak to position plot nicely on top of gridlines
+	const double plotOriginX_ = plotOriginX + hTrim;
+
 	const double hScaling = static_cast<double>(plotWidth) / numBins;
 	const double vScaling = static_cast<double>(plotHeight) / parameters.getDynRange();
 	const double magScaling = 1.0 / N;
 
 	// clip the plotting region
-	cairo_rectangle(cr, plotOriginX, plotOriginY, plotWidth, plotHeight);
+	cairo_rectangle(cr, plotOriginX_, plotOriginY, plotWidth, plotHeight);
 	cairo_clip(cr);
 	const double opacity = 0.8;
 
@@ -112,14 +116,14 @@ std::pair <std::vector<std::vector<double>>, double> Renderer::renderSpectrum(co
 		cairo_set_line_width (cr, 1.0);
 		Rgb chColor = spectrumChannelColors[std::min(static_cast<int>(spectrumChannelColors.size() - 1), c)];
 		cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, opacity);
-		cairo_move_to(cr, plotOriginX, plotOriginY - vScaling * spectrumData.at(c).at(0));
+		cairo_move_to(cr, plotOriginX_, plotOriginY - vScaling * spectrumData.at(c).at(0));
 
 		if (spectrumSmoothingMode == None) {
 			for (int i = 0; i < numBins; i++) {
 				const double mag = spectrumData.at(c).at(i);
 				const double y = plotOriginY - vScaling * mag;
 				results[c][i] = mag;
-				cairo_line_to(cr, plotOriginX + hScaling * i, y);
+				cairo_line_to(cr, plotOriginX_ + hScaling * i, y);
 			}
 		} else if (spectrumSmoothingMode == MovingAverage) {
 			const int d = std::ceil(gd);
@@ -134,7 +138,7 @@ std::pair <std::vector<std::vector<double>>, double> Renderer::renderSpectrum(co
 				const double mag = magScaling * acc;
 				const double y = plotOriginY - vScaling * mag;
 				results[c][i - d] = mag;
-				cairo_line_to(cr, plotOriginX + hScaling * (i - gd), y);
+				cairo_line_to(cr, plotOriginX_ + hScaling * (i - gd), y);
 			}
 		} else if (spectrumSmoothingMode == Peak) {
 			for (int i = 0; i < N; i++) {
@@ -145,7 +149,7 @@ std::pair <std::vector<std::vector<double>>, double> Renderer::renderSpectrum(co
 				}
 				const double y = plotOriginY - vScaling * maxDB;
 				results[c][i] = mag;
-				cairo_line_to(cr, plotOriginX + hScaling * i, y);
+				cairo_line_to(cr, plotOriginX_ + hScaling * i, y);
 			}
 
 			for (int i = N; i < numBins; i++) {
@@ -156,7 +160,7 @@ std::pair <std::vector<std::vector<double>>, double> Renderer::renderSpectrum(co
 				}
 				const double y = plotOriginY - vScaling * maxDB;
 				results[c][i] = mag;
-				cairo_line_to(cr, plotOriginX + hScaling * i, y);
+				cairo_line_to(cr, plotOriginX_ + hScaling * i, y);
 			}
 
 		}
