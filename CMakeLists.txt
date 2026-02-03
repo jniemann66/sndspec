@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 project(sndspec C CXX)
-set(sndspec_VERSION 0.9.04)
+set(sndspec_VERSION 0.9.05)
 find_package(Threads REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

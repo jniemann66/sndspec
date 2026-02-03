@@ -28,7 +28,7 @@ Usage: sndspec filename [filename2 ...] [options]
 -c, --channel <[all|[L|R|0|1|2|...]...] [sum|difference|normal]> select specific channels and set channel mode
 -l, --linear-mag                                  Set magnitude scale to be linear
 -f, --frequency-step <n>                          Set interval of frequency tick marks in Hz
--p, --peak-selection <n>                          Annotate the top n local peaks in the resuls
+-p, --peak-selection <n>                          Annotate the top n local peaks in the results
 -r, --recursive                                   Recursive directory traversal
 --version                                         Show program version
 --help                                            Help
