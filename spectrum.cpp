@@ -23,7 +23,8 @@
 namespace Sndspec {
 
 // todo: this is only good for doubles: specialize for FloatType
-Spectrum::Spectrum(int fft_size) : fftSize(fft_size)
+Spectrum::Spectrum(int fft_size)
+	: fftSize(fft_size)
 {
 	spectrumSize = convertFFTSizeToSpectrumSize(fftSize);
 

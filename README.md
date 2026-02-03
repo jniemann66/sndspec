@@ -1,6 +1,6 @@
 # sndspec
 
-*soundfile-to-spectrogram / spectrum utility*
+*command-line soundfile-to-spectrogram / spectrum utility*
 
 ![spectrogram](./screenshots/sweep-0-to22050_44_1k32f_log.png)
 *above: spectrogram showing 0-22050 Hz frequency sweep*
@@ -26,6 +26,9 @@ Usage: sndspec filename [filename2 ...] [options]
 --spectrum                                        Plot a Spectrum instead of Spectrogram
 -S, --smoothing <moving average|peak|none>        Set Spectrum Smoothing Mode (default:peak)
 -c, --channel <[all|[L|R|0|1|2|...]...] [sum|difference|normal]> select specific channels and set channel mode
+-l, --linear-mag                                  Set magnitude scale to be linear
+-f, --frequency-step <n>                          Set interval of frequency tick marks in Hz
+-p, --peak-selection <n>                          Annotate the top n local peaks in the resuls
 -r, --recursive                                   Recursive directory traversal
 --version                                         Show program version
 --help                                            Help
