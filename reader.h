@@ -31,7 +31,7 @@ public:
 		: filename(filename), blockSize(blockSize), w(w)
 	{
 		sndFileHandle = std::make_unique<SndfileHandle>(Reader::filename);
-		if(sndFileHandle.get() != nullptr) {
+		if (sndFileHandle.get() != nullptr) {
 			setStartPos(0LL);
 			setFinishPos(sndFileHandle->frames());
 			nChannels = sndFileHandle->channels();
@@ -75,37 +75,37 @@ public:
 
 	void readSum()
 	{
-		if(!window.empty() && window.size() != blockSize) { // incorrect window size
+		if (!window.empty() && window.size() != blockSize) { // incorrect window size
 			return;
 		}
 
 		std::vector<T> inputBuffer(nChannels * blockSize);
 
 		int64_t startFrame = startPos;
-		for(int x = 0; x < w; x++) {
+		for (int x = 0; x < w; x++) {
 
 			sndFileHandle->seek(startFrame, SEEK_SET);
 			int64_t framesRead = sndFileHandle->readf(inputBuffer.data(), blockSize);
 
 			if (framesRead < blockSize) {
 				// pad with trailing zeroes
-				for(size_t i = static_cast<size_t>(framesRead); i < inputBuffer.size(); i++) {
+				for (size_t i = static_cast<size_t>(framesRead); i < inputBuffer.size(); i++) {
 					inputBuffer[i] = 0.0;
 				}
 			}
 
 			// deinterleave
 			const T* p = inputBuffer.data();
-			if(window.empty()) {
-				for(int64_t f = 0; f < framesRead; f++) {
-					for(int ch = 0; ch < nChannels; ch++) {
+			if (window.empty()) {
+				for (int64_t f = 0; f < framesRead; f++) {
+					for (int ch = 0; ch < nChannels; ch++) {
 						channelBuffers[ch][f] = 0.0; // clear
 						channelBuffers[0][f] += *p++; // sum
 					}
 				}
 			} else {
-				for(int64_t f = 0; f < framesRead; f++) {
-					for(int ch = 0; ch < nChannels; ch++) {
+				for (int64_t f = 0; f < framesRead; f++) {
+					for (int ch = 0; ch < nChannels; ch++) {
 						channelBuffers[ch][f] = 0.0; // clear
 						channelBuffers[0][f] += *p++; // sum
 					}
@@ -123,39 +123,39 @@ public:
 
 	void readDifference()
 	{
-		if(!window.empty() && window.size() != blockSize) { // incorrect window size
+		if (!window.empty() && window.size() != blockSize) { // incorrect window size
 			return;
 		}
 
 		std::vector<T> inputBuffer(nChannels * blockSize);
 
 		int64_t startFrame = startPos;
-		for(int x = 0; x < w; x++) {
+		for (int x = 0; x < w; x++) {
 
 			sndFileHandle->seek(startFrame, SEEK_SET);
 			int64_t framesRead = sndFileHandle->readf(inputBuffer.data(), blockSize);
 
 			if (framesRead < blockSize) {
 				// pad with trailing zeroes
-				for(size_t i = static_cast<size_t>(framesRead); i < inputBuffer.size(); i++) {
+				for (size_t i = static_cast<size_t>(framesRead); i < inputBuffer.size(); i++) {
 					inputBuffer[i] = 0.0;
 				}
 			}
 
 			// deinterleave
 			const T* p = inputBuffer.data();
-			if(window.empty()) {
-				for(int64_t f = 0; f < framesRead; f++) {
+			if (window.empty()) {
+				for (int64_t f = 0; f < framesRead; f++) {
 					channelBuffers[0][f] = *p++;
-					for(int ch = 1; ch < nChannels; ch++) {
+					for (int ch = 1; ch < nChannels; ch++) {
 						channelBuffers[ch][f] = 0.0; // clear
 						channelBuffers[0][f] -= *p++; // subtract
 					}
 				}
 			} else {
-				for(int64_t f = 0; f < framesRead; f++) {
+				for (int64_t f = 0; f < framesRead; f++) {
 					channelBuffers[0][f] = *p++;
-					for(int ch = 1; ch < nChannels; ch++) {
+					for (int ch = 1; ch < nChannels; ch++) {
 						channelBuffers[ch][f] = 0.0; // clear
 						channelBuffers[0][f] -= *p++; // subtract
 					}
@@ -173,43 +173,43 @@ public:
 
 	void readDeinterleaved()
 	{
-		if(!window.empty() && window.size() != blockSize) { // incorrect window size
+		if (!window.empty() && window.size() != blockSize) { // incorrect window size
 			return;
 		}
 
 		std::vector<T> inputBuffer(nChannels * blockSize);
 
 		int64_t startFrame = startPos;
-		for(int x = 0; x < w; x++) {
+		for (int x = 0; x < w; x++) {
 
 			sndFileHandle->seek(startFrame, SEEK_SET);
 			int64_t framesRead = sndFileHandle->readf(inputBuffer.data(), blockSize);
 
 			if (framesRead < blockSize) {
 				// pad with trailing zeroes
-				for(size_t i = static_cast<size_t>(framesRead); i < inputBuffer.size(); i++) {
+				for (size_t i = static_cast<size_t>(framesRead); i < inputBuffer.size(); i++) {
 					inputBuffer[i] = 0.0;
 				}
 			}
 
 			// deinterleave
 			const T* p = inputBuffer.data();
-			if(window.empty()) {
-				for(int64_t f = 0; f < framesRead; f++) {
-					for(int ch = 0; ch < nChannels; ch++) {
+			if (window.empty()) {
+				for (int64_t f = 0; f < framesRead; f++) {
+					for (int ch = 0; ch < nChannels; ch++) {
 						channelBuffers[ch][f] = *p++;
 					}
 				}
 			} else {
-				for(int64_t f = 0; f < framesRead; f++) {
-					for(int ch = 0; ch < nChannels; ch++) {
+				for (int64_t f = 0; f < framesRead; f++) {
+					for (int ch = 0; ch < nChannels; ch++) {
 						channelBuffers[ch][f] = *p++ * window[f];
 					}
 				}
 			}
 
 			// call processing function
-			for(int ch = 0; ch < nChannels; ch++) {
+			for (int ch = 0; ch < nChannels; ch++) {
 				processingFunc(x, ch, channelBuffers.at(ch));
 			}
 

@@ -30,7 +30,7 @@ public:
 		endTimer = std::chrono::high_resolution_clock::now();
 		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTimer - beginTimer).count();
 		std::cout << " Time=" << std::setprecision(5) << 0.001 * duration << " ms";
-		if(msComparison != 0.0) {
+		if (msComparison != 0.0) {
 			double relativeSpeed = msComparison / duration;
 			auto ss = std::cout.precision();
 			std::cout << " [" << std::setprecision(1) << relativeSpeed << "x]" << std::setprecision(
