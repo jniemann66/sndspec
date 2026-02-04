@@ -16,6 +16,8 @@
 #include <cairo.h>
 
 #include <map>
+#include <string>
+#include <sstream>
 
 extern "C" {
 #include <cairo.h>
