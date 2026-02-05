@@ -10,13 +10,14 @@
 #ifndef DIRECTORY_H
 #define DIRECTORY_H
 
-#include "fsdetect.h"
-
-#include <string>
 #include <algorithm>
+#include <filesystem>
+#include <string>
 #include <vector>
 
 namespace Sndspec {
+
+namespace fs =  std::filesystem;
 
 template <typename DirIteratorType>
 std::vector<std::string> expand(const std::string &path, const std::vector<std::string> &extensions)

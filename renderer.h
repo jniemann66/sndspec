@@ -14,10 +14,11 @@
 #include "spectrogram.h"
 
 #include <cairo.h>
-
+#include <cstdint>
+#include <iomanip>
 #include <map>
-#include <string>
 #include <sstream>
+#include <string>
 
 extern "C" {
 #include <cairo.h>

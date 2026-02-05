@@ -28,7 +28,6 @@ endif()
 set(SOURCE_FILES
 	directory.h
 	factorial.h
-	fsdetect.h
 	parameters.h
 	raiitimer.h
 	reader.h

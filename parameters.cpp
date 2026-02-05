@@ -9,10 +9,7 @@
 
 #include "parameters.h"
 #include "window.h"
-
-#ifdef FS_AVAILABLE
 #include "directory.h"
-#endif
 
 #ifdef SNDSPEC_VERSION
 #define STRINGIFY_(s) #s
@@ -224,12 +221,10 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			}
 			break;
 
-#ifdef FS_AVAILABLE
 		case Recursive:
 			recursiveDirectoryTraversal = true;
 			++argsIt;
 			break;
-#endif
 
 #ifdef SNDSPEC_VERSION
 		case Version:
@@ -242,14 +237,12 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 		}
 	}
 
-#ifdef FS_AVAILABLE
 	std::vector<std::string> expandedFileList;
 	for (const auto& path : inputFiles) {
 		auto list = expand(path, fileTypes, recursiveDirectoryTraversal);
 		expandedFileList.insert(expandedFileList.end(), list.begin(), list.end());
 	}
 	inputFiles = expandedFileList;
-#endif
 
 	return {};
 }

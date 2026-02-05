@@ -10,12 +10,10 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
-#include "fsdetect.h"
-
 #include <optional>
+#include <set>
 #include <string>
 #include <vector>
-#include <set>
 
 namespace Sndspec {
 
@@ -63,11 +61,7 @@ enum OptionID
 	LinearMag,
 	FrequencyStep,
 	PeakSelection,
-
-#ifdef FS_AVAILABLE
 	Recursive,
-#endif
-
 	Version,
 	Help
 };
@@ -112,11 +106,7 @@ const std::vector<Option> options
 	{OptionID::LinearMag, "--linear-mag", "-l", false, "Set magnitude scale to be linear", {}},
 	{OptionID::FrequencyStep, "--frequency-step", "-f", false, "Set interval of frequency tick marks in Hz", {"n"}},
 	{OptionID::PeakSelection, "--peak-selection", "-p", false, "Annotate the top n local peaks in the results", {"n"}},
-
-
-#ifdef FS_AVAILABLE
 	{OptionID::Recursive, "--recursive", "-r", false, "Recursive directory traversal", {}},
-#endif
 
 #ifdef SNDSPEC_VERSION
 	{OptionID::Version, "--version", "", false, "Show program version", {}},
@@ -199,10 +189,7 @@ private:
 	bool linearMag{false};
 	int frequencyStep{5000};
 	std::optional<int> topN;
-
-#ifdef FS_AVAILABLE
 	bool recursiveDirectoryTraversal{false};
-#endif
 
 	void processChannelArgs(const std::vector<std::string> &args);
 };
