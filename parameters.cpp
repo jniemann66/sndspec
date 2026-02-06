@@ -218,6 +218,18 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			if (++argsIt != args.cend()) {
 				topN = std::max(1, std::stoi(*argsIt));
 				++argsIt;
+				if (argsIt != args.cend() && !argsIt->empty() && argsIt->at(0) != '-') {
+					std::cout << *argsIt << std::endl;
+					try {
+						// look for potnetially another number (min-spacing in Hz)
+						const double d = std::stod(*argsIt);
+						topN_minSpacing = std::max(1.0, d);
+						std::cout << "minimum spacing between peaks set to " << d << std::endl;
+						++argsIt;
+					} catch (const std::invalid_argument& e) {
+					} catch (const std::out_of_range& e) {
+					}
+				}
 			}
 			break;
 
@@ -363,6 +375,16 @@ int Parameters::getFrequencyStep() const
 std::optional<int> Parameters::getTopN() const
 {
 	return topN;
+}
+
+std::optional<double> Parameters::getTopN_minSpacing() const
+{
+	return topN_minSpacing;
+}
+
+void Parameters::setTopN_minSpacing(std::optional<double> val)
+{
+	topN_minSpacing = val;
 }
 
 void Parameters::setTopN(std::optional<int> value)

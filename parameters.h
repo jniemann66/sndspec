@@ -105,7 +105,7 @@ const std::vector<Option> options
 	{OptionID::Channel, "--channel", "-c", false, "select specific channels and set channel mode", {"[all|[L|R|0|1|2|...]...] [sum|difference|normal]"}},
 	{OptionID::LinearMag, "--linear-mag", "-l", false, "Set magnitude scale to be linear", {}},
 	{OptionID::FrequencyStep, "--frequency-step", "-f", false, "Set interval of frequency tick marks in Hz", {"n"}},
-	{OptionID::PeakSelection, "--peak-selection", "-p", false, "Annotate the top n local peaks in the results", {"n"}},
+	{OptionID::PeakSelection, "--peak-selection", "-p", false, "Annotate the top n local peaks in the results", {"n [min-spacing(Hz)]"}},
 	{OptionID::Recursive, "--recursive", "-r", false, "Recursive directory traversal", {}},
 
 #ifdef SNDSPEC_VERSION
@@ -145,6 +145,7 @@ public:
 	void setLinearMag(bool value);
 	void setFrequencyStep(int value);
 	void setTopN(std::optional<int> value);
+	void setTopN_minSpacing(std::optional<double> newTopN_minSpacing);
 
 	// getters
 	std::vector<std::string> getInputFiles() const;
@@ -167,6 +168,7 @@ public:
 	bool getLinearMag() const;
 	int getFrequencyStep() const;
 	std::optional<int> getTopN() const;
+	std::optional<double> getTopN_minSpacing() const;
 
 private:
 	std::vector<std::string> inputFiles;
@@ -189,6 +191,7 @@ private:
 	bool linearMag{false};
 	int frequencyStep{5000};
 	std::optional<int> topN;
+	std::optional<double> topN_minSpacing;
 	bool recursiveDirectoryTraversal{false};
 
 	void processChannelArgs(const std::vector<std::string> &args);

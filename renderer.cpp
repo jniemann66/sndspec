@@ -442,7 +442,7 @@ std::vector<Marker> Renderer::getTopNFrequencyMarkers(const Parameters& paramete
 
 	std::vector<Marker> markers; // retval
 
-	double thresh_Hz = 10.0;
+	const double thresh_Hz = parameters.getTopN_minSpacing().value_or(10.0);
 	size_t thresh = std::ceil(thresh_Hz / (static_cast<double>(nyquist) / numBins));
 	constexpr bool verbose = false;
 
