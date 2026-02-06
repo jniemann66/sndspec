@@ -29,6 +29,7 @@ enum WindowType
 	Rectangular,
 	Bartlett,
 	Triangular,
+    Welch,
 	CosineSum,
 	Kaiser
 };
@@ -46,6 +47,7 @@ static const std::vector<WindowParameters> windowDefinitions
 	{"rectangular",		"Rectangular", Rectangular, {}},
 	{"bartlett",		"Bartlett", Bartlett, {}},
 	{"triangular",		"Triangular", Triangular, {}},
+    {"welch",           "Welch", Welch, {}},
 	{"hann",			"Hann", CosineSum, {0.5, 0.5}},
 	{"hanning",			"Hanning", CosineSum, {0.5, 0.5}},
 	{"hamming",			"Hamming", CosineSum, {0.54, 0.46}},
@@ -148,24 +150,33 @@ public:
 		data.resize(size, 1.0);
 	}
 
+    // Triangular: first and last elements are NOT zero
 	void generateTriangular(int size)
 	{
 		data.resize(size, 0.0);
-		for (int n = 0 ; n < size; n++)
-		{
+        for (int n = 0 ; n < size; n++) {
 			data[n] = 1.0 - std::abs((n - (size - 1) / 2.0) / ((size + 1) / 2.0));
 		}
 	}
 
+    // Bartlett: first and last elements are zero
 	void generateBartlett(int size)
 	{
 		data.resize(size, 0.0);
-		for (int n = 0 ; n < size; n++)
-		{
+        for (int n = 0 ; n < size; n++) {
 			data[n] = 1.0 - std::abs((n - (size - 1) / 2.0) / ((size - 1) / 2.0));
 		}
 	}
 
+    void generateWelch(int size)
+    {
+        data.resize(size, 0.0);
+        const double half_sizeMinus1 = static_cast<double>(size - 1) / 2.0;
+        for (int n = 0; n < size; n++) {
+            double t = (static_cast<double>(n) - half_sizeMinus1) / half_sizeMinus1;
+            data[n] = 1 - t * t;
+        }
+    }
 
 	void generalizedCosineWindow(int size, std::vector<FloatType> coeffs)
 	{
@@ -201,7 +212,9 @@ public:
 		case Bartlett:
 			return generateBartlett(size);
 		case Triangular:
-			return generateTriangular(size);
+            return generateTriangular(size);
+        case Welch:
+            return generateWelch(size);
 		case CosineSum:
 			return generalizedCosineWindow(size, w.coefficients);
 		case Kaiser:
