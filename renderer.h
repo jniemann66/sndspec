@@ -63,6 +63,8 @@ public:
 	// renderSpectrum() : returns <final plotted values, vertical scaling factor used>
 	std::pair<std::vector<std::vector<double>>, double> renderSpectrum(const Parameters& parameters, const std::vector<std::vector<double>>& spectrumData);
 
+	void renderWindowFunction(const Parameters& parameters);
+
 	std::vector<Marker> getTopNFrequencyMarkers(const Parameters& parameters, const std::vector<double>& spectrumData, double vScaling, size_t n, int channel);
 	void drawMarkers(const std::vector<Marker>& markers);
 

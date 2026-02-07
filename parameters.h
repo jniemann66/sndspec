@@ -61,6 +61,7 @@ enum OptionID
 	LinearMag,
 	FrequencyStep,
 	PeakSelection,
+	PlotWindowFunction,
 	Recursive,
 	Version,
 	Help
@@ -96,7 +97,7 @@ const std::vector<Option> options
 	{OptionID::OutputDir, "--output-dir", "-o", false, "Set Output directory", {"path"}},
 	{OptionID::Height, "--height","-h", false, "Set Image Height in Pixels", {"n"}},
 	{OptionID::Width, "--width", "-w", false, "Set Image Width in Pixels", {"n"}},
-	{OptionID::TimeRange, "--time-range", "-t", false, "Set Time Range in seconds", {"start-time", "finish-time"}},
+	{OptionID::TimeRange, "--time-range", "-t", false, "Set	Time Range in seconds", {"start-time", "finish-time"}},
 	{OptionID::WhiteBackground, "--white-background", "", false, "White Background (instead of black) with inverted colors", {}},
 	{OptionID::WindowFunction, "--window", "-W", false, "Set the window function", {"name"}},
 	{OptionID::ShowWindows, "--show-windows", "", false, "Show a list of available window functions", {}},
@@ -106,6 +107,7 @@ const std::vector<Option> options
 	{OptionID::LinearMag, "--linear-mag", "-l", false, "Set magnitude scale to be linear", {}},
 	{OptionID::FrequencyStep, "--frequency-step", "-f", false, "Set interval of frequency tick marks in Hz", {"n"}},
 	{OptionID::PeakSelection, "--peak-selection", "-p", false, "Annotate the top n local peaks in the results", {"n [min-spacing(Hz)]"}},
+	{OptionID::PlotWindowFunction, "--plot-window", "", false, "Plot window function", {"name [time domain]"}},
 	{OptionID::Recursive, "--recursive", "-r", false, "Recursive directory traversal", {}},
 
 #ifdef SNDSPEC_VERSION
@@ -125,27 +127,29 @@ public:
 	std::string showWindowList();
 
 	// setters
-	void setInputFiles(const std::vector<std::string> &value);
-	void setOutputPath(const std::string &value);
-	void setImgWidth(int value);
-	void setIngHeight(int value);
-	void setDynRange(double value);
-	void setHasTimeRange(bool value);
-	void setHasWhiteBackground(bool value);
-	void setStart(double value);
-	void setFinish(double value);
-	void setWindowFunction(const std::string &value);
-	void setWindowFunctionDisplayName(const std::string &value);
-	void setShowWindowFunctionLabel(bool value);
-	void setShowWindows(bool value);
-	void setSpectrumMode(bool value);
-	void setSpectrumSmoothingMode(const SpectrumSmoothingMode &value);
-	void setSelectedChannels(const std::set<int> &value);
-	void setChannelMode(const ChannelMode &value);
-	void setLinearMag(bool value);
-	void setFrequencyStep(int value);
-	void setTopN(std::optional<int> value);
+	void setInputFiles(const std::vector<std::string> &val);
+	void setOutputPath(const std::string &val);
+	void setImgWidth(int val);
+	void setIngHeight(int val);
+	void setDynRange(double val);
+	void setHasTimeRange(bool val);
+	void setHasWhiteBackground(bool val);
+	void setStart(double val);
+	void setFinish(double val);
+	void setWindowFunction(const std::string &val);
+	void setWindowFunctionDisplayName(const std::string &val);
+	void setShowWindowFunctionLabel(bool val);
+	void setShowWindows(bool val);
+	void setSpectrumMode(bool val);
+	void setSpectrumSmoothingMode(const SpectrumSmoothingMode &val);
+	void setSelectedChannels(const std::set<int> &val);
+	void setChannelMode(const ChannelMode &val);
+	void setLinearMag(bool val);
+	void setFrequencyStep(int val);
+	void setTopN(std::optional<int> val);
 	void setTopN_minSpacing(std::optional<double> newTopN_minSpacing);
+	void setPlotWindowFunction(bool val);
+	void setPlotTimeDomain(bool val);
 
 	// getters
 	std::vector<std::string> getInputFiles() const;
@@ -160,7 +164,104 @@ public:
 	std::string getWindowFunction() const;
 	std::string getWindowFunctionDisplayName() const;
 	bool getShowWindows() const;
-	bool getShowWindowFunctionLabel() const;
+	bool getShowWindowFunctionLabel() const;	// const int numChannels = spectrumData.size();
+	// const int numBins =  spectrumData.at(0).size();
+
+	// resolveEnabledChannels(parameters, numChannels);
+	// showWindowFunctionLabel = parameters.getShowWindowFunctionLabel();
+	// windowFunctionLabel = "Window: " + parameters.getWindowFunctionDisplayName();
+
+	// // todo: move smoothing out of here and into it's own dedicated function - also try other filters like savitsky-golay etc
+	// const SpectrumSmoothingMode spectrumSmoothingMode = parameters.getSpectrumSmoothingMode();
+
+	// // these next 3 are only used for moving average
+	// const int N = std::max(1, numBins / plotWidth); // size of smoothing filter (not used for "peak" or "none")
+	// const double gd = (N - 1) / 2.0; // spatial domain (freq bins) compensation due to group delay from smoothing filter
+	// const double magScaling = 1.0 / N;
+
+	// // positioning and scaling constants
+	// constexpr double hTrim = -0.5; // horizontal centering tweak to position plot nicely on top of gridlines
+	// const double plotOriginX_ = plotOriginX + hTrim;
+	// const double hScaling = static_cast<double>(plotWidth) / numBins;
+	// const double vScaling = static_cast<double>(plotHeight) / parameters.getDynRange();
+
+	// // clip the plotting region
+	// cairo_rectangle(cr, plotOriginX_, plotOriginY, plotWidth, plotHeight);
+	// cairo_clip(cr);
+	// const double opacity = 0.8;
+
+	// // retval : buffer to contain final plotted y-coordinates
+	// std::vector<std::vector<double>> results{spectrumData.size(), std::vector<double>(numBins, 0.0)};
+
+	// for (int c = 0; c < numChannels; c++) {
+
+	// 	// if channel is disabled, skip this channel
+	// 	if (!channelsEnabled.at(c)) {
+	// 		continue;
+	// 	}
+
+	// 	cairo_set_line_width (cr, 1.0);
+	// 	Rgb chColor = spectrumChannelColors[std::min(static_cast<int>(spectrumChannelColors.size() - 1), c)];
+	// 	cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, opacity);
+	// 	cairo_move_to(cr, plotOriginX_, plotOriginY - vScaling * spectrumData.at(c).at(0));
+
+	// 	if (spectrumSmoothingMode == None) {
+	// 		for (int i = 0; i < numBins; i++) {
+	// 			const double mag = spectrumData.at(c).at(i);
+	// 			const double y = plotOriginY - vScaling * mag;
+	// 			results[c][i] = mag;
+	// 			cairo_line_to(cr, plotOriginX_ + hScaling * i, y);
+	// 		}
+	// 	} else if (spectrumSmoothingMode == MovingAverage) {
+	// 		const int d = std::ceil(gd);
+	// 		double acc = 0.0;
+	// 		for (int i = 0; i < N; i++) {
+	// 			acc += spectrumData.at(c).at(i);
+	// 		}
+
+	// 		for (int i = N; i < numBins; i++) {
+	// 			acc += spectrumData.at(c).at(i);
+	// 			acc -= spectrumData.at(c).at(i - N);
+	// 			const double mag = magScaling * acc;
+	// 			const double y = plotOriginY - vScaling * mag;
+	// 			results[c][i - d] = mag;
+	// 			cairo_line_to(cr, plotOriginX_ + hScaling * (i - gd), y);
+	// 		}
+	// 	} else if (spectrumSmoothingMode == Peak) {
+	// 		for (int i = 0; i < N; i++) {
+	// 			double maxDB(-300);
+	// 			const double mag = spectrumData.at(c).at(i);
+	// 			for (int a = 0; a <= i; a++) {
+	// 				maxDB = std::max(maxDB, spectrumData.at(c).at(a));
+	// 			}
+	// 			const double y = plotOriginY - vScaling * maxDB;
+	// 			results[c][i] = mag;
+	// 			cairo_line_to(cr, plotOriginX_ + hScaling * i, y);
+	// 		}
+
+	// 		for (int i = N; i < numBins; i++) {
+	// 			const double mag = spectrumData.at(c).at(i);
+	// 			double maxDB(-300);
+	// 			for (int a = i - N + 1; a <= i; a++) {
+	// 				maxDB = std::max(maxDB, spectrumData.at(c).at(a));
+	// 			}
+	// 			const double y = plotOriginY - vScaling * maxDB;
+	// 			results[c][i] = mag;
+	// 			cairo_line_to(cr, plotOriginX_ + hScaling * i, y);
+	// 		}
+
+	// 	}
+	// 	cairo_stroke(cr);
+	// }
+
+	// cairo_reset_clip(cr);
+
+	// drawBorder();
+	// drawSpectrumGrid();
+	// drawSpectrumTickmarks(parameters.getLinearMag());
+	// drawSpectrumText();
+
+	// return {results, vScaling};
 	bool getSpectrumMode() const;
 	SpectrumSmoothingMode getSpectrumSmoothingMode() const;
 	std::set<int> getSelectedChannels() const;
@@ -169,6 +270,9 @@ public:
 	int getFrequencyStep() const;
 	std::optional<int> getTopN() const;
 	std::optional<double> getTopN_minSpacing() const;
+	bool getPlotWindowFunction() const;
+	bool getPlotTimeDomain() const;
+
 
 private:
 	std::vector<std::string> inputFiles;
@@ -185,6 +289,8 @@ private:
 	bool showWindowFunctionLabel{false}; // flag to show the name of window function on the rendered output
 	bool showWindows{false}; // flag to provide a list of available window functions
 	bool spectrumMode{false};
+	bool plotWindowFunction{false};
+	bool plotTimeDomain{false};
 	SpectrumSmoothingMode spectrumSmoothingMode{Peak};
 	std::set<int> selectedChannels; // if the set is empty, it is interpreted as "all channels"
 	ChannelMode channelMode{Normal};

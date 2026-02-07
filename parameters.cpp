@@ -32,9 +32,9 @@ std::vector<std::string> Parameters::getInputFiles() const
 	return inputFiles;
 }
 
-void Parameters::setInputFiles(const std::vector<std::string> &value)
+void Parameters::setInputFiles(const std::vector<std::string> &val)
 {
-	inputFiles = value;
+	inputFiles = val;
 }
 
 std::string Parameters::getOutputPath() const
@@ -42,9 +42,9 @@ std::string Parameters::getOutputPath() const
 	return outputPath;
 }
 
-void Parameters::setOutputPath(const std::string &value)
+void Parameters::setOutputPath(const std::string &val)
 {
-	outputPath = value;
+	outputPath = val;
 }
 
 int Parameters::getImgWidth() const
@@ -52,9 +52,9 @@ int Parameters::getImgWidth() const
 	return imgWidth;
 }
 
-void Parameters::setImgWidth(int value)
+void Parameters::setImgWidth(int val)
 {
-	imgWidth = value;
+	imgWidth = val;
 }
 
 int Parameters::getImgHeight() const
@@ -62,9 +62,9 @@ int Parameters::getImgHeight() const
 	return imgHeight;
 }
 
-void Parameters::setIngHeight(int value)
+void Parameters::setIngHeight(int val)
 {
-	imgHeight = value;
+	imgHeight = val;
 }
 
 double Parameters::getDynRange() const
@@ -72,9 +72,9 @@ double Parameters::getDynRange() const
 	return dynRange;
 }
 
-void Parameters::setDynRange(double value)
+void Parameters::setDynRange(double val)
 {
-	dynRange = value;
+	dynRange = val;
 }
 
 std::string Parameters::fromArgs(const std::vector<std::string> &args)
@@ -221,7 +221,7 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 				if (argsIt != args.cend() && !argsIt->empty() && argsIt->at(0) != '-') {
 					std::cout << *argsIt << std::endl;
 					try {
-						// look for potnetially another number (min-spacing in Hz)
+						// look for potentially another number (min-spacing in Hz)
 						const double d = std::stod(*argsIt);
 						topN_minSpacing = std::max(1.0, d);
 						std::cout << "minimum spacing between peaks set to " << d << std::endl;
@@ -232,6 +232,39 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 				}
 			}
 			break;
+
+		case PlotWindowFunction:
+		{
+			if (++argsIt != args.cend()) {
+				plotWindowFunction = true;
+				showWindowFunctionLabel = true;
+				auto wp = Window<double>::findWindow(*argsIt);
+				if (wp.windowType == Unknown) {
+					windowFunction = "kaiser";
+					windowFunctionDisplayName = "Kaiser";
+				} else {
+					windowFunction = wp.name;
+					windowFunctionDisplayName = wp.displayName;
+				}
+				++argsIt;
+
+				if (argsIt != args.cend()) {
+					std::string s{*argsIt};
+
+					// convert name to lowercase
+					std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) -> unsigned char {
+						return std::tolower(c);
+					});
+
+					if (s.compare(0, 4, "time") == 0) {
+						plotTimeDomain = true;
+					} else {
+						plotTimeDomain = false;
+					}
+				}
+			}
+			break;
+		}
 
 		case Recursive:
 			recursiveDirectoryTraversal = true;
@@ -307,9 +340,9 @@ bool Parameters::hasTimeRange() const
 	return timeRange;
 }
 
-void Parameters::setHasTimeRange(bool value)
+void Parameters::setHasTimeRange(bool val)
 {
-	timeRange = value;
+	timeRange = val;
 }
 
 bool Parameters::hasWhiteBackground() const
@@ -332,9 +365,9 @@ std::string Parameters::getWindowFunctionDisplayName() const
 	return windowFunctionDisplayName;
 }
 
-void Parameters::setWindowFunctionDisplayName(const std::string &value)
+void Parameters::setWindowFunctionDisplayName(const std::string &val)
 {
-	windowFunctionDisplayName = value;
+	windowFunctionDisplayName = val;
 }
 
 bool Parameters::getShowWindowFunctionLabel() const
@@ -382,74 +415,94 @@ std::optional<double> Parameters::getTopN_minSpacing() const
 	return topN_minSpacing;
 }
 
+bool Parameters::getPlotWindowFunction() const
+{
+	return plotWindowFunction;
+}
+
+void Parameters::setPlotWindowFunction(bool val)
+{
+	plotWindowFunction = val;
+}
+
+bool Parameters::getPlotTimeDomain() const
+{
+	return plotTimeDomain;
+}
+
+void Parameters::setPlotTimeDomain(bool val)
+{
+	plotTimeDomain = val;
+}
+
 void Parameters::setTopN_minSpacing(std::optional<double> val)
 {
 	topN_minSpacing = val;
 }
 
-void Parameters::setTopN(std::optional<int> value)
+void Parameters::setTopN(std::optional<int> val)
 {
-	topN = value;
+	topN = val;
 }
 
-void Parameters::setFrequencyStep(int value)
+void Parameters::setFrequencyStep(int val)
 {
-	frequencyStep = value;
+	frequencyStep = val;
 }
 
-void Parameters::setLinearMag(bool value)
+void Parameters::setLinearMag(bool val)
 {
-	linearMag = value;
+	linearMag = val;
 }
 
-void Parameters::setChannelMode(const ChannelMode &value)
+void Parameters::setChannelMode(const ChannelMode &val)
 {
-	channelMode = value;
+	channelMode = val;
 }
 
-void Parameters::setSelectedChannels(const std::set<int> &value)
+void Parameters::setSelectedChannels(const std::set<int> &val)
 {
-	selectedChannels = value;
+	selectedChannels = val;
 }
 
-void Parameters::setSpectrumSmoothingMode(const SpectrumSmoothingMode &value)
+void Parameters::setSpectrumSmoothingMode(const SpectrumSmoothingMode &val)
 {
-	spectrumSmoothingMode = value;
+	spectrumSmoothingMode = val;
 }
 
-void Parameters::setSpectrumMode(bool value)
+void Parameters::setSpectrumMode(bool val)
 {
-	spectrumMode = value;
+	spectrumMode = val;
 }
 
-void Parameters::setShowWindowFunctionLabel(bool value)
+void Parameters::setShowWindowFunctionLabel(bool val)
 {
-	showWindowFunctionLabel = value;
+	showWindowFunctionLabel = val;
 }
 
-void Parameters::setShowWindows(bool value)
+void Parameters::setShowWindows(bool val)
 {
-	showWindows = value;
+	showWindows = val;
 }
 
-void Parameters::setWindowFunction(const std::string &value)
+void Parameters::setWindowFunction(const std::string &val)
 {
-	windowFunction = value;
+	windowFunction = val;
 }
 
-void Parameters::setHasWhiteBackground(bool value)
+void Parameters::setHasWhiteBackground(bool val)
 {
-	whiteBackground = value;
+	whiteBackground = val;
 }
 
-void Parameters::setStart(double value)
+void Parameters::setStart(double val)
 {
-	start = value;
+	start = val;
 }
 
-void Parameters::setFinish(double value)
+void Parameters::setFinish(double val)
 {
-	finish = value;
+	finish = val;
 }
 
 void Parameters::processChannelArgs(const std::vector<std::string>& args)
