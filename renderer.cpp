@@ -202,7 +202,7 @@ void Renderer::renderWindowFunction(const Parameters& parameters, const std::vec
 
 	const double vScaling =
 			parameters.getPlotTimeDomain() ? - static_cast<double>(plotHeight)
-											 : static_cast<double>(plotHeight) / parameters.getDynRange();
+											 : - static_cast<double>(plotHeight) / parameters.getDynRange();
 
 	// clip the plotting region
 	cairo_rectangle(cr, plotOriginX, plotOriginY, plotWidth, plotHeight);

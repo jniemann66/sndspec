@@ -159,7 +159,7 @@ bool Spectrum::convertToDb(std::vector<std::vector<double>> &s, bool fromMagSqua
 		};
 
 		for (int c = 0; c < numChannels; c++) {
-			std::transform (s[c].begin(), s[c].end(), s[c].begin(), scaleFunc);
+			std::transform(s[c].begin(), s[c].end(), s[c].begin(), scaleFunc);
 		}
 	}
 
@@ -191,7 +191,7 @@ bool Spectrum::convertToDb(std::vector<double> &s, bool fromMagSquared)
 			return dBMult * std::log10(std::max(scale * v, floor));
 		};
 
-		std::transform (s.begin(), s.end(), s.begin(), scaleFunc);
+		std::transform(s.begin(), s.end(), s.begin(), scaleFunc);
 
 	}
 

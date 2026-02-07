@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 		static const int w = parameters.getImgWidth();
 		static const int h = parameters.getImgHeight();
 		// make sample size next power-of-2 >= width
-		const size_t size = 1 << (1 + static_cast<int>(std::log2(w - 1)));
+		const size_t size = 1 << (static_cast<int>(std::log2(w - 1)) + 1);
 		Sndspec::Window<double> window;
 		window.generate(parameters.getWindowFunction(), size, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
 		if (parameters.getPlotTimeDomain()) {
@@ -64,7 +64,7 @@ int main(int argc, char** argv)
 			s.exec();
 
 			Sndspec::Renderer r{w, h};
-			r.setNyquist(size * 2);
+			r.setNyquist(size);
 			r.setFreqStep(size / 10);
 			r.setInputFilename(parameters.getWindowFunctionDisplayName() + " - time domain");
 			r.setDynRange(parameters.getDynRange());
@@ -77,15 +77,13 @@ int main(int argc, char** argv)
 				r.setVertAxisLabel("Relative Magnitude (dB)");
 			}
 
-			// todo: send spectrum data from s.fDbuf;
-
-
 			std::vector<double> v(fftSize, 0.0);
-			s.getMagSquared(v);
+			s.getMag(v);
+			auto mm = std::minmax_element(v.begin(), v.end());
 			s.convertToDb(v, false);
+			std::cout << "min=" << *mm.first << " max=" << *mm.second << std::endl;
 			r.renderWindowFunction(parameters, v);
 			r.writeToFile("windowfunction.png");
-
 		}
 	} else if (parameters.getSpectrumMode()) {
 		Sndspec::Spectrum::makeSpectrumFromFile(parameters);
