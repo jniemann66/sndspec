@@ -15,7 +15,7 @@
 #include "window.h"
 
 #include <sndfile.hh>
-
+#include <cstring>
 #include <iostream>
 #include <cmath>
 
@@ -36,7 +36,7 @@ int main(int argc, char** argv)
 		Sndspec::Window<double> window;
 		window.generate(parameters.getWindowFunction(), size, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
 		if (parameters.getPlotTimeDomain()) {
-			// todo: plot the window
+			// plot the window
 			std::cout << "w=" << w << " h=" << h << " window size=" << window.getData().size() << std::endl;
 			Sndspec::Renderer r{w, h};
 			r.setNyquist(size * 2);
@@ -55,7 +55,29 @@ int main(int argc, char** argv)
 			r.renderWindowFunction(parameters, window.getData());
 			r.writeToFile("windowfunction.png");
 		} else {
-			// todo: plot fft magnitude of the window
+			Sndspec::Spectrum s(size);
+			std::memcpy(s.getTdBuf(), window.getData().data(), size * sizeof(double));
+			s.exec();
+
+			Sndspec::Renderer r{w, h};
+			r.setNyquist(size * 2);
+			r.setFreqStep(size / 10);
+			r.setInputFilename(parameters.getWindowFunctionDisplayName() + " - time domain");
+			r.setDynRange(parameters.getDynRange());
+			r.setTitle("Window Function");
+			r.setHorizAxisLabel("x");
+
+			if (parameters.getLinearMag()) {
+				r.setVertAxisLabel("Relative Magnitude (%)");
+			} else {
+				r.setVertAxisLabel("Relative Magnitude (dB)");
+			}
+
+			// todo: send spectrum data from s.fDbuf;
+
+			r.renderWindowFunction(parameters, window.getData());
+			r.writeToFile("windowfunction.png");
+
 		}
 	} else if (parameters.getSpectrumMode()) {
 		Sndspec::Spectrum::makeSpectrumFromFile(parameters);
