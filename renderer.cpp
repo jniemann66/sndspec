@@ -183,8 +183,7 @@ std::pair <std::vector<std::vector<double>>, double> Renderer::renderSpectrum(co
 
 void Renderer::renderWindowFunction(const Parameters &parameters)
 {
-	// make sample size next power-of-2 >= width
-	const size_t size = 1 << (1 + static_cast<int>(std::log2(parameters.getImgWidth())));
+
 }
 
 // note: in Normal mode, channels may be disabled due to the following:

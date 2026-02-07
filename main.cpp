@@ -10,11 +10,13 @@
 #include "spectrogram.h"
 #include "spectrum.h"
 #include "parameters.h"
+#include "window.h"
 #include "tests.h"
 
 #include <sndfile.hh>
 
 #include <iostream>
+#include <cmath>
 
 int main(int argc, char** argv)
 {
@@ -25,7 +27,17 @@ int main(int argc, char** argv)
 		exit(0);
 	}
 
-	if (parameters.getSpectrumMode()) {
+	if (parameters.getPlotWindowFunction()) {
+		// make sample size next power-of-2 >= width
+		const size_t size = 1 << (1 + static_cast<int>(std::log2(parameters.getImgWidth())));
+		Sndspec::Window<double> window;
+		window.generate(parameters.getWindowFunction(), size, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
+		if (parameters.getPlotTimeDomain()) {
+			// todo: plot the window
+		} else {
+			// todo: plot fft magnitude of the window
+		}
+	} else if (parameters.getSpectrumMode()) {
 		Sndspec::Spectrum::makeSpectrumFromFile(parameters);
 	} else {
 		Sndspec::Spectrogram::makeSpectrogramFromFile(parameters);
