@@ -238,6 +238,7 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			if (++argsIt != args.cend()) {
 				plotWindowFunction = true;
 				showWindowFunctionLabel = true;
+				spectrumMode = true;
 				auto wp = Window<double>::findWindow(*argsIt);
 				if (wp.windowType == Unknown) {
 					windowFunction = "kaiser";
@@ -257,8 +258,11 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 					});
 
 					if (s.compare(0, 4, "time") == 0) {
+						linearMag = true;
+						dynRange = 100.0;
 						plotTimeDomain = true;
 					} else {
+						linearMag = false;
 						plotTimeDomain = false;
 					}
 				}

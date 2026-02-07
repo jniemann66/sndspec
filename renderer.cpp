@@ -181,9 +181,37 @@ std::pair <std::vector<std::vector<double>>, double> Renderer::renderSpectrum(co
 	return {results, vScaling};
 }
 
-void Renderer::renderWindowFunction(const Parameters &parameters)
+void Renderer::renderWindowFunction(const Parameters& parameters, const std::vector<double>& data)
 {
+	// positioning and scaling constants
+	constexpr double hTrim = -0.5; // horizontal centering tweak to position plot nicely on top of gridlines
+	const double plotOriginX_ = plotOriginX + hTrim;
+	const double hScaling = static_cast<double>(plotWidth) / data.size();
+	const double vScaling = static_cast<double>(plotHeight);// / parameters.getDynRange();
 
+	// clip the plotting region
+	cairo_rectangle(cr, plotOriginX_, plotOriginY, plotWidth, plotHeight);
+	cairo_clip(cr);
+	const double opacity = 0.8;
+
+	cairo_set_line_width (cr, 1.0);
+	Rgb chColor = spectrumChannelColors[3];
+	cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, opacity);
+	cairo_move_to(cr, plotOriginX_, plotOriginY - vScaling * data.at(0));
+
+	for (int i = 0; i < data.size(); i++) {
+		const double mag = data.at(i);
+		const double y = plotOriginY + plotHeight - vScaling * mag;
+		cairo_line_to(cr, plotOriginX_ + hScaling * i, y);
+	}
+
+	cairo_stroke(cr);
+	cairo_reset_clip(cr);
+
+	drawBorder();
+	drawSpectrumGrid();
+	drawSpectrumTickmarks(parameters.getLinearMag());
+	drawSpectrumText();
 }
 
 // note: in Normal mode, channels may be disabled due to the following:
@@ -356,7 +384,11 @@ void Renderer::drawSpectrumText()
 	cairo_set_font_size(cr, 13);
 
 	// info
-	std::string infoString = inputFilename + " " + formatTimeRange(startTime, finishTime);
+	std::string infoString = " ";
+	if (startTime != finishTime) {
+		infoString = inputFilename + " " + formatTimeRange(startTime, finishTime);
+	}
+
 	cairo_text_extents_t infoExtents;
 	cairo_text_extents(cr, infoString.c_str(), &infoExtents);
 	cairo_move_to(cr, plotOriginX, plotOriginY - infoExtents.height);

@@ -7,11 +7,12 @@
 * with this file. If not, please refer to: https://github.com/jniemann66/ReSampler
 */
 
+#include "parameters.h"
+#include "renderer.h"
 #include "spectrogram.h"
 #include "spectrum.h"
-#include "parameters.h"
-#include "window.h"
 #include "tests.h"
+#include "window.h"
 
 #include <sndfile.hh>
 
@@ -28,12 +29,31 @@ int main(int argc, char** argv)
 	}
 
 	if (parameters.getPlotWindowFunction()) {
+		static const int w = parameters.getImgWidth();
+		static const int h = parameters.getImgHeight();
 		// make sample size next power-of-2 >= width
-		const size_t size = 1 << (1 + static_cast<int>(std::log2(parameters.getImgWidth())));
+		const size_t size = 1 << (1 + static_cast<int>(std::log2(w - 1)));
 		Sndspec::Window<double> window;
 		window.generate(parameters.getWindowFunction(), size, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
 		if (parameters.getPlotTimeDomain()) {
 			// todo: plot the window
+			std::cout << "w=" << w << " h=" << h << " window size=" << window.getData().size() << std::endl;
+			Sndspec::Renderer r{w, h};
+			r.setNyquist(size * 2);
+			r.setFreqStep(size / 10);
+			r.setInputFilename(parameters.getWindowFunctionDisplayName() + " - time domain");
+			r.setDynRange(parameters.getDynRange());
+			r.setTitle("Window Function");
+			r.setHorizAxisLabel("x");
+
+			if (parameters.getLinearMag()) {
+				r.setVertAxisLabel("Relative Magnitude (%)");
+			} else {
+				r.setVertAxisLabel("Relative Magnitude (dB)");
+			}
+
+			r.renderWindowFunction(parameters, window.getData());
+			r.writeToFile("windowfunction.png");
 		} else {
 			// todo: plot fft magnitude of the window
 		}
