@@ -185,12 +185,27 @@ void Renderer::renderWindowFunction(const Parameters& parameters, const std::vec
 {
 	// positioning and scaling constants
 	constexpr double hTrim = -0.5; // horizontal centering tweak to position plot nicely on top of gridlines
-	const double plotOriginX_ = plotOriginX + hTrim;
 	const double hScaling = static_cast<double>(plotWidth) / data.size();
-	const double vScaling = static_cast<double>(plotHeight);// / parameters.getDynRange();
+
+	// time domain: left-to-right
+	// freq-domain: start at centre (f=0)
+	const double plotOriginX_ = parameters.getPlotTimeDomain() ?
+				plotOriginX + hTrim
+			  :	plotOriginX + hTrim + plotWidth / 2.0;
+
+	// time domain: range is expected to be from 0..1
+	// freq domain: range is expected from 0dB .. -dB
+
+	const double plotOriginY_ = parameters.getPlotTimeDomain() ?
+				plotOriginY + plotHeight
+			  : plotOriginY;
+
+	const double vScaling =
+			parameters.getPlotTimeDomain() ? - static_cast<double>(plotHeight)
+											 : static_cast<double>(plotHeight) / parameters.getDynRange();
 
 	// clip the plotting region
-	cairo_rectangle(cr, plotOriginX_, plotOriginY, plotWidth, plotHeight);
+	cairo_rectangle(cr, plotOriginX, plotOriginY, plotWidth, plotHeight);
 	cairo_clip(cr);
 	const double opacity = 0.8;
 
@@ -201,11 +216,26 @@ void Renderer::renderWindowFunction(const Parameters& parameters, const std::vec
 
 	for (int i = 0; i < data.size(); i++) {
 		const double mag = data.at(i);
-		const double y = plotOriginY + plotHeight - vScaling * mag;
+		const double y = plotOriginY_ + vScaling * mag;
 		cairo_line_to(cr, plotOriginX_ + hScaling * i, y);
 	}
 
 	cairo_stroke(cr);
+
+	if (!parameters.getPlotTimeDomain()) {
+		// draw negative half of spectrum
+
+		cairo_move_to(cr, plotOriginX_, plotOriginY - vScaling * data.at(0));
+
+		for (int i = 0; i < data.size(); i++) {
+			const double mag = data.at(i);
+			const double y = plotOriginY_ + vScaling * mag;
+			cairo_line_to(cr, plotOriginX_ - hScaling * i, y);
+		}
+
+		cairo_stroke(cr);
+	}
+
 	cairo_reset_clip(cr);
 
 	drawBorder();

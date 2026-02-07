@@ -18,6 +18,7 @@
 #include <cstring>
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 
 int main(int argc, char** argv)
 {
@@ -57,6 +58,9 @@ int main(int argc, char** argv)
 		} else {
 			Sndspec::Spectrum s(size);
 			std::memcpy(s.getTdBuf(), window.getData().data(), size * sizeof(double));
+
+			size_t fftSize = s.getFFTSize();
+			std::cout << "fft size=" << fftSize << std::endl;
 			s.exec();
 
 			Sndspec::Renderer r{w, h};
@@ -75,7 +79,11 @@ int main(int argc, char** argv)
 
 			// todo: send spectrum data from s.fDbuf;
 
-			r.renderWindowFunction(parameters, window.getData());
+
+			std::vector<double> v(fftSize, 0.0);
+			s.getMagSquared(v);
+			s.convertToDb(v, false);
+			r.renderWindowFunction(parameters, v);
 			r.writeToFile("windowfunction.png");
 
 		}

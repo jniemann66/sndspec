@@ -166,6 +166,39 @@ bool Spectrum::convertToDb(std::vector<std::vector<double>> &s, bool fromMagSqua
 	return hasSignal;
 }
 
+bool Spectrum::convertToDb(std::vector<double> &s, bool fromMagSquared)
+{
+	int numChannels = s.size();
+	bool hasSignal{false};
+	int numBins = s.size();
+
+	// find peak
+	double peak{0.0};
+	for (int b = 0; b < numBins; b++) {
+		peak = std::max(peak, s[b]);
+	}
+
+	if (std::fpclassify(peak) != FP_ZERO) { // scale the data
+
+		hasSignal = true;
+		double dBMult = fromMagSquared ? 10.0 : 20.0;
+
+		// set a floor to avoid log(0) problems
+		double floor = std::max(std::numeric_limits<double>::min(), peak * pow(10.0, -300.0 / dBMult)); // 300dB below peak or smallest normal number
+
+		// function to convert to dB
+		auto scaleFunc = [scale = 1.0 / peak, dBMult, floor] (double v) -> double {
+			return dBMult * std::log10(std::max(scale * v, floor));
+		};
+
+		std::transform (s.begin(), s.end(), s.begin(), scaleFunc);
+
+	}
+
+	return hasSignal;
+}
+
+
 bool Spectrum::convertToLinear(std::vector<std::vector<double>> &s, bool fromMagSquared)
 {
 	int numChannels = s.size();
