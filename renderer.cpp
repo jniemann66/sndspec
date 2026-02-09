@@ -202,9 +202,12 @@ void Renderer::renderWindowFunction(const Parameters& parameters, const std::vec
 	const double vScaling = freqDomain ? - static_cast<double>(plotHeight) / parameters.getDynRange()
 									   : - static_cast<double>(plotHeight);
 
-	// clip the plotting region
-	cairo_rectangle(cr, plotOriginX, plotOriginY, plotWidth, plotHeight);
-	cairo_clip(cr);
+	if (freqDomain) {
+		// clip the plotting region
+		cairo_rectangle(cr, plotOriginX, plotOriginY, plotWidth, plotHeight);
+		cairo_clip(cr);
+	}
+
 	const double opacity = 0.8;
 
 	cairo_set_line_width (cr, 1.0);

@@ -33,8 +33,7 @@ int main(int argc, char** argv)
 		static const int w = parameters.getImgWidth();
 		static const int h = parameters.getImgHeight();
 
-		// const size_t size = 1 << (static_cast<int>(std::log2(w - 1)) + 1); // make sample size next power-of-2 >= width
-		const size_t size = 512;
+		const size_t size = 256;
 
 		Sndspec::Window<double> window;
 		window.generate(parameters.getWindowFunction(), size, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
@@ -50,7 +49,7 @@ int main(int argc, char** argv)
 			r.setInputFilename(name);
 			r.setDynRange(parameters.getDynRange());
 			r.setTitle("Window Function");
-			r.setHorizAxisLabel("x");
+			r.setHorizAxisLabel("t");
 
 			if (parameters.getLinearMag()) {
 				r.setVertAxisLabel("Relative Magnitude (%)");
@@ -71,27 +70,28 @@ int main(int argc, char** argv)
 			std::cout << "fft size=" << fftSize << std::endl;
 			s.exec();
 
-			Sndspec::Renderer r{w, h};
-			r.setNyquist(size / 2);
-			r.setFreqStep(size / 10);
-			r.setInputFilename(name);
-			r.setDynRange(parameters.getDynRange());
-			r.setTitle("Window Function");
-			r.setHorizAxisLabel("x");
-
-			if (parameters.getLinearMag()) {
-				r.setVertAxisLabel("Relative Magnitude (%)");
-			} else {
-				r.setVertAxisLabel("Relative Magnitude (dB)");
-			}
+			const int horizontalZoom = 2;
 
 			std::vector<double> v(fftSize, 0.0);
 			s.getMag(v);
 			auto mm = std::minmax_element(v.begin(), v.end());
 			s.convertToDb(v, false);
 			std::cout << "min=" << *mm.first << " max=" << *mm.second << std::endl;
+			v.resize(v.size() / horizontalZoom);
 
-			v.resize(v.size() / 2);
+			Sndspec::Renderer r{w, h};
+			r.setNyquist(v.size());
+			r.setFreqStep(10);
+			r.setInputFilename(name);
+			r.setDynRange(parameters.getDynRange());
+			r.setTitle("Window Function");
+			r.setHorizAxisLabel("freq bin");
+
+			if (parameters.getLinearMag()) {
+				r.setVertAxisLabel("Relative Magnitude (%)");
+			} else {
+				r.setVertAxisLabel("Relative Magnitude (dB)");
+			}
 			r.renderWindowFunction(parameters, v);
 			r.writeToFile(name + ".png");
 		}
