@@ -187,22 +187,21 @@ void Renderer::renderWindowFunction(const Parameters& parameters, const std::vec
 	constexpr double hTrim = -0.5; // horizontal centering tweak to position plot nicely on top of gridlines
 	const double hScaling = static_cast<double>(plotWidth) / data.size();
 
-	// time domain: left-to-right
+	const bool freqDomain = !parameters.getPlotTimeDomain();
+
 	// freq-domain: start at centre (f=0)
-	const double plotOriginX_ = parameters.getPlotTimeDomain() ?
-				plotOriginX + hTrim
-			  :	plotOriginX + hTrim + plotWidth / 2.0;
+	// time domain: left-to-right
+	const double plotOriginX_ = freqDomain ? plotOriginX + hTrim + plotWidth / 2.0
+										   : plotOriginX + hTrim;
 
 	// time domain: range is expected to be from 0..1
 	// freq domain: range is expected from 0dB .. -dB
 
-	const double plotOriginY_ = parameters.getPlotTimeDomain() ?
-				plotOriginY + plotHeight
-			  : plotOriginY;
+	const double plotOriginY_ = freqDomain ? plotOriginY
+										   : plotOriginY + plotHeight;
 
-	const double vScaling =
-			parameters.getPlotTimeDomain() ? - static_cast<double>(plotHeight)
-											 : - static_cast<double>(plotHeight) / parameters.getDynRange();
+	const double vScaling = freqDomain ? - static_cast<double>(plotHeight) / parameters.getDynRange()
+									   : - static_cast<double>(plotHeight);
 
 	// clip the plotting region
 	cairo_rectangle(cr, plotOriginX, plotOriginY, plotWidth, plotHeight);
@@ -216,25 +215,22 @@ void Renderer::renderWindowFunction(const Parameters& parameters, const std::vec
 
 	for (int i = 0; i < data.size(); i++) {
 		const double mag = data.at(i);
+		const double x = plotOriginX_ + hScaling * i;
 		const double y = plotOriginY_ + vScaling * mag;
-		cairo_line_to(cr, plotOriginX_ + hScaling * i, y);
+		if (freqDomain) {
+			const double x2 = plotOriginX_ - hScaling * i;
+			const double y2 = y + plotHeight;
+			// draw mirror-image (left of center)
+			cairo_move_to(cr, x2, y2);
+			cairo_line_to(cr, x2, y);
+			// move to right-of centre
+			cairo_move_to(cr, x, y2);
+
+		}
+		cairo_line_to(cr, x, y);
 	}
 
 	cairo_stroke(cr);
-
-	if (!parameters.getPlotTimeDomain()) {
-		// draw negative half of spectrum
-
-		cairo_move_to(cr, plotOriginX_, plotOriginY - vScaling * data.at(0));
-
-		for (int i = 0; i < data.size(); i++) {
-			const double mag = data.at(i);
-			const double y = plotOriginY_ + vScaling * mag;
-			cairo_line_to(cr, plotOriginX_ - hScaling * i, y);
-		}
-
-		cairo_stroke(cr);
-	}
 
 	cairo_reset_clip(cr);
 

@@ -32,17 +32,22 @@ int main(int argc, char** argv)
 	if (parameters.getPlotWindowFunction()) {
 		static const int w = parameters.getImgWidth();
 		static const int h = parameters.getImgHeight();
-		// make sample size next power-of-2 >= width
-		const size_t size = 1 << (static_cast<int>(std::log2(w - 1)) + 1);
+
+		// const size_t size = 1 << (static_cast<int>(std::log2(w - 1)) + 1); // make sample size next power-of-2 >= width
+		const size_t size = 512;
+
 		Sndspec::Window<double> window;
 		window.generate(parameters.getWindowFunction(), size, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
 		if (parameters.getPlotTimeDomain()) {
+			std::string name = parameters.getWindowFunctionDisplayName() + "-time_domain";
+			std::replace(name.begin(), name.end(), ' ', '_');
+
 			// plot the window
 			std::cout << "w=" << w << " h=" << h << " window size=" << window.getData().size() << std::endl;
 			Sndspec::Renderer r{w, h};
 			r.setNyquist(size * 2);
 			r.setFreqStep(size / 10);
-			r.setInputFilename(parameters.getWindowFunctionDisplayName() + " - time domain");
+			r.setInputFilename(name);
 			r.setDynRange(parameters.getDynRange());
 			r.setTitle("Window Function");
 			r.setHorizAxisLabel("x");
@@ -54,8 +59,11 @@ int main(int argc, char** argv)
 			}
 
 			r.renderWindowFunction(parameters, window.getData());
-			r.writeToFile("windowfunction.png");
+			r.writeToFile(name + ".png");
 		} else {
+			std::string name = parameters.getWindowFunctionDisplayName() + "-freq_domain";
+			std::replace(name.begin(), name.end(), ' ', '_');
+
 			Sndspec::Spectrum s(size);
 			std::memcpy(s.getTdBuf(), window.getData().data(), size * sizeof(double));
 
@@ -64,9 +72,9 @@ int main(int argc, char** argv)
 			s.exec();
 
 			Sndspec::Renderer r{w, h};
-			r.setNyquist(size);
+			r.setNyquist(size / 2);
 			r.setFreqStep(size / 10);
-			r.setInputFilename(parameters.getWindowFunctionDisplayName() + " - time domain");
+			r.setInputFilename(name);
 			r.setDynRange(parameters.getDynRange());
 			r.setTitle("Window Function");
 			r.setHorizAxisLabel("x");
@@ -82,8 +90,10 @@ int main(int argc, char** argv)
 			auto mm = std::minmax_element(v.begin(), v.end());
 			s.convertToDb(v, false);
 			std::cout << "min=" << *mm.first << " max=" << *mm.second << std::endl;
+
+			v.resize(v.size() / 2);
 			r.renderWindowFunction(parameters, v);
-			r.writeToFile("windowfunction.png");
+			r.writeToFile(name + ".png");
 		}
 	} else if (parameters.getSpectrumMode()) {
 		Sndspec::Spectrum::makeSpectrumFromFile(parameters);
