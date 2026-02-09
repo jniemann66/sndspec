@@ -51,7 +51,7 @@ void Renderer::renderSpectrogram(const Parameters &parameters, const Spectrogram
 	int numSpectrums = spectrogramData.at(0).size();
 	int numBins = spectrogramData.at(0).at(0).size();
 
-	int h = plotHeight - 1;
+	int h = plotHeight - 2;
 	double colorScale = heatMapPalette.size() / -parameters.getDynRange();
 	int lastColorIndex = std::max(0, static_cast<int>(heatMapPalette.size()) - 1);
 	windowFunctionLabel = "Window: " + parameters.getWindowFunctionDisplayName();
@@ -194,9 +194,8 @@ void Renderer::renderWindowFunction(const Parameters& parameters, const std::vec
 	const double plotOriginX_ = freqDomain ? plotOriginX + hTrim + plotWidth / 2.0
 										   : plotOriginX + hTrim;
 
-	// time domain: range is expected to be from 0..1
 	// freq domain: range is expected from 0dB .. -dB
-
+	// time domain: range is expected to be from 0..1
 	const double plotOriginY_ = freqDomain ? plotOriginY
 										   : plotOriginY + plotHeight;
 
@@ -285,7 +284,7 @@ void Renderer::drawSpectrogramGrid()
 	cairo_set_line_width (cr, 1.0);
 	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, opacity);
 
-	double yStep = plotHeight * freqStep / nyquist;
+	double yStep = plotHeight * static_cast<double>(freqStep) / nyquist;
 	double y = plotOriginY + plotHeight - 1 ;
 
 	while (y > plotOriginY) {
@@ -411,7 +410,9 @@ void Renderer::drawSpectrumText()
 
 	// info
 	std::string infoString = " ";
-	if (startTime != finishTime) {
+	if (startTime == finishTime && std::fpclassify(startTime) == FP_ZERO) {
+		infoString = inputFilename;
+	} else {
 		infoString = inputFilename + " " + formatTimeRange(startTime, finishTime);
 	}
 
@@ -624,11 +625,11 @@ void Renderer::drawBorder()
 {
 	cairo_set_line_width (cr, 2);
 	cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
-	int s = -1;
-	cairo_move_to(cr, plotOriginX - s, plotOriginY - s);
-	cairo_line_to(cr, plotOriginX + plotWidth + s, plotOriginY - s);
-	cairo_line_to(cr, plotOriginX + plotWidth + s, plotOriginY + plotHeight + s);
-	cairo_line_to(cr, plotOriginX - s,  plotOriginY + plotHeight + s);
+	double s = 1;
+	cairo_move_to(cr, plotOriginX, plotOriginY + s);
+	cairo_line_to(cr, plotOriginX + plotWidth - s, plotOriginY + s);
+	cairo_line_to(cr, plotOriginX + plotWidth - s, plotOriginY + plotHeight - s);
+	cairo_line_to(cr, plotOriginX,  plotOriginY + plotHeight - s);
 	cairo_close_path(cr);
 
 	cairo_stroke(cr);
