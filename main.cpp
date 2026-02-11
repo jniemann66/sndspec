@@ -29,74 +29,10 @@ int main(int argc, char** argv)
 		exit(0);
 	}
 
-	if (parameters.getPlotWindowFunction()) {
-		static const int w = parameters.getImgWidth();
-		static const int h = parameters.getImgHeight();
-
-		const size_t size = 256;
-
-		Sndspec::Window<double> window;
-		window.generate(parameters.getWindowFunction(), size, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
-		if (parameters.getPlotTimeDomain()) {
-			std::string name = parameters.getWindowFunctionDisplayName() + "-time_domain";
-			std::replace(name.begin(), name.end(), ' ', '_');
-
-			// plot the window
-			std::cout << "w=" << w << " h=" << h << " window size=" << window.getData().size() << std::endl;
-			Sndspec::Renderer r{w, h};
-			r.setNyquist(size * 2);
-			r.setFreqStep(size / 10);
-			r.setInputFilename(name);
-			r.setDynRange(parameters.getDynRange());
-			r.setTitle("Window Function");
-			r.setHorizAxisLabel("t");
-
-			if (parameters.getLinearMag()) {
-				r.setVertAxisLabel("Relative Magnitude (%)");
-			} else {
-				r.setVertAxisLabel("Relative Magnitude (dB)");
-			}
-
-			r.renderWindowFunction(parameters, window.getData());
-			r.writeToFile(name + ".png");
-		} else {
-			std::string name = parameters.getWindowFunctionDisplayName() + "-freq_domain";
-			std::replace(name.begin(), name.end(), ' ', '_');
-
-			Sndspec::Spectrum s(size);
-			std::memcpy(s.getTdBuf(), window.getData().data(), size * sizeof(double));
-
-			size_t fftSize = s.getFFTSize();
-			std::cout << "fft size=" << fftSize << std::endl;
-			s.exec();
-
-			const int horizontalZoom = 2;
-
-			std::vector<double> v(fftSize, 0.0);
-			s.getMag(v);
-			auto mm = std::minmax_element(v.begin(), v.end());
-			s.convertToDb(v, false);
-			std::cout << "min=" << *mm.first << " max=" << *mm.second << std::endl;
-			v.resize(v.size() / horizontalZoom);
-
-			Sndspec::Renderer r{w, h};
-			r.setNyquist(v.size());
-			r.setFreqStep(10);
-			r.setInputFilename(name);
-			r.setDynRange(parameters.getDynRange());
-			r.setTitle("Window Function");
-			r.setHorizAxisLabel("freq bin");
-
-			if (parameters.getLinearMag()) {
-				r.setVertAxisLabel("Relative Magnitude (%)");
-			} else {
-				r.setVertAxisLabel("Relative Magnitude (dB)");
-			}
-			r.renderWindowFunction(parameters, v);
-			r.writeToFile(name + ".png");
-		}
-	} else if (parameters.getSpectrumMode()) {
+	if (parameters.getSpectrumMode()) {
 		Sndspec::Spectrum::makeSpectrumFromFile(parameters);
+	} else if (parameters.getPlotWindowFunction()) {
+		Sndspec::Spectrum::makeWindowFunctionPlot(parameters);
 	} else {
 		Sndspec::Spectrogram::makeSpectrogramFromFile(parameters);
 	}

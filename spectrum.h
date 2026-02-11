@@ -38,7 +38,8 @@ public:
 	int getFFTSize() const;
 	int getSpectrumSize() const;
 
-	static void makeSpectrumFromFile(const Sndspec::Parameters &parameters);
+	static void makeSpectrumFromFile(const Sndspec::Parameters& parameters);
+	static void makeWindowFunctionPlot(const Sndspec::Parameters& parameters);
 	static int convertSpectrumSizeToFFTSize(int spectrum_size);
 	static int convertFFTSizeToSpectrumSize(int fft_size);
 	static int selectBestFFTSizeFromSpectrumSize(int spectrum_size);
