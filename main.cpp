@@ -29,10 +29,10 @@ int main(int argc, char** argv)
 		exit(0);
 	}
 
-	if (parameters.getSpectrumMode()) {
-		Sndspec::Spectrum::makeSpectrumFromFile(parameters);
-	} else if (parameters.getPlotWindowFunction()) {
+	if (parameters.getPlotWindowFunction()) {
 		Sndspec::Spectrum::makeWindowFunctionPlot(parameters);
+	} else if (parameters.getSpectrumMode()) {
+		Sndspec::Spectrum::makeSpectrumFromFile(parameters);
 	} else {
 		Sndspec::Spectrogram::makeSpectrogramFromFile(parameters);
 	}
