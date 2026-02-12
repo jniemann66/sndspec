@@ -188,6 +188,7 @@ void Renderer::renderWindowFunction(const Parameters& parameters, const std::vec
 	const double hScaling = static_cast<double>(plotWidth) / data.size();
 
 	const bool freqDomain = !parameters.getPlotTimeDomain();
+	const double vTrim = freqDomain ? 0.0 : 1.0;
 
 	// freq-domain: start at centre (f=0)
 	// time domain: left-to-right
@@ -196,8 +197,8 @@ void Renderer::renderWindowFunction(const Parameters& parameters, const std::vec
 
 	// freq domain: range is expected from 0dB .. -dB
 	// time domain: range is expected to be from 0..1
-	const double plotOriginY_ = freqDomain ? plotOriginY
-										   : plotOriginY + plotHeight;
+	const double plotOriginY_ = freqDomain ? plotOriginY + vTrim
+										   : plotOriginY + vTrim + plotHeight;
 
 	const double vScaling = freqDomain ? - static_cast<double>(plotHeight) / parameters.getDynRange()
 									   : - static_cast<double>(plotHeight);
