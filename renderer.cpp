@@ -379,12 +379,11 @@ void Renderer::drawSpectrumTickmarks(bool linearMag)
 
 	double fWidth = static_cast<double>(plotWidth);
 	double xStep = fWidth * freqStep / nyquist;
-	double x = plotOriginX;
-	double f = 0.0;
-	constexpr int ty = s + 15;
-
 	char fLabelBuf[20];
-	while (x < (fWidth + plotOriginX) ) {
+	constexpr int ty = s + 15;
+	double f = 0.0;
+	double x = plotOriginX;
+	while (x < (fWidth + plotOriginX)) {
 		sprintf(fLabelBuf, "%6.0f", f);
 		cairo_text_extents_t freqLabelTextExtents;
 		cairo_text_extents(cr, fLabelBuf, &freqLabelTextExtents);

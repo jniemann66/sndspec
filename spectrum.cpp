@@ -395,10 +395,11 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 	const int w = parameters.getImgWidth();
 	const int h = parameters.getImgHeight();
 
-	const size_t size = 256;
+	constexpr size_t windowSize = 256;
+	constexpr size_t fftSize = 16 * windowSize;
 
 	Sndspec::Window<double> window;
-	window.generate(parameters.getWindowFunction(), size, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
+	window.generate(parameters.getWindowFunction(), windowSize, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
 	if (parameters.getPlotTimeDomain()) {
 		std::string name = parameters.getWindowFunctionDisplayName() + "-time_domain";
 		std::replace(name.begin(), name.end(), ' ', '_');
@@ -406,8 +407,8 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 		// plot the window
 		std::cout << "w=" << w << " h=" << h << " window size=" << window.getData().size() << std::endl;
 		Sndspec::Renderer r{w, h};
-		r.setNyquist(size * 2);
-		r.setFreqStep(size / 10);
+		r.setNyquist(windowSize * 2);
+		r.setFreqStep(windowSize / 10);
 		r.setInputFilename(name);
 		r.setDynRange(parameters.getDynRange());
 		r.setTitle("Window Function");
@@ -430,25 +431,35 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 		std::string name = parameters.getWindowFunctionDisplayName() + "-freq_domain";
 		std::replace(name.begin(), name.end(), ' ', '_');
 
-		Sndspec::Spectrum s(size);
-		std::memcpy(s.getTdBuf(), window.getData().data(), size * sizeof(double));
+		Sndspec::Spectrum s(fftSize);
 
-		size_t fftSize = s.getFFTSize();
+		std::vector<double> wd = window.getData();
+		wd.resize(fftSize, 0.0);
+
+		std::memcpy(s.getTdBuf(), wd.data(), fftSize * sizeof(double));
+
+		for (size_t x = 0; x < windowSize; x++) {
+			assert(s.getTdBuf()[x] == window.getData()[x]);
+		}
+
 		std::cout << "fft size=" << fftSize << std::endl;
 		s.exec();
 
-		const int horizontalZoom = 2;
+		const int horizontalZoom = 1;
 
 		std::vector<double> v(fftSize, 0.0);
 		s.getMag(v);
 		auto mm = std::minmax_element(v.begin(), v.end());
 		s.convertToDb(v, false);
 		std::cout << "min=" << *mm.first << " max=" << *mm.second << std::endl;
-		v.resize(v.size() / horizontalZoom);
+
+		if (horizontalZoom > 1) {
+			v.resize(v.size() / horizontalZoom);
+		}
 
 		Sndspec::Renderer r{w, h};
 		r.setNyquist(v.size());
-		r.setFreqStep(10);
+		r.setFreqStep(fftSize / 10.0);
 		r.setInputFilename(name);
 		r.setDynRange(parameters.getDynRange());
 		r.setTitle("Window Function");
