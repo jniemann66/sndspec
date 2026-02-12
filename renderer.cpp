@@ -184,11 +184,11 @@ std::pair <std::vector<std::vector<double>>, double> Renderer::renderSpectrum(co
 void Renderer::renderWindowFunction(const Parameters& parameters, const std::vector<double>& data)
 {
 	// positioning and scaling constants
-	constexpr double hTrim = -0.5; // horizontal centering tweak to position plot nicely on top of gridlines
 	const double hScaling = static_cast<double>(plotWidth) / data.size();
 
 	const bool freqDomain = !parameters.getPlotTimeDomain();
-	const double vTrim = freqDomain ? 0.0 : 1.0;
+	const double hTrim = freqDomain ? - 0.5 : 0.5; // horizontal centering tweak to position plot nicely on top of gridlines
+	const double vTrim = freqDomain ? 0.0 : 0.0;
 
 	// freq-domain: start at centre (f=0)
 	// time domain: left-to-right
@@ -201,7 +201,7 @@ void Renderer::renderWindowFunction(const Parameters& parameters, const std::vec
 										   : plotOriginY + vTrim + plotHeight;
 
 	const double vScaling = freqDomain ? - static_cast<double>(plotHeight) / parameters.getDynRange()
-									   : - static_cast<double>(plotHeight);
+									   : - static_cast<double>(plotHeight - 1.0);
 
 	if (freqDomain) {
 		// clip the plotting region
