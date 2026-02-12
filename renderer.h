@@ -75,8 +75,8 @@ public:
 
 	// setters
 	void setHeatMapPalette(const std::vector<int32_t> &value);
-	void setNyquist(int value); // required for frequency axis
-	void setFreqStep(int value); // required for frequency axis
+	void setNyquist(double value); // required for frequency axis
+	void setFreqStep(double value); // required for frequency axis
 	void setNumTimeDivs(int value); // required for time axis
 	void setStartTime(double value); // required for time axis
 	void setFinishTime(double value); // required for time axis
@@ -91,8 +91,8 @@ public:
 	std::vector<int32_t> getHeatMapPalette() const;
 	int getPlotWidth() const;
 	int getPlotHeight() const;
-	int getNyquist() const;
-	int getFreqStep() const;
+	double getNyquist() const;
+	double getFreqStep() const;
 	int getNumTimeDivs() const;
 	double getStartTime() const;
 	double getFinishTime() const;
@@ -128,8 +128,8 @@ private:
 	int height;
 
 	// properties required for labelling the chart
-	int nyquist{};
-	int freqStep{};
+	double nyquist{};
+	double freqStep{};
 	int numTimeDivs{5};
 	double startTime{};
 	double finishTime{};

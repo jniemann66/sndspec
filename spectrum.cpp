@@ -407,7 +407,7 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 		// plot the window
 		std::cout << "w=" << w << " h=" << h << " window size=" << window.getData().size() << std::endl;
 		Sndspec::Renderer r{w, h};
-		r.setNyquist(windowSize * 2);
+		r.setNyquist(windowSize);
 		r.setFreqStep(windowSize / 10);
 		r.setInputFilename(name);
 		r.setDynRange(parameters.getDynRange());
@@ -458,8 +458,8 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 		}
 
 		Sndspec::Renderer r{w, h};
-		r.setNyquist(v.size());
-		r.setFreqStep(fftSize / 10.0);
+		r.setNyquist(100.0);
+		r.setFreqStep(10);
 		r.setInputFilename(name);
 		r.setDynRange(parameters.getDynRange());
 		r.setTitle("Window Function");

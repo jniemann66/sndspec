@@ -187,7 +187,7 @@ void Renderer::renderWindowFunction(const Parameters& parameters, const std::vec
 	const double hScaling = static_cast<double>(plotWidth) / data.size();
 
 	const bool freqDomain = !parameters.getPlotTimeDomain();
-	const double hTrim = freqDomain ? - 0.5 : 0.5; // horizontal centering tweak to position plot nicely on top of gridlines
+	const double hTrim = freqDomain ? - 0.0 : 0.5; // horizontal centering tweak to position plot nicely on top of gridlines
 	const double vTrim = freqDomain ? 0.0 : 0.0;
 
 	// freq-domain: start at centre (f=0)
@@ -839,22 +839,22 @@ int Renderer::getPlotHeight() const
 	return plotHeight;
 }
 
-int Renderer::getNyquist() const
+double Renderer::getNyquist() const
 {
 	return nyquist;
 }
 
-void Renderer::setNyquist(int value)
+void Renderer::setNyquist(double value)
 {
 	nyquist = value;
 }
 
-int Renderer::getFreqStep() const
+double Renderer::getFreqStep() const
 {
 	return freqStep;
 }
 
-void Renderer::setFreqStep(int value)
+void Renderer::setFreqStep(double value)
 {
 	freqStep = value;
 }
