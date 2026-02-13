@@ -45,17 +45,16 @@ struct WindowParameters
 static const std::vector<WindowParameters> windowDefinitions
 {
 	{"rectangular",		"Rectangular", Rectangular, {}},
-	{"bartlett",		"Bartlett", Bartlett, {}},
+	{"welch",           "Welch", Welch, {}},
 	{"triangular",		"Triangular", Triangular, {}},
-    {"welch",           "Welch", Welch, {}},
+	{"bartlett",		"Bartlett", Bartlett, {}},
+	{"hamming",			"Hamming", CosineSum, {0.54, 0.46}},
 	{"hann",			"Hann", CosineSum, {0.5, 0.5}},
 	{"hanning",			"Hanning", CosineSum, {0.5, 0.5}},
-	{"hamming",			"Hamming", CosineSum, {0.54, 0.46}},
 	{"blackman",		"Blackman", CosineSum, {0.42, 0.5, 0.08}},
 	{"nuttall",			"Nuttall", CosineSum, {0.355768, 0.487396, 0.144232, 0.012604}},
 	{"blackmannuttall",	"Blackman-Nuttall", CosineSum, {0.3635819, 0.4891775, 0.1365995, 0.0106411}},
 	{"blackmanharris",	"Blackman-Harris", CosineSum, {0.35875, 0.48829, 0.14128, 0.01168}},
-	{"flattop",			"Flat top", CosineSum, {0.21557895, 0.41663158, 0.277263158, 0.083578947, 0.006947368}},
 	{"5term", "5-term", CosineSum, {
 			3.232153788877343e-01,
 			4.714921439576260e-01,
@@ -126,6 +125,7 @@ static const std::vector<WindowParameters> windowDefinitions
 			1.938617116029048e-007,
 			8.482485599330470e-010
 		}},
+	{"flattop",	"Flat top", CosineSum, {0.21557895, 0.41663158, 0.277263158, 0.083578947, 0.006947368}},
 	{"kaiser", "Kaiser", Kaiser, {}}
 };
 

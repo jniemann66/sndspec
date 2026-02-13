@@ -14,6 +14,8 @@ class tests
 {
 public:
 	static bool testWindow();
+	static bool testAllWindows();
+
 };
 
 #endif // TESTS_H

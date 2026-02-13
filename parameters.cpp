@@ -157,6 +157,22 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 					windowFunctionDisplayName = wp.displayName;
 				}
 				++argsIt;
+
+				// look for numerical parameters
+				while (argsIt != args.cend() && !argsIt->empty() && argsIt->at(0) != '-') {
+					std::string s{*argsIt};
+					try {
+						// look for a number (parameter for window function)
+						const double d = std::stod(s);
+						windowFunctionParameters.push_back(std::max(0.0, d));
+						std::cout << "applying additional window function parameter: " << d << std::endl;
+						++argsIt;
+					} catch (const std::invalid_argument& e) {
+					} catch (const std::out_of_range& e) {
+					}
+
+				} // ends while () loop
+
 			}
 			break;
 

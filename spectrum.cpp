@@ -464,6 +464,16 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 		s.getMag(v);
 		s.convertToDb(v, false);
 
+		// code to calculate width at -3dB
+		// std::cout << parameters.getWindowFunction() << " ";
+		// for (size_t i = 0; i < v.size(); i++) {
+		// 	double d = v.at(i);
+		// 	if (d <= -3.0) {
+		// 		std::cout << "-3dB width =" << 2 * i << std::endl;
+		// 		break;
+		// 	}
+		// }
+
 		if (horizontalZoom > 1) {
 			// zoom accomplished by simply shrinking results to area of interest
 			v.resize(v.size() / horizontalZoom);
@@ -478,6 +488,7 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 		r.setDynRange(parameters.getDynRange());
 		r.setTitle("Window Function");
 		r.setHorizAxisLabel("Normalised Frequency (x π radians / sample)");
+
 
 		if (parameters.getLinearMag()) {
 			r.setVertAxisLabel("Relative Magnitude (%)");

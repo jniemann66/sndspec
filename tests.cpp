@@ -7,8 +7,12 @@
 * with this file. If not, please refer to: https://github.com/jniemann66/ReSampler
 */
 
+
+
 #include "tests.h"
+#include "parameters.h"
 #include "window.h"
+#include "spectrum.h"
 
 bool tests::testWindow()
 {
@@ -19,4 +23,18 @@ bool tests::testWindow()
 		std::cout << v << std::endl;
 	}
     return true;
+}
+
+bool tests::testAllWindows()
+{
+	Sndspec::Parameters p;
+	p.setPlotWindowFunction(true);
+	p.setImgWidth(1280);
+	p.setIngHeight(960);
+	for (const auto& wd : Sndspec::windowDefinitions) {
+		p.setWindowFunction(wd.name);
+		p.setWindowFunctionDisplayName(wd.displayName);
+		Sndspec::Spectrum::makeWindowFunctionPlot(p);
+	}
+	return true;
 }
