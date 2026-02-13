@@ -234,7 +234,6 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			break;
 
 		case PlotWindowFunction:
-		{
 			if (++argsIt != args.cend()) {
 				plotWindowFunction = true;
 				showWindowFunctionLabel = true;
@@ -249,26 +248,35 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 				}
 				++argsIt;
 
-				if (argsIt != args.cend()) {
-					std::string s{*argsIt};
+				if (argsIt != args.cend() && !argsIt->empty() && argsIt->at(0) != '-') {
+					do {
+						std::string s{*argsIt};
 
-					// convert name to lowercase
-					std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) -> unsigned char {
-						return std::tolower(c);
-					});
+						// convert name to lowercase
+						std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) -> unsigned char {
+							return std::tolower(c);
+						});
 
-					if (s.compare(0, 4, "time") == 0) {
-						linearMag = true;
-						dynRange = 100.0;
-						plotTimeDomain = true;
-					} else {
-						linearMag = false;
-						plotTimeDomain = false;
-					}
+						if (s.compare(0, 4, "time") == 0) {
+							linearMag = true;
+							dynRange = 100.0;
+							plotTimeDomain = true;
+							++argsIt;
+						} else {
+							try {
+								// look for potentially another number (min-spacing in Hz)
+								const double d = std::stod(s);
+								windowFunctionParameters.push_back(std::max(1.0, d));
+								std::cout << "applying additional window function parameter: " << d << std::endl;
+								++argsIt;
+							} catch (const std::invalid_argument& e) {
+							} catch (const std::out_of_range& e) {
+							}
+						}
+					} while (argsIt != args.cend() && !argsIt->empty() && argsIt->at(0) != '-');
 				}
 			}
 			break;
-		}
 
 		case Recursive:
 			recursiveDirectoryTraversal = true;
@@ -280,11 +288,26 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 			++argsIt;
 			return std::string{VERSION_STRING};
 #endif
+
+		case Zoom:
+			if (++argsIt != args.cend()) {
+				// if there is a number, interpret it as zoom factor
+				try {
+					const double d = std::stod(*argsIt);
+					horizZoomFactor = std::max(1.0, d);
+					std::cout << "frequency zoom-factor set to " << horizZoomFactor << std::endl;
+				} catch (const std::invalid_argument& e) {
+				} catch (const std::out_of_range& e) {
+				}
+			}
+			break;
+
 		case Help:
 			++argsIt;
 			return showHelp();
-		}
-	}
+
+		} // ends switch(...)
+	} // ends while(...)
 
 	std::vector<std::string> expandedFileList;
 	for (const auto& path : inputFiles) {
@@ -432,6 +455,26 @@ void Parameters::setPlotWindowFunction(bool val)
 bool Parameters::getPlotTimeDomain() const
 {
 	return plotTimeDomain;
+}
+
+double Parameters::getHorizZoomFactor() const
+{
+	return horizZoomFactor;
+}
+
+std::vector<double> Parameters::getWindowFunctionParameters() const
+{
+	return windowFunctionParameters;
+}
+
+void Parameters::setWindowFunctionParameters(const std::vector<double>& newWindowFunctionParameters)
+{
+	windowFunctionParameters = newWindowFunctionParameters;
+}
+
+void Parameters::setHorizZoomFactor(double newHorizZoomFactor)
+{
+	horizZoomFactor = newHorizZoomFactor;
 }
 
 void Parameters::setPlotTimeDomain(bool val)

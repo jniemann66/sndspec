@@ -384,7 +384,16 @@ void Renderer::drawSpectrumTickmarks(bool linearMag)
 	double f = 0.0;
 	double x = plotOriginX;
 	while (x < (fWidth + plotOriginX)) {
-		sprintf(fLabelBuf, "%6.0f", f);
+
+		if (freqAxisStyle == FreqAxisFormat_PlusMinusNormalisedFreq) {
+			double z = std::max(1.0, horizZoomFactor);
+			sprintf(fLabelBuf,
+					(z > 1.0 ? "%0.3f" : "%0.1f"), // more dec. places for higher zooms
+					(2.0 * f / nyquist - 1.0) / z);
+		} else {
+			sprintf(fLabelBuf, "%6.0f", f);
+		}
+
 		cairo_text_extents_t freqLabelTextExtents;
 		cairo_text_extents(cr, fLabelBuf, &freqLabelTextExtents);
 		cairo_move_to(cr, x, plotOriginY + plotHeight);
@@ -480,6 +489,26 @@ void Renderer::drawSpectrumText()
 	cairo_rotate(cr, M_PI_2);
 	cairo_show_text(cr, vertAxisLabel.c_str());
 	cairo_restore(cr);
+}
+
+double Renderer::getHorizZoomFactor() const
+{
+	return horizZoomFactor;
+}
+
+void Renderer::setHorizZoomFactor(double newHorizZoomFactor)
+{
+	horizZoomFactor = newHorizZoomFactor;
+}
+
+Renderer::FreqAxisFormat Renderer::getFreqAxisFormat() const
+{
+	return freqAxisStyle;
+}
+
+void Renderer::setFreqAxisFormat(FreqAxisFormat newFreqAxisFormat)
+{
+	freqAxisStyle = newFreqAxisFormat;
 }
 
 Renderer::LocalPeakData_t Renderer::getRankedLocalMaxima(const std::vector<double>& data)

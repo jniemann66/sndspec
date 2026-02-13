@@ -283,7 +283,12 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 
 		// create window
 		Sndspec::Window<double> window;
-		window.generate(parameters.getWindowFunction(), blockSize, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
+		const double param
+				= parameters.getWindowFunctionParameters().empty() ?
+					   Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange())
+					 : parameters.getWindowFunctionParameters().at(0);
+		window.generate(parameters.getWindowFunction(), blockSize, param);
+
 		r.setWindow(window.getData());
 
 		// prepare the spectrum analyzers
@@ -395,11 +400,21 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 	const int w = parameters.getImgWidth();
 	const int h = parameters.getImgHeight();
 
+	// generate a window with this many sample points
 	constexpr size_t windowSize = 256;
-	constexpr size_t fftSize = 16 * windowSize;
 
+	// for smooth spectrum results, make the fft Size considerably larger than the actual window (pad with zeroes)
+	constexpr int fftSizeRato = 16;
+	constexpr size_t fftSize = fftSizeRato * windowSize;
+
+	// generate the window
 	Sndspec::Window<double> window;
-	window.generate(parameters.getWindowFunction(), windowSize, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
+	const double param
+			= parameters.getWindowFunctionParameters().empty() ?
+				   Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange())
+				 : parameters.getWindowFunctionParameters().at(0);
+	window.generate(parameters.getWindowFunction(), windowSize, param);
+
 	if (parameters.getPlotTimeDomain()) {
 		std::string name = parameters.getWindowFunctionDisplayName() + "-time_domain";
 		std::replace(name.begin(), name.end(), ' ', '_');
@@ -412,7 +427,7 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 		r.setInputFilename(name);
 		r.setDynRange(parameters.getDynRange());
 		r.setTitle("Window Function");
-		r.setHorizAxisLabel("t");
+		r.setHorizAxisLabel("Time (sample index)");
 
 		if (parameters.getLinearMag()) {
 			r.setVertAxisLabel("Relative Magnitude (%)");
@@ -431,39 +446,38 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 		std::string name = parameters.getWindowFunctionDisplayName() + "-freq_domain";
 		std::replace(name.begin(), name.end(), ' ', '_');
 
-		Sndspec::Spectrum s(fftSize);
+		// horizontal scaling factor. Values > 1 allow zooming-in to see more detail around f=0
+		const double horizontalZoom = parameters.getHorizZoomFactor();
 
+		// make a copy of the window data, and resize it to fftSize by padding with zeroes
 		std::vector<double> wd = window.getData();
+		std::cout << "fft size=" << fftSize << std::endl;
 		wd.resize(fftSize, 0.0);
 
+		// initialise Spectrum object, and copy window data to it's time-domain buffer
+		Sndspec::Spectrum s(fftSize);
 		std::memcpy(s.getTdBuf(), wd.data(), fftSize * sizeof(double));
+		s.exec(); // run the fft
 
-		for (size_t x = 0; x < windowSize; x++) {
-			assert(s.getTdBuf()[x] == window.getData()[x]);
-		}
-
-		std::cout << "fft size=" << fftSize << std::endl;
-		s.exec();
-
-		const int horizontalZoom = 1;
-
+		// get magnitude spectrum
 		std::vector<double> v(fftSize, 0.0);
 		s.getMag(v);
-		auto mm = std::minmax_element(v.begin(), v.end());
 		s.convertToDb(v, false);
-		std::cout << "min=" << *mm.first << " max=" << *mm.second << std::endl;
 
 		if (horizontalZoom > 1) {
+			// zoom accomplished by simply shrinking results to area of interest
 			v.resize(v.size() / horizontalZoom);
 		}
 
 		Sndspec::Renderer r{w, h};
 		r.setNyquist(100.0);
+		r.setFreqAxisFormat(Renderer::FreqAxisFormat_PlusMinusNormalisedFreq);
 		r.setFreqStep(10);
+		r.setHorizZoomFactor(horizontalZoom);
 		r.setInputFilename(name);
 		r.setDynRange(parameters.getDynRange());
 		r.setTitle("Window Function");
-		r.setHorizAxisLabel("freq bin");
+		r.setHorizAxisLabel("Normalised Frequency (x π radians / sample)");
 
 		if (parameters.getLinearMag()) {
 			r.setVertAxisLabel("Relative Magnitude (%)");

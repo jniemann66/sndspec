@@ -34,7 +34,11 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 
 	// make a suitable FFT Window
 	Sndspec::Window<double> window;
-	window.generate(parameters.getWindowFunction(), fftSize, Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange()));
+	const double param
+			= parameters.getWindowFunctionParameters().empty() ?
+				   Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange())
+				 : parameters.getWindowFunctionParameters().at(0);
+	window.generate(parameters.getWindowFunction(), fftSize, param);
 
 	// prepare storage for spectrogram results
 	SpectrogramResults<double> spectrogramData;
