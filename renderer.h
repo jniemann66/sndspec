@@ -73,6 +73,13 @@ public:
 	bool writeToFile(const std::string &filename);
 	void clear();
 
+	// enum to control the formatting of text on Horiz axis tickmarks
+	enum FreqAxisFormat
+	{
+		FreqAxisFormat_ZeroToNyquist,
+		FreqAxisFormat_PlusMinusNormalisedFreq
+	};
+
 	// setters
 	void setHeatMapPalette(const std::vector<int32_t> &value);
 	void setNyquist(double value); // required for frequency axis
@@ -86,6 +93,8 @@ public:
 	void setHorizAxisLabel(const std::string &value);
 	void setVertAxisLabel(const std::string &value);
 	void setChannelsEnabled(const std::vector<bool> &value);
+	void setFreqAxisFormat(FreqAxisFormat newFreqAxisFormat);
+	void setHorizZoomFactor(double newHorizZoomFactor);
 
 	// getters
 	std::vector<int32_t> getHeatMapPalette() const;
@@ -103,6 +112,8 @@ public:
 	double getDynRange() const;
 	std::vector<uint32_t> getPixelBuffer() const;
 	std::vector<bool> getChannelsEnabled() const;
+	FreqAxisFormat getFreqAxisFormat() const;
+	double getHorizZoomFactor() const;
 
 private:
 	void drawBorder();
@@ -128,11 +139,12 @@ private:
 	int height;
 
 	// properties required for labelling the chart
-	double nyquist{};
-	double freqStep{};
+	double nyquist;
+	double freqStep;
 	int numTimeDivs{5};
-	double startTime{};
-	double finishTime{};
+	double startTime{0.0};
+	double finishTime{0.0};
+
 	std::string title{"Spectrogram"};
 	std::string inputFilename;
 	std::string channelMode;
@@ -140,6 +152,8 @@ private:
 	std::string vertAxisLabel{"Frequency (Hz)"};
 	std::string windowFunctionLabel;
 	bool showWindowFunctionLabel{false};
+	FreqAxisFormat freqAxisStyle{FreqAxisFormat_ZeroToNyquist};
+	double horizZoomFactor{1.0};
 	double dynRange{};
 
 	// font sizes

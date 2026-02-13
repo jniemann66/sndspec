@@ -64,6 +64,7 @@ enum OptionID
 	PlotWindowFunction,
 	Recursive,
 	Version,
+	Zoom,
 	Help
 };
 
@@ -114,6 +115,7 @@ const std::vector<Option> options
 	{OptionID::Version, "--version", "", false, "Show program version", {}},
 #endif
 
+	{OptionID::Zoom, "--zoom-factor", "-z", false, "Zoom-in (magnify) frequency axis (only on --plot-window)", {"n"}},
 	{OptionID::Help, "--help", "", false, "Help", {}}
 
 };
@@ -150,6 +152,8 @@ public:
 	void setTopN_minSpacing(std::optional<double> newTopN_minSpacing);
 	void setPlotWindowFunction(bool val);
 	void setPlotTimeDomain(bool val);
+	void setHorizZoomFactor(double newHorizZoomFactor);
+	void setWindowFunctionParameters(const std::vector<double>& newWindowFunctionParameters);
 
 	// getters
 	std::vector<std::string> getInputFiles() const;
@@ -164,104 +168,7 @@ public:
 	std::string getWindowFunction() const;
 	std::string getWindowFunctionDisplayName() const;
 	bool getShowWindows() const;
-	bool getShowWindowFunctionLabel() const;	// const int numChannels = spectrumData.size();
-	// const int numBins =  spectrumData.at(0).size();
-
-	// resolveEnabledChannels(parameters, numChannels);
-	// showWindowFunctionLabel = parameters.getShowWindowFunctionLabel();
-	// windowFunctionLabel = "Window: " + parameters.getWindowFunctionDisplayName();
-
-	// // todo: move smoothing out of here and into it's own dedicated function - also try other filters like savitsky-golay etc
-	// const SpectrumSmoothingMode spectrumSmoothingMode = parameters.getSpectrumSmoothingMode();
-
-	// // these next 3 are only used for moving average
-	// const int N = std::max(1, numBins / plotWidth); // size of smoothing filter (not used for "peak" or "none")
-	// const double gd = (N - 1) / 2.0; // spatial domain (freq bins) compensation due to group delay from smoothing filter
-	// const double magScaling = 1.0 / N;
-
-	// // positioning and scaling constants
-	// constexpr double hTrim = -0.5; // horizontal centering tweak to position plot nicely on top of gridlines
-	// const double plotOriginX_ = plotOriginX + hTrim;
-	// const double hScaling = static_cast<double>(plotWidth) / numBins;
-	// const double vScaling = static_cast<double>(plotHeight) / parameters.getDynRange();
-
-	// // clip the plotting region
-	// cairo_rectangle(cr, plotOriginX_, plotOriginY, plotWidth, plotHeight);
-	// cairo_clip(cr);
-	// const double opacity = 0.8;
-
-	// // retval : buffer to contain final plotted y-coordinates
-	// std::vector<std::vector<double>> results{spectrumData.size(), std::vector<double>(numBins, 0.0)};
-
-	// for (int c = 0; c < numChannels; c++) {
-
-	// 	// if channel is disabled, skip this channel
-	// 	if (!channelsEnabled.at(c)) {
-	// 		continue;
-	// 	}
-
-	// 	cairo_set_line_width (cr, 1.0);
-	// 	Rgb chColor = spectrumChannelColors[std::min(static_cast<int>(spectrumChannelColors.size() - 1), c)];
-	// 	cairo_set_source_rgba(cr, chColor.red, chColor.green, chColor.blue, opacity);
-	// 	cairo_move_to(cr, plotOriginX_, plotOriginY - vScaling * spectrumData.at(c).at(0));
-
-	// 	if (spectrumSmoothingMode == None) {
-	// 		for (int i = 0; i < numBins; i++) {
-	// 			const double mag = spectrumData.at(c).at(i);
-	// 			const double y = plotOriginY - vScaling * mag;
-	// 			results[c][i] = mag;
-	// 			cairo_line_to(cr, plotOriginX_ + hScaling * i, y);
-	// 		}
-	// 	} else if (spectrumSmoothingMode == MovingAverage) {
-	// 		const int d = std::ceil(gd);
-	// 		double acc = 0.0;
-	// 		for (int i = 0; i < N; i++) {
-	// 			acc += spectrumData.at(c).at(i);
-	// 		}
-
-	// 		for (int i = N; i < numBins; i++) {
-	// 			acc += spectrumData.at(c).at(i);
-	// 			acc -= spectrumData.at(c).at(i - N);
-	// 			const double mag = magScaling * acc;
-	// 			const double y = plotOriginY - vScaling * mag;
-	// 			results[c][i - d] = mag;
-	// 			cairo_line_to(cr, plotOriginX_ + hScaling * (i - gd), y);
-	// 		}
-	// 	} else if (spectrumSmoothingMode == Peak) {
-	// 		for (int i = 0; i < N; i++) {
-	// 			double maxDB(-300);
-	// 			const double mag = spectrumData.at(c).at(i);
-	// 			for (int a = 0; a <= i; a++) {
-	// 				maxDB = std::max(maxDB, spectrumData.at(c).at(a));
-	// 			}
-	// 			const double y = plotOriginY - vScaling * maxDB;
-	// 			results[c][i] = mag;
-	// 			cairo_line_to(cr, plotOriginX_ + hScaling * i, y);
-	// 		}
-
-	// 		for (int i = N; i < numBins; i++) {
-	// 			const double mag = spectrumData.at(c).at(i);
-	// 			double maxDB(-300);
-	// 			for (int a = i - N + 1; a <= i; a++) {
-	// 				maxDB = std::max(maxDB, spectrumData.at(c).at(a));
-	// 			}
-	// 			const double y = plotOriginY - vScaling * maxDB;
-	// 			results[c][i] = mag;
-	// 			cairo_line_to(cr, plotOriginX_ + hScaling * i, y);
-	// 		}
-
-	// 	}
-	// 	cairo_stroke(cr);
-	// }
-
-	// cairo_reset_clip(cr);
-
-	// drawBorder();
-	// drawSpectrumGrid();
-	// drawSpectrumTickmarks(parameters.getLinearMag());
-	// drawSpectrumText();
-
-	// return {results, vScaling};
+	bool getShowWindowFunctionLabel() const;
 	bool getSpectrumMode() const;
 	SpectrumSmoothingMode getSpectrumSmoothingMode() const;
 	std::set<int> getSelectedChannels() const;
@@ -272,7 +179,8 @@ public:
 	std::optional<double> getTopN_minSpacing() const;
 	bool getPlotWindowFunction() const;
 	bool getPlotTimeDomain() const;
-
+	double getHorizZoomFactor() const;
+	std::vector<double> getWindowFunctionParameters() const;
 
 private:
 	std::vector<std::string> inputFiles;
@@ -291,6 +199,7 @@ private:
 	bool spectrumMode{false};
 	bool plotWindowFunction{false};
 	bool plotTimeDomain{false};
+	double horizZoomFactor{1.0};
 	SpectrumSmoothingMode spectrumSmoothingMode{Peak};
 	std::set<int> selectedChannels; // if the set is empty, it is interpreted as "all channels"
 	ChannelMode channelMode{Normal};
@@ -298,6 +207,7 @@ private:
 	int frequencyStep{5000};
 	std::optional<int> topN;
 	std::optional<double> topN_minSpacing;
+	std::vector<double> windowFunctionParameters;
 	bool recursiveDirectoryTraversal{false};
 
 	void processChannelArgs(const std::vector<std::string> &args);
