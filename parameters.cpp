@@ -248,33 +248,31 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 				}
 				++argsIt;
 
-				if (argsIt != args.cend() && !argsIt->empty() && argsIt->at(0) != '-') {
-					do {
-						std::string s{*argsIt};
+				while (argsIt != args.cend() && !argsIt->empty() && argsIt->at(0) != '-') {
+					std::string s{*argsIt};
 
-						// convert name to lowercase
-						std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) -> unsigned char {
-							return std::tolower(c);
-						});
+					// convert name to lowercase
+					std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) -> unsigned char {
+						return std::tolower(c);
+					});
 
-						if (s.compare(0, 4, "time") == 0) {
-							linearMag = true;
-							dynRange = 100.0;
-							plotTimeDomain = true;
+					if (s.compare(0, 4, "time") == 0) {
+						linearMag = true;
+						dynRange = 100.0;
+						plotTimeDomain = true;
+						++argsIt;
+					} else {
+						try {
+							// look for a number (parameter for window function)
+							const double d = std::stod(s);
+							windowFunctionParameters.push_back(std::max(0.0, d));
+							std::cout << "applying additional window function parameter: " << d << std::endl;
 							++argsIt;
-						} else {
-							try {
-								// look for potentially another number (min-spacing in Hz)
-								const double d = std::stod(s);
-								windowFunctionParameters.push_back(std::max(1.0, d));
-								std::cout << "applying additional window function parameter: " << d << std::endl;
-								++argsIt;
-							} catch (const std::invalid_argument& e) {
-							} catch (const std::out_of_range& e) {
-							}
+						} catch (const std::invalid_argument& e) {
+						} catch (const std::out_of_range& e) {
 						}
-					} while (argsIt != args.cend() && !argsIt->empty() && argsIt->at(0) != '-');
-				}
+					}
+				} // ends while () loop
 			}
 			break;
 
