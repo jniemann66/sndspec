@@ -407,23 +407,38 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 	constexpr size_t fftSize = fftSizeRato * windowSize;
 
 	// generate the window
+	const std::string windowName = parameters.getWindowFunction();
 	Sndspec::Window<double> window;
 	const double param
 			= parameters.getWindowFunctionParameters().empty() ?
-				   Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange())
-				 : parameters.getWindowFunctionParameters().at(0);
-	window.generate(parameters.getWindowFunction(), windowSize, param);
+				Sndspec::Window<double>::kaiserBetaFromDecibels(parameters.getDynRange())
+			  : parameters.getWindowFunctionParameters().at(0);
+	window.generate(windowName, windowSize, param);
+
+	std::string displayName = [&]() {
+		std::stringstream name;
+		name << parameters.getWindowFunctionDisplayName();
+		if (windowName.compare("kaiser") == 0) {
+			std::vector<double> wp = parameters.getWindowFunctionParameters();
+			if (!wp.empty()) {
+				name << "_" << wp.at(0);
+			}
+		}
+		return name.str();
+	}();
 
 	if (parameters.getPlotTimeDomain()) {
-		std::string name = parameters.getWindowFunctionDisplayName() + "-time_domain";
-		std::replace(name.begin(), name.end(), ' ', '_');
+
+		displayName.append("-time_domain");
+
+		std::replace(displayName.begin(), displayName.end(), ' ', '_');
 
 		// plot the window
 		std::cout << "w=" << w << " h=" << h << " window size=" << window.getData().size() << std::endl;
 		Sndspec::Renderer r{w, h};
 		r.setNyquist(windowSize);
 		r.setFreqStep(windowSize / 10);
-		r.setInputFilename(name);
+		r.setInputFilename(displayName);
 		r.setDynRange(parameters.getDynRange());
 		r.setTitle("Window Function");
 		r.setHorizAxisLabel("Time (sample index)");
@@ -440,10 +455,10 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 			r.makeNegativeImage();
 		}
 
-		r.writeToFile(name + ".png");
+		r.writeToFile(displayName + ".png");
 	} else {
-		std::string name = parameters.getWindowFunctionDisplayName() + "-freq_domain";
-		std::replace(name.begin(), name.end(), ' ', '_');
+		displayName.append("-freq_domain");
+		std::replace(displayName.begin(), displayName.end(), ' ', '_');
 
 		// horizontal scaling factor. Values > 1 allow zooming-in to see more detail around f=0
 		const double horizontalZoom = parameters.getHorizZoomFactor();
@@ -472,7 +487,7 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 		r.setFreqAxisFormat(Renderer::FreqAxisFormat_PlusMinusNormalisedFreq);
 		r.setFreqStep(10);
 		r.setHorizZoomFactor(horizontalZoom);
-		r.setInputFilename(name);
+		r.setInputFilename(displayName);
 		r.setDynRange(parameters.getDynRange());
 		r.setTitle("Window Function");
 		r.setHorizAxisLabel("Normalised Frequency (x π radians / sample)");
@@ -488,7 +503,7 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 			r.makeNegativeImage();
 		}
 
-		r.writeToFile(name + ".png");
+		r.writeToFile(displayName + ".png");
 	}
 }
 
