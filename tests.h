@@ -15,7 +15,7 @@ class tests
 public:
 	static bool testWindow();
 	static bool testAllWindows();
-
+	static bool testMinus3dbWidth();
 };
 
 #endif // TESTS_H

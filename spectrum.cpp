@@ -169,7 +169,6 @@ bool Spectrum::convertToDb(std::vector<std::vector<double>> &s, bool fromMagSqua
 
 bool Spectrum::convertToDb(std::vector<double> &s, bool fromMagSquared)
 {
-	int numChannels = s.size();
 	bool hasSignal{false};
 	int numBins = s.size();
 
@@ -451,7 +450,6 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 
 		// make a copy of the window data, and resize it to fftSize by padding with zeroes
 		std::vector<double> wd = window.getData();
-		std::cout << "fft size=" << fftSize << std::endl;
 		wd.resize(fftSize, 0.0);
 
 		// initialise Spectrum object, and copy window data to it's time-domain buffer
@@ -463,16 +461,6 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 		std::vector<double> v(fftSize, 0.0);
 		s.getMag(v);
 		s.convertToDb(v, false);
-
-		// code to calculate width at -3dB
-		// std::cout << parameters.getWindowFunction() << " ";
-		// for (size_t i = 0; i < v.size(); i++) {
-		// 	double d = v.at(i);
-		// 	if (d <= -3.0) {
-		// 		std::cout << "-3dB width =" << 2 * i << std::endl;
-		// 		break;
-		// 	}
-		// }
 
 		if (horizontalZoom > 1) {
 			// zoom accomplished by simply shrinking results to area of interest
@@ -488,7 +476,6 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 		r.setDynRange(parameters.getDynRange());
 		r.setTitle("Window Function");
 		r.setHorizAxisLabel("Normalised Frequency (x π radians / sample)");
-
 
 		if (parameters.getLinearMag()) {
 			r.setVertAxisLabel("Relative Magnitude (%)");
@@ -520,5 +507,45 @@ std::map<double, size_t, std::greater<double>> Spectrum::getRankedLocalMaxima(co
 
 	return results;
 }
+
+double Spectrum::getMinus3dbWidth(const std::string &windowName, const std::vector<double>& parameters)
+{
+	constexpr size_t windowSize = 1024;
+	constexpr int fftSizeRato = 16;
+	constexpr size_t fftSize = fftSizeRato * windowSize;
+
+	// generate the window
+	Sndspec::Window<double> window;
+	const double param
+			= parameters.empty() ?
+				   Sndspec::Window<double>::kaiserBetaFromDecibels(-190.0)
+				 : parameters.at(0);
+	window.generate(windowName, windowSize, param);
+
+	// make a copy of the window data, and resize it to fftSize by padding with zeroes
+	std::vector<double> wd = window.getData();
+	wd.resize(fftSize, 0.0);
+
+	// initialise Spectrum object, and copy window data to it's time-domain buffer
+	Sndspec::Spectrum s(fftSize);
+	std::memcpy(s.getTdBuf(), wd.data(), fftSize * sizeof(double));
+	s.exec(); // run the fft
+
+	// get magnitude spectrum
+	std::vector<double> v(fftSize, 0.0);
+	s.getMag(v);
+	s.convertToDb(v, false);
+
+	// find the first bin which has mag <= -3dB
+	for (size_t i = 0; i < v.size(); i++) {
+		double d = v.at(i);
+		if (d <= -3.0) {
+			return (2.0 * i) / fftSizeRato;
+			break;
+		}
+	}
+	return 0.0;
+}
+
 
 } // namespace Sndspec

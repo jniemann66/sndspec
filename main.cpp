@@ -29,8 +29,6 @@ int main(int argc, char** argv)
 		exit(0);
 	}
 
-	// tests::testAllWindows();
-
 	if (parameters.getPlotWindowFunction()) {
 		Sndspec::Spectrum::makeWindowFunctionPlot(parameters);
 	} else if (parameters.getSpectrumMode()) {

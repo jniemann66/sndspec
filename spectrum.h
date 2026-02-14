@@ -51,6 +51,7 @@ public:
 	// getRankedLocalMaxima() : finds all local peaks in input data. Returns a map of <peak, index>,
 	// with peaks sorted from highest to lowest (due to std::greater<double>)
 	static std::map<double, size_t, std::greater<double> > getRankedLocalMaxima(const std::vector<double> &data);
+	static double getMinus3dbWidth(const std::string& windowName, const std::vector<double>& parameters);
 
 private:
 	fftw_plan plan;

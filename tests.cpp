@@ -38,3 +38,12 @@ bool tests::testAllWindows()
 	}
 	return true;
 }
+
+bool tests::testMinus3dbWidth()
+{
+	for (const auto& wd : Sndspec::windowDefinitions) {
+		std::cout << wd.displayName << ": " << Sndspec::Spectrum::getMinus3dbWidth(wd.name, {} ) << "\n";
+	}
+	std::cout << std::endl;
+	return true;
+}
