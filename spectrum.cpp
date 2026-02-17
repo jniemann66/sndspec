@@ -105,7 +105,7 @@ const fftw_complex *Spectrum::getFdBuf() const
 	return fdBuf;
 }
 
-void Spectrum::getMag(std::vector<double>& buf)
+void Spectrum::calcMag(std::vector<double>& buf)
 {
 	for (int b = 0; b < spectrumSize; b++) {
 		double re = fdBuf[b][0];
@@ -114,7 +114,7 @@ void Spectrum::getMag(std::vector<double>& buf)
 	}
 }
 
-void Spectrum::getMagSquared(std::vector<double>& buf)
+void Spectrum::calcMagSquared(std::vector<double>& buf)
 {
 	for (int b = 0; b < spectrumSize; b++) {
 		double re = fdBuf[b][0];
@@ -123,7 +123,7 @@ void Spectrum::getMagSquared(std::vector<double>& buf)
 	}
 }
 
-void Spectrum::getPhase(std::vector<double>& buf)
+void Spectrum::calcPhase(std::vector<double>& buf)
 {
 	for (int b = 0; b < spectrumSize; b++) {
 		double re = fdBuf[b][0];
@@ -318,7 +318,7 @@ void Spectrum::makeSpectrumFromFile(const Sndspec::Parameters &parameters)
 		std::vector<std::vector<double>> results;
 		for (int ch = 0; ch < nChannels; ch ++) {
 			results.emplace_back(analyzers.at(ch)->getSpectrumSize(), 0.0);
-			analyzers.at(ch)->getMagSquared(results.at(ch));
+			analyzers.at(ch)->calcMagSquared(results.at(ch));
 		}
 
 		bool hasSignal = false;
@@ -474,7 +474,7 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 
 		// get magnitude spectrum
 		std::vector<double> v(fftSize, 0.0);
-		s.getMag(v);
+		s.calcMag(v);
 		s.convertToDb(v, false);
 
 		if (horizontalZoom > 1) {
@@ -526,7 +526,7 @@ std::map<double, size_t, std::greater<double>> Spectrum::getRankedLocalMaxima(co
 double Spectrum::getMinus3dbWidth(const std::string &windowName, const std::vector<double>& parameters)
 {
 	constexpr size_t windowSize = 1024;
-	constexpr int fftSizeRato = 16;
+	constexpr int fftSizeRato = 64;
 	constexpr size_t fftSize = fftSizeRato * windowSize;
 
 	// generate the window
@@ -548,7 +548,7 @@ double Spectrum::getMinus3dbWidth(const std::string &windowName, const std::vect
 
 	// get magnitude spectrum
 	std::vector<double> v(fftSize, 0.0);
-	s.getMag(v);
+	s.calcMag(v);
 	s.convertToDb(v, false);
 
 	// find the first bin which has mag <= -3dB
@@ -556,7 +556,6 @@ double Spectrum::getMinus3dbWidth(const std::string &windowName, const std::vect
 		double d = v.at(i);
 		if (d <= -3.0) {
 			return (2.0 * i) / fftSizeRato;
-			break;
 		}
 	}
 	return 0.0;

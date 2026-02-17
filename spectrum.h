@@ -32,9 +32,9 @@ public:
 
 	double* getTdBuf() const;
 	const fftw_complex *getFdBuf() const;
-	void getMag(std::vector<double>& buf);
-	void getMagSquared(std::vector<double> &buf);
-	void getPhase(std::vector<double>& buf);
+	void calcMag(std::vector<double>& buf);
+	void calcMagSquared(std::vector<double> &buf);
+	void calcPhase(std::vector<double>& buf);
 	int getFFTSize() const;
 	int getSpectrumSize() const;
 
@@ -44,8 +44,9 @@ public:
 	static int convertFFTSizeToSpectrumSize(int fft_size);
 	static int selectBestFFTSizeFromSpectrumSize(int spectrum_size);
 	static int selectBestFFTSize(int requested_size); // pick a good FFT size for FFTW (of the form 2^a * 3^b * 5^c * 7^d * [1|11|13] )
-	static bool convertToDb(std::vector<std::vector<double>> &s, bool fromMagSquared);
-	static bool convertToDb(std::vector<double> &s, bool fromMagSquared);
+
+	static bool convertToDb(std::vector<std::vector<double>> &s, bool fromMagSquared); // multi-channel
+	static bool convertToDb(std::vector<double> &s, bool fromMagSquared); // single-channel
 	static bool convertToLinear(std::vector<std::vector<double>> &s, bool fromMagSquared);
 
 	// getRankedLocalMaxima() : finds all local peaks in input data. Returns a map of <peak, index>,
@@ -58,10 +59,9 @@ private:
 	int fftSize;
 	int spectrumSize;
 
-	// C facing:
+	// C -facing:
 	double* tdBuf;	// time-domain buffer
 	fftw_complex* fdBuf; // frequency-domain buffer
-
 };
 
 std::string replaceFileExt(const std::string& filename, const std::string &newExt)

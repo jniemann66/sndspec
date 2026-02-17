@@ -19,9 +19,9 @@
 
 namespace SndSpec {
 
-class RaiiTimer {
+class RaiiTimer
+{
 public:
-
 	explicit RaiiTimer(double msComparison = 0.0) : msComparison(msComparison) {
 		beginTimer = std::chrono::high_resolution_clock::now();
 	}

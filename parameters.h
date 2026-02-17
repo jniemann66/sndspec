@@ -96,7 +96,7 @@ const std::vector<Option> options
 {
 	{OptionID::DynRange, "--dyn-range", "", false, "Set Dynamic Range in dB", {"n"}},
 	{OptionID::OutputDir, "--output-dir", "-o", false, "Set Output directory", {"path"}},
-	{OptionID::Height, "--height","-h", false, "Set Image Height in Pixels", {"n"}},
+	{OptionID::Height, "--height", "-h", false, "Set Image Height in Pixels", {"n"}},
 	{OptionID::Width, "--width", "-w", false, "Set Image Width in Pixels", {"n"}},
 	{OptionID::TimeRange, "--time-range", "-t", false, "Set	Time Range in seconds", {"start-time", "finish-time"}},
 	{OptionID::WhiteBackground, "--white-background", "", false, "White Background (instead of black) with inverted colors", {}},
@@ -183,31 +183,31 @@ public:
 	std::vector<double> getWindowFunctionParameters() const;
 
 private:
-	std::vector<std::string> inputFiles;
-	std::string outputPath;
-	int imgWidth{1024};
-	int imgHeight{768};
 	double dynRange{190};
-	bool timeRange{false};
 	double start{0.0};
 	double finish{0.0};
-	bool whiteBackground{false};
+	double horizZoomFactor{1.0};
+	std::optional<double> topN_minSpacing;
+	std::vector<std::string> inputFiles;
+	std::vector<double> windowFunctionParameters;
+	std::string outputPath;
 	std::string windowFunction{"kaiser"};
 	std::string windowFunctionDisplayName{"Kaiser"};
+	std::set<int> selectedChannels; // if the set is empty, it is interpreted as "all channels"
+	int imgWidth{1024};
+	int imgHeight{768};
+	SpectrumSmoothingMode spectrumSmoothingMode{Peak};
+	ChannelMode channelMode{Normal};
+	int frequencyStep{5000};
+	std::optional<int> topN;
+	bool timeRange{false};
+	bool whiteBackground{false};
 	bool showWindowFunctionLabel{false}; // flag to show the name of window function on the rendered output
 	bool showWindows{false}; // flag to provide a list of available window functions
 	bool spectrumMode{false};
 	bool plotWindowFunction{false};
 	bool plotTimeDomain{false};
-	double horizZoomFactor{1.0};
-	SpectrumSmoothingMode spectrumSmoothingMode{Peak};
-	std::set<int> selectedChannels; // if the set is empty, it is interpreted as "all channels"
-	ChannelMode channelMode{Normal};
 	bool linearMag{false};
-	int frequencyStep{5000};
-	std::optional<int> topN;
-	std::optional<double> topN_minSpacing;
-	std::vector<double> windowFunctionParameters;
 	bool recursiveDirectoryTraversal{false};
 
 	void processChannelArgs(const std::vector<std::string> &args);

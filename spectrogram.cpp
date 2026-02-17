@@ -89,7 +89,7 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 				Spectrum* analyzer = analyzers.at(channel).get();
 				assert(data == analyzer->getTdBuf());
 				analyzer->exec();
-				analyzer->getMagSquared(spectrogramData[channel][pos]); // magSquared avoids having do to square root !
+				analyzer->calcMagSquared(spectrogramData[channel][pos]); // magSquared avoids having do to square root !
 			});
 
 			// read (and analyze) the file

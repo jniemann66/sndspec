@@ -21,10 +21,11 @@ class Spectrogram {
 
 public:
 	static void makeSpectrogramFromFile(const Parameters& parameters);
+
+	// these functions do in-place conversion of magnitude spectrum data into a standard decibel or linear range
+	// return value is a vector of bools signifying whether each respective channel has a signal present
 	static std::vector<bool> convertToDb(SpectrogramResults<double>& s, bool fromMagSquared = true); // return value indicates whether each channel has a signal (ie not silent)
 	static std::vector<bool> convertToLinear(SpectrogramResults<double> &s, bool fromMagSquared = false);
-private:
-
 };
 
 } // namespace Sndspec
