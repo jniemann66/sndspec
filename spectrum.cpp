@@ -170,7 +170,7 @@ bool Spectrum::convertToDb(std::vector<std::vector<double>> &s, bool fromMagSqua
 bool Spectrum::convertToDb(std::vector<double> &s, bool fromMagSquared)
 {
 	bool hasSignal{false};
-	int numBins = s.size();
+	const int numBins = s.size();
 
 	// find peak
 	double peak{0.0};
@@ -201,9 +201,9 @@ bool Spectrum::convertToDb(std::vector<double> &s, bool fromMagSquared)
 
 bool Spectrum::convertToLinear(std::vector<std::vector<double>> &s, bool fromMagSquared)
 {
-	int numChannels = s.size();
+	const int numChannels = s.size();
+	const int numBins = s.at(0).size();
 	bool hasSignal{false};
-	int numBins = s.at(0).size();
 
 	for (int c = 0; c < numChannels; c++) {
 		// find peak

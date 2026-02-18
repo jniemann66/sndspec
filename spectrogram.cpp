@@ -30,7 +30,7 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 
 	auto fftSize = Spectrum::selectBestFFTSizeFromSpectrumSize(renderer.getPlotHeight());
 	auto spectrumSize = Spectrum::convertFFTSizeToSpectrumSize(fftSize);
-	int plotWidth = renderer.getPlotWidth();
+	const int plotWidth = renderer.getPlotWidth();
 
 	// make a suitable FFT Window
 	Sndspec::Window<double> window;
@@ -110,8 +110,8 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 			}
 
 			// set render parameters
-			double startTime = static_cast<double>(r.getStartPos()) / r.getSamplerate();
-			double finishTime = static_cast<double>(r.getFinishPos()) / r.getSamplerate();
+			const double startTime = static_cast<double>(r.getStartPos()) / r.getSamplerate();
+			const double finishTime = static_cast<double>(r.getFinishPos()) / r.getSamplerate();
 			renderer.setNyquist(r.getSamplerate() / 2);
 			renderer.setFreqStep(parameters.getFrequencyStep());
 			renderer.setNumTimeDivs(5);
@@ -157,9 +157,9 @@ void Sndspec::Spectrogram::makeSpectrogramFromFile(const Sndspec::Parameters &pa
 
 std::vector<bool> Sndspec::Spectrogram::convertToDb(SpectrogramResults<double> &s, bool fromMagSquared)
 {
-	int numChannels = s.size();
-	int numSpectrums = s.at(0).size();
-	int numBins = s.at(0).at(0).size();
+	const int numChannels = s.size();
+	const int numSpectrums = s.at(0).size();
+	const int numBins = s.at(0).at(0).size();
 	std::vector<bool> hasSignal(numChannels, false);
 
 	for (int c = 0; c < numChannels; c++) {
@@ -198,9 +198,9 @@ std::vector<bool> Sndspec::Spectrogram::convertToDb(SpectrogramResults<double> &
 
 std::vector<bool> Sndspec::Spectrogram::convertToLinear(SpectrogramResults<double> &s, bool fromMagSquared)
 {
-	int numChannels = s.size();
-	int numSpectrums = s.at(0).size();
-	int numBins = s.at(0).at(0).size();
+	const int numChannels = s.size();
+	const int numSpectrums = s.at(0).size();
+	const int numBins = s.at(0).at(0).size();
 	std::vector<bool> hasSignal(numChannels, false);
 
 	for (int c = 0; c < numChannels; c++) {

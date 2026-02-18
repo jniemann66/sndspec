@@ -22,8 +22,8 @@ Renderer::Renderer(int width, int height)
 	: width(width), height(height), pixelBuffer(static_cast<size_t>(width * height), 0)
 {
 	// set up cairo surface
-	const cairo_format_t cairoFormat =  CAIRO_FORMAT_RGB24;
-	int stride =  cairo_format_stride_for_width(cairoFormat, width);
+	constexpr cairo_format_t cairoFormat =  CAIRO_FORMAT_RGB24;
+	const int stride =  cairo_format_stride_for_width(cairoFormat, width);
 	stride32 = stride / static_cast<int>(sizeof(uint32_t));
 	surface = cairo_image_surface_create_for_data(reinterpret_cast<unsigned char*>(pixelBuffer.data()), cairoFormat, width, height, stride);
 	cr = cairo_create(surface);
@@ -45,13 +45,12 @@ Renderer::~Renderer()
 
 void Renderer::renderSpectrogram(const Parameters &parameters, const SpectrogramResults<double> &spectrogramData)
 {
-	int numChannels = spectrogramData.size();
+	const int numChannels = spectrogramData.size();
 	resolveEnabledChannels(parameters, numChannels);
 
-	int numSpectrums = spectrogramData.at(0).size();
-	int numBins = spectrogramData.at(0).at(0).size();
-
-	int h = plotHeight - 2;
+	const int numSpectrums = spectrogramData.at(0).size();
+	const int numBins = spectrogramData.at(0).at(0).size();
+	const int h = plotHeight - 2;
 	double colorScale = heatMapPalette.size() / -parameters.getDynRange();
 	int lastColorIndex = std::max(0, static_cast<int>(heatMapPalette.size()) - 1);
 	windowFunctionLabel = "Window: " + parameters.getWindowFunctionDisplayName();
@@ -288,7 +287,7 @@ void Renderer::drawSpectrogramGrid()
 	cairo_set_line_width (cr, 1.0);
 	cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, opacity);
 
-	double yStep = plotHeight * static_cast<double>(freqStep) / nyquist;
+	const double yStep = plotHeight * static_cast<double>(freqStep) / nyquist;
 	double y = plotOriginY + plotHeight - 1 ;
 
 	while (y > plotOriginY) {
@@ -297,8 +296,8 @@ void Renderer::drawSpectrogramGrid()
 		y -= yStep;
 	}
 
-	double fWidth = static_cast<double>(plotWidth);
-	double xStep = fWidth / numTimeDivs;
+	const double fWidth = static_cast<double>(plotWidth);
+	const double xStep = fWidth / numTimeDivs;
 	double x = plotOriginX;
 
 	while (x < fWidth) {
@@ -313,10 +312,10 @@ void Renderer::drawSpectrogramGrid()
 void Renderer::drawSpectrumGrid()
 {
 	const double opacity = 0.5;
-	double yScale = plotHeight / dynRange;
-	double yStep = yScale * 10;
+	const double yScale = plotHeight / dynRange;
+	const double yStep = yScale * 10;
 	double y = plotOriginY + plotHeight - 1 ;
-	double dashpattern[] = {4.0, 2.0};
+	const double dashpattern[] = {4.0, 2.0};
 	cairo_set_dash(cr, dashpattern, 2, 0.0);
 
 	// draw horizontal gridlines
@@ -329,10 +328,10 @@ void Renderer::drawSpectrumGrid()
 	}
 	cairo_stroke (cr);
 
-	double fWidth = static_cast<double>(plotWidth);
-	double xStep = fWidth * freqStep / nyquist;
+	const double fWidth = static_cast<double>(plotWidth);
+	const double xStep = fWidth * freqStep / nyquist;
 	double x = plotOriginX;
-	double xf = plotOriginX + fWidth;
+	const double xf = plotOriginX + fWidth;
 
 	// draw vertical gridlines
 	cairo_set_line_width (cr, 1.0);
@@ -364,7 +363,7 @@ void Renderer::drawSpectrumTickmarks(bool linearMag)
 	double dB = dynRange;
 	while (y > plotOriginY) {
 		if (linearMag) {
-			sprintf(dbLabelBuf, "%d", static_cast<int>(100.0-dB));
+			sprintf(dbLabelBuf, "%d", static_cast<int>(100.0 - dB));
 		} else {
 			sprintf(dbLabelBuf, "%d", static_cast<int>(-dB));
 		}
@@ -377,8 +376,8 @@ void Renderer::drawSpectrumTickmarks(bool linearMag)
 	}
 	cairo_stroke (cr);
 
-	double fWidth = static_cast<double>(plotWidth);
-	double xStep = fWidth * freqStep / nyquist;
+	const double fWidth = static_cast<double>(plotWidth);
+	const double xStep = fWidth * freqStep / nyquist;
 	char fLabelBuf[20];
 	constexpr int ty = s + 15;
 	double f = 0.0;
@@ -386,7 +385,7 @@ void Renderer::drawSpectrumTickmarks(bool linearMag)
 	while (x < (fWidth + plotOriginX)) {
 
 		if (freqAxisStyle == FreqAxisFormat_PlusMinusNormalisedFreq) {
-			double z = std::max(1.0, horizZoomFactor);
+			const double z = std::max(1.0, horizZoomFactor);
 			sprintf(fLabelBuf,
 					(z > 1.0 ? "%0.3f" : "%0.1f"), // more dec. places for higher zooms
 					(2.0 * f / nyquist - 1.0) / z);
@@ -410,7 +409,7 @@ void Renderer::drawSpectrumTickmarks(bool linearMag)
 void Renderer::drawSpectrumText()
 {
 	const double opacity = 0.8;
-	double s = 20.0;
+	const double s = 20.0;
 
 	// heading
 	cairo_text_extents_t headingTextExtents;
@@ -672,13 +671,13 @@ void Renderer::drawSpectrogramTickmarks()
 	cairo_set_line_width (cr, 2);
 	cairo_set_source_rgb (cr, 1.0, 1.0, 1.0);
 
-	const int s = 10;
+	constexpr int s = 10;
 	constexpr int fx = s + 5;
 	const int fy = 4;
 
 	cairo_set_font_size(cr, 13);
 
-	double yStep = plotHeight * static_cast<double>(freqStep) / nyquist;
+	const double yStep = plotHeight * static_cast<double>(freqStep) / nyquist;
 	double y = plotOriginY + plotHeight - 1 ;
 	int f = 0;
 
@@ -694,12 +693,12 @@ void Renderer::drawSpectrogramTickmarks()
 		f += freqStep;
 	}
 
-	double fWidth = static_cast<double>(plotWidth);
-	double xStep = fWidth / numTimeDivs;
+	const double fWidth = static_cast<double>(plotWidth);
+	const double xStep = fWidth / numTimeDivs;
 	double x = plotOriginX;
 
 	char tLabelBuf[20];
-	double tStep = (finishTime - startTime) / numTimeDivs;
+	const double tStep = (finishTime - startTime) / numTimeDivs;
 	double t = startTime;
 	const int tx = -5;
 	constexpr int ty = s + 15;
@@ -719,7 +718,7 @@ void Renderer::drawSpectrogramTickmarks()
 
 void Renderer::drawSpectrogramText()
 {
-	double s = 20.0;
+	constexpr double s = 20.0;
 
 	// heading
 	cairo_text_extents_t headingTextExtents;
@@ -801,7 +800,7 @@ void Renderer::drawSpectrogramHeatMap(bool linearMag)
 	}
 
 	// draw the heatmap border
-	double s = 0.5;
+	constexpr double s = 0.5;
 	cairo_set_source_rgb(cr, 255, 255, 255);
 	cairo_set_line_width (cr, 2);
 	cairo_rectangle(cr, hmOriginX-s, plotOriginY - s, hmWidth + 2 * s, plotHeight + 2 * s);
