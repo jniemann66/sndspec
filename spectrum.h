@@ -53,6 +53,7 @@ public:
 	// with peaks sorted from highest to lowest (due to std::greater<double>)
 	static std::map<double, size_t, std::greater<double> > getRankedLocalMaxima(const std::vector<double> &data);
 	static double getMinus3dbWidth(const std::string& windowName, const std::vector<double>& parameters);
+	static bool plotAllWindows(bool timeDomain, bool whiteBackground);
 
 private:
 	fftw_plan plan;

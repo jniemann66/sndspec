@@ -8,7 +8,6 @@
 */
 
 
-
 #include "tests.h"
 #include "parameters.h"
 #include "window.h"
@@ -23,30 +22,6 @@ bool tests::testWindow()
 		std::cout << v << std::endl;
 	}
     return true;
-}
-
-bool tests::plotAllWindows()
-{
-	Sndspec::Parameters p;
-	p.setPlotWindowFunction(true);
-	p.setImgWidth(1280);
-	p.setIngHeight(960);
-	for (const auto& wd : Sndspec::windowDefinitions) {
-		p.setWindowFunction(wd.name);
-		p.setWindowFunctionDisplayName(wd.displayName);
-		//p.setPlotTimeDomain(true);
-		p.setHasWhiteBackground(true);
-		if (wd.name.compare("kaiser") == 0) {
-			// make a whole set of kaisers, with range of beta values
-			for (int beta = 0; beta < 25; beta++) {
-				p.setWindowFunctionParameters({static_cast<double>(beta)});
-				Sndspec::Spectrum::makeWindowFunctionPlot(p);
-			}
-		} else {
-			Sndspec::Spectrum::makeWindowFunctionPlot(p);
-		}
-	}
-	return true;
 }
 
 bool tests::testMinus3dbWidth()

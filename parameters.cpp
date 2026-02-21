@@ -254,13 +254,18 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 				plotWindowFunction = true;
 				showWindowFunctionLabel = true;
 				spectrumMode = true;
-				auto wp = Window<double>::findWindow(*argsIt);
-				if (wp.windowType == Unknown) {
-					windowFunction = "kaiser";
-					windowFunctionDisplayName = "Kaiser";
+				if (argsIt->compare("all") == 0) {
+					windowFunction = "all";
+					windowFunctionDisplayName = "all windows";
 				} else {
-					windowFunction = wp.name;
-					windowFunctionDisplayName = wp.displayName;
+					auto wp = Window<double>::findWindow(*argsIt);
+					if (wp.windowType == Unknown) {
+						windowFunction = "kaiser";
+						windowFunctionDisplayName = "Kaiser";
+					} else {
+						windowFunction = wp.name;
+						windowFunctionDisplayName = wp.displayName;
+					}
 				}
 				++argsIt;
 
@@ -275,7 +280,7 @@ std::string Parameters::fromArgs(const std::vector<std::string> &args)
 					if (s.compare(0, 4, "time") == 0) {
 						linearMag = true;
 						dynRange = 100.0;
-						plotTimeDomain = true;
+						plotTimeDomain_ = true;
 						++argsIt;
 					} else {
 						try {
@@ -466,9 +471,9 @@ void Parameters::setPlotWindowFunction(bool val)
 	plotWindowFunction = val;
 }
 
-bool Parameters::getPlotTimeDomain() const
+bool Parameters::plotTimeDomain() const
 {
-	return plotTimeDomain;
+	return plotTimeDomain_;
 }
 
 double Parameters::getHorizZoomFactor() const
@@ -493,7 +498,7 @@ void Parameters::setHorizZoomFactor(double newHorizZoomFactor)
 
 void Parameters::setPlotTimeDomain(bool val)
 {
-	plotTimeDomain = val;
+	plotTimeDomain_ = val;
 }
 
 void Parameters::setTopN_minSpacing(std::optional<double> val)

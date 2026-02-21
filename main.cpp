@@ -30,7 +30,11 @@ int main(int argc, char** argv)
 	}
 
 	if (parameters.getPlotWindowFunction()) {
-		Sndspec::Spectrum::makeWindowFunctionPlot(parameters);
+		if (parameters.getWindowFunction().compare("all") == 0) {
+			Sndspec::Spectrum::plotAllWindows(parameters.plotTimeDomain(), parameters.hasWhiteBackground());
+		} else {
+			Sndspec::Spectrum::makeWindowFunctionPlot(parameters);
+		}
 	} else if (parameters.getSpectrumMode()) {
 		Sndspec::Spectrum::makeSpectrumFromFile(parameters);
 	} else {

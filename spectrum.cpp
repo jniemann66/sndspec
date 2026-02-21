@@ -427,7 +427,7 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 		return name.str();
 	}();
 
-	if (parameters.getPlotTimeDomain()) {
+	if (parameters.plotTimeDomain()) {
 
 		displayName.append("-time_domain");
 
@@ -505,6 +505,30 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 
 		r.writeToFile(displayName + ".png");
 	}
+}
+
+bool Spectrum::plotAllWindows(bool timeDomain, bool whiteBackground)
+{
+	Sndspec::Parameters p;
+	p.setPlotWindowFunction(true);
+	p.setImgWidth(1280);
+	p.setIngHeight(960);
+	for (const auto& wd : Sndspec::windowDefinitions) {
+		p.setWindowFunction(wd.name);
+		p.setWindowFunctionDisplayName(wd.displayName);
+		p.setPlotTimeDomain(timeDomain);
+		p.setHasWhiteBackground(whiteBackground);
+		if (wd.name.compare("kaiser") == 0) {
+			// make a whole set of kaisers, with range of beta values
+			for (int beta = 0; beta < 25; beta++) {
+				p.setWindowFunctionParameters({static_cast<double>(beta)});
+				Sndspec::Spectrum::makeWindowFunctionPlot(p);
+			}
+		} else {
+			Sndspec::Spectrum::makeWindowFunctionPlot(p);
+		}
+	}
+	return true;
 }
 
 std::map<double, size_t, std::greater<double>> Spectrum::getRankedLocalMaxima(const std::vector<double>& data)

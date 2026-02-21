@@ -178,7 +178,7 @@ public:
 	std::optional<int> getTopN() const;
 	std::optional<double> getTopN_minSpacing() const;
 	bool getPlotWindowFunction() const;
-	bool getPlotTimeDomain() const;
+	bool plotTimeDomain() const;
 	double getHorizZoomFactor() const;
 	std::vector<double> getWindowFunctionParameters() const;
 
@@ -206,7 +206,7 @@ private:
 	bool showWindows{false}; // flag to provide a list of available window functions
 	bool spectrumMode{false};
 	bool plotWindowFunction{false};
-	bool plotTimeDomain{false};
+	bool plotTimeDomain_{false};
 	bool linearMag{false};
 	bool recursiveDirectoryTraversal{false};
 

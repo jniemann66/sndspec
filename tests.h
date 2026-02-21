@@ -14,7 +14,6 @@ class tests
 {
 public:
 	static bool testWindow();
-	static bool plotAllWindows();
 	static bool testMinus3dbWidth();
 };
 

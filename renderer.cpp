@@ -185,7 +185,7 @@ void Renderer::renderWindowFunction(const Parameters& parameters, const std::vec
 	// positioning and scaling constants
 	const double hScaling = static_cast<double>(plotWidth) / data.size();
 
-	const bool freqDomain = !parameters.getPlotTimeDomain();
+	const bool freqDomain = !parameters.plotTimeDomain();
 	const double hTrim = freqDomain ? - 0.0 : 0.5; // horizontal centering tweak to position plot nicely on top of gridlines
 	const double vTrim = freqDomain ? 0.0 : 0.0;
 
