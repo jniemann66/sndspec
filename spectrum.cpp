@@ -427,14 +427,17 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 		return name.str();
 	}();
 
+	// plot the window
+	std::cout << "plotting '" << parameters.getWindowFunctionDisplayName();
+	if (!parameters.getWindowFunctionParameters().empty()) {
+		std::cout << " " << parameters.getWindowFunctionParameters().at(0);
+	}
+	std::cout << "' size=" << window.getData().size() << " w=" << w << " h=" << h << " ... ";
 	if (parameters.plotTimeDomain()) {
 
 		displayName.append("-time_domain");
 
 		std::replace(displayName.begin(), displayName.end(), ' ', '_');
-
-		// plot the window
-		std::cout << "w=" << w << " h=" << h << " window size=" << window.getData().size() << std::endl;
 		Sndspec::Renderer r{w, h};
 		r.setNyquist(windowSize);
 		r.setFreqStep(windowSize / 10);
@@ -455,7 +458,11 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 			r.makeNegativeImage();
 		}
 
-		r.writeToFile(displayName + ".png");
+		if (r.writeToFile(displayName + ".png")) {
+			std::cout << "saved " << displayName + ".png";
+		}
+
+		std::cout << std::endl;
 	} else {
 		displayName.append("-freq_domain");
 		std::replace(displayName.begin(), displayName.end(), ' ', '_');
@@ -503,7 +510,11 @@ void Spectrum::makeWindowFunctionPlot(const Parameters &parameters)
 			r.makeNegativeImage();
 		}
 
-		r.writeToFile(displayName + ".png");
+		if (r.writeToFile(displayName + ".png")) {
+			std::cout << "saved " << displayName + ".png";
+		}
+
+		std::cout << std::endl;
 	}
 }
 
