@@ -63,10 +63,15 @@ if (WIN32)
 else()
     #Not Windows ...
     if(APPLE)
-        # since Mojave, cmake no longer finds these automatically:
-        # (see https://stackoverflow.com/questions/54068035/linking-not-working-in-homebrews-cmake-since-mojave)
-        link_directories(/usr/local/lib)
-        include_directories(/usr/local/include /usr/local/include/cairo)
+	if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "arm64")
+		include_directories(/opt/hombrew/include /opt/homebrew/include/cairo)
+		link_directories(/opt/homebrew/lib)
+	elseif("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+        	# since Mojave, cmake no longer finds these automatically:
+        	# (see https://stackoverflow.com/questions/54068035/linking-not-working-in-homebrews-cmake-since-mojave)
+        	link_directories(/usr/local/lib)
+        	include_directories(/usr/local/include /usr/local/include/cairo)
+	endif()
     else()
         include_directories(/usr/local/include /usr/include /usr/include/cairo)
     endif()
@@ -84,7 +89,7 @@ else()
 
     # find cairo
     find_library(CAIRO_LIBRARY NAMES cairo)
-    add_library(sndspecLib SHARED ${SOURCE_FILES})
+    add_library(sndspecLib STATIC ${SOURCE_FILES})
 
 endif()
 
