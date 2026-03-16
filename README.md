@@ -29,6 +29,8 @@ Usage: sndspec filename [filename2 ...] [options]
 -l, --linear-mag                                  Set magnitude scale to be linear
 -f, --frequency-step <n>                          Set interval of frequency tick marks in Hz
 -p, --peak-selection <n>                          Annotate the top n local peaks in the results
+--plot-window <name> [time|freq]                  Plot a window function in the time or frequency domain
+-z, --zoom-factor <n>                             Set zoom factor for window function plots
 -r, --recursive                                   Recursive directory traversal
 --version                                         Show program version
 --help                                            Help
@@ -70,6 +72,10 @@ sndspec --spectrum ~/soundfiles/guitar.flac --channel difference
 - if you want to plot the frequency response of an impulse response, you might want to switch-off the default Kaiser Window, by using **-W rectangular**, particularly if your impulse response is asymmetrical,
 as the window might skew your results in an undesirable way.
 - Smoothing option only applies to spectrums
+- **-p** / **--peak-selection** annotates the top *n* local peaks by magnitude in a frequency spectrum plot, making it easy to identify dominant frequency components
+- **-f** / **--frequency-step** overrides the automatically chosen frequency tick-mark interval; specify the desired interval in Hz
+- **--plot-window** renders a named window function as a standalone plot. The optional second argument selects the domain: **time** (default) shows the window shape, **freq** shows its frequency response. Use **--show-windows** to list available window names
+- **-z** / **--zoom-factor** scales the horizontal axis when plotting window functions, allowing you to zoom in on a region of interest (e.g. the main lobe or side lobes of the frequency response)
 - when specifying channels with the **--channel** option, the left channel is 0 and the right is 1. Channels always start at zero.
 - The default channel setting is all channels / normal mode
 - For spectrograms in normal mode, the first *enabled* channel is plotted. (use **--channel R** to get a spectrogram of the right channel)
